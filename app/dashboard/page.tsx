@@ -3,23 +3,18 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '@/store/authStore';
 import { useCampaign } from '@/store/campaignStore';
-import { useRouter } from 'next/navigation';
-import mapboxgl from 'mapbox-gl';
-import Map, { Marker, Popup } from 'react-map-gl';
-import CampaignWizard from '@/components/CampaignWizard';
+import Map, { GeolocateControl, Marker, NavigationControl, Popup } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import Link from 'next/link';
 
-if (process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
-  mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-}
 
 export default function Dashboard() {
 
   const { campaigns, fetchCampaigns } = useCampaign();
+  const [hovered, setHovered] = useState<typeof markers[number] | null>(null);
+  const [selected, setSelected] = useState<typeof markers[number] | null>(null); // for tap/click and persistent open
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { user, logout } = useAuth();
   const [showWizard, setShowWizard] = useState(false);
-  const [hovered, setHovered] = useState(null);
 
 
   useEffect(() => {
@@ -32,25 +27,49 @@ export default function Dashboard() {
     fetchCampaigns(user.id || '');
   }, [user, fetchCampaigns]);
 
-  const markers = useMemo(
-    () => [
-      {
-        id: "1",
-        name: "Ikeja Branch",
-        longitude: 3.3500,
-        latitude: 6.6000,
-        address: "Ikeja, Lagos",
-      },
-      {
-        id: "2",
-        name: "VI Branch",
-        longitude: 3.4200,
-        latitude: 6.4300,
-        address: "Victoria Island, Lagos",
-      },
-    ],
-    []
-  );
+  const handleEnter = (marker: any) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setHovered(marker);
+  };
+
+  const handleLeave = () => {
+    timeoutRef.current = setTimeout(() => setHovered(null), 150);
+  };
+
+  // Optional: close popup when tapping elsewhere on the map
+  const handleMapClick = () => {
+    setSelected(null); // or toggle if you prefer
+  };
+
+  const markers = useMemo(() => [
+    {
+      id: "1",
+      name: "Ikeja Branch",
+      longitude: 3.3500,
+      latitude: 6.6000,
+      address: "Ikeja, Lagos",
+      backgroundImage: "https://example.com/ikeja-image.jpg", // replace with real URL or dynamic
+      subtitle: "Tech Hub & University District", // customize per marker
+      dailyActive: 5000,
+      inventory: "High",
+      screens: 12,
+    },
+    {
+      id: "2",
+      name: "VI Branch",
+      longitude: 3.4200,
+      latitude: 6.4300,
+      address: "Victoria Island, Lagos",
+      backgroundImage: "https://example.com/vi-image.jpg", // replace with real URL or dynamic
+      subtitle: "Business & Entertainment District",
+      dailyActive: 7500,
+      inventory: "Medium",
+      screens: 8,
+    },
+    // Add more markers with their specific data
+  ], []);
+
+  const getActiveMarker = hovered || selected; // unified for Popup
 
   return <main className="flex-1 relative flex flex-col bg-background-dark h-screen w-screen/2">
     {/* Header / Overlay Controls */}
@@ -124,47 +143,147 @@ export default function Dashboard() {
         initialViewState={{
           longitude: 3.3792,
           latitude: 6.5244,
-          zoom: 14
+          zoom: 14,
         }}
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/dark-v11"
+        onClick={handleMapClick} // close popup when tapping empty map area
       >
-        {/* MARKERS */}
+        {/* Map Controls: Zoom In/Out and Find Me */}
+        <NavigationControl
+          position="bottom-right"
+          showCompass={false} // just zoom buttons
+          visualizePitch={false}
+        />
+        <GeolocateControl
+          position="bottom-right"
+          positionOptions={{ enableHighAccuracy: true }}
+          trackUserLocation={true} // optional: follow user
+          showUserHeading={true}
+          style={{ marginBottom: 80 }} // space above navigation if needed
+        />
+
         {markers.map((m) => (
-          <Marker key={m.id} longitude={m.longitude} latitude={m.latitude}>
+          <Marker
+            key={m.id}
+            longitude={m.longitude}
+            latitude={m.latitude}
+          >
             <div
-              onMouseEnter={() => setHovered(m)}
-              onMouseLeave={() => setHovered(null)}
+              // Desktop hover
+              onMouseEnter={() => {
+                if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                setHovered(m);
+              }}
+              onMouseLeave={() => {
+                timeoutRef.current = setTimeout(() => setHovered(null), 200); // delay hide to allow moving to popup
+              }}
+
+              // Mobile/Desktop: tap/click to select (toggle persistent open)
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelected(m === selected ? null : m);
+                setHovered(null); // clear hover if clicking
+              }}
+
               style={{
-                width: 14,
-                height: 14,
+                width: 24,                // even larger for better tap/hover
+                height: 24,
                 borderRadius: "50%",
-                background: "red",
+                background: getActiveMarker?.id === m.id
+                  ? "#ff9800"             // orange when active
+                  : "red",
+                border: "3px solid white",
                 cursor: "pointer",
+                pointerEvents: "auto",
+                transform: "translate(-50%, -50%)",
+                transition: "all 0.2s ease",
+                boxShadow: getActiveMarker?.id === m.id ? "0 0 12px rgba(255,152,0,0.6)" : "none",
               }}
             />
           </Marker>
         ))}
 
-        {/* HOVER CARD */}
-        {hovered && (
+        {getActiveMarker && (
           <Popup
-            longitude={hovered.longitude}
-            latitude={hovered.latitude}
-            closeButton={false}
+            longitude={getActiveMarker.longitude}
+            latitude={getActiveMarker.latitude}
+            closeButton={true}
             closeOnClick={false}
             anchor="top"
-            offset={15}
+            offset={28} // more space for larger card
+            onClose={() => {
+              setHovered(null);
+              setSelected(null);
+            }}
+            // Keep open on hover over popup (for desktop)
+            onMouseEnter={() => {
+              if (timeoutRef.current) clearTimeout(timeoutRef.current);
+              setHovered(getActiveMarker); // reinforce hovered
+            }}
+            onMouseLeave={() => {
+              timeoutRef.current = setTimeout(() => setHovered(null), 200);
+            }}
+            // Style to match card width/appearance
+            style={{
+              maxWidth: "none", // allow full card width
+              padding: 0,       // no extra padding
+              background: "transparent", // hide default bg
+              border: "none",
+            }}
           >
-            {/* Your prepared card goes here */}
-            <div style={{ width: 200 }}>
-              <h4 style={{ margin: 0 }}>{hovered.name}</h4>
-              <p style={{ margin: "6px 0 0" }}>{hovered.address}</p>
+            {/* Custom Card Component */}
+            <div className="mt-4 bg-card-dark/95 backdrop-blur-xl border border-white/10 p-0 rounded-xl shadow-2xl w-64 overflow-hidden">
+              <div
+                className="h-24 bg-cover bg-center relative"
+                data-alt={`${getActiveMarker.name} view`}
+                style={{
+                  backgroundImage: `url("${getActiveMarker.backgroundImage}")`
+                }}
+              >
+                <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent" />
+                <div className="absolute bottom-3 left-3">
+                  <h3 className="text-lg font-bold text-white leading-none">
+                    {getActiveMarker.name}
+                  </h3>
+                  <p className="text-xs text-gray-300 mt-1">
+                    {getActiveMarker.subtitle || getActiveMarker.address}
+                  </p>
+                </div>
+              </div>
+              <div className="p-3">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="material-symbols-outlined text-green-400 text-sm">
+                    trending_up
+                  </span>
+                  <span className="text-sm font-semibold text-white">
+                    {getActiveMarker.dailyActive.toLocaleString()} daily active eaters
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="bg-white/5 p-2 rounded flex flex-col gap-1">
+                    <span className="text-text-secondary">Inventory</span>
+                    <span className="text-white font-medium">{getActiveMarker.inventory}</span>
+                  </div>
+                  <div className="bg-white/5 p-2 rounded flex flex-col gap-1">
+                    <span className="text-text-secondary">Screens</span>
+                    <span className="text-white font-medium">{getActiveMarker.screens} Avail.</span>
+                  </div>
+                </div>
+                <button
+                  className="mt-3 w-full py-1.5 bg-primary/20 hover:bg-primary/30 text-primary hover:text-white border border-primary/20 rounded text-xs font-semibold transition-all"
+                  onClick={() => {
+                    // Add your "Target this Area" logic here, e.g., console.log or navigate
+                    alert(`Targeting ${getActiveMarker.name}`);
+                  }}
+                >
+                  Target this Area
+                </button>
+              </div>
             </div>
           </Popup>
         )}
       </Map>
-
 
       {/* Floating Bottom Controls */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
