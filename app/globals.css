@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  /* COLORS */
+  --color-primary: #195de6;
+  --color-background-light: #f6f6f8;
+  --color-background-dark: #0f1115;
+  --color-card-dark: #1c1f26;
+  --color-text-secondary: #9da6b8;
+
+  /* FONT */
+  --font-display: Inter, sans-serif;
+
+  /* BORDER RADIUS */
+  --radius-default: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+
+}
+
+@layer base {
+  html.dark {
+    color-scheme: dark;
+  }
+}
+
+@layer base {
+  html.dark {
+    color-scheme: dark;
+  }
+}
+
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Custom scrollbar for modern feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111318;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #292e38;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3e4552;
+}
+
+/* Map glow effect for the heatmap simulation */
+.heatmap-glow {
+  background: radial-gradient(circle, rgba(25, 93, 230, 0.4) 0%, rgba(25, 93, 230, 0.1) 40%, transparent 70%);
+  mix-blend-mode: screen;
+}
