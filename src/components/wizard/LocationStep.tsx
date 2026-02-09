@@ -79,7 +79,7 @@ export default function LocationStep({ data, updateData }: LocationStepProps) {
         </div>
       </div>
 
-      <div className="pt-4 border-t border-white/5">
+      {/* <div className="pt-4 border-t border-white/5">
         <h3 className="text-xl font-bold text-white mb-4">Venue Type</h3>
         <p className="text-white/60 mb-4">
           Filter by venue type for better targeting
@@ -107,7 +107,7 @@ export default function LocationStep({ data, updateData }: LocationStepProps) {
             </button>
           ))}
         </div>
-      </div>
+      </div> */}
 
       <div className="mt-6 p-4 rounded-lg bg-primary/10 border border-primary/20">
         <p className="text-sm text-white/80">

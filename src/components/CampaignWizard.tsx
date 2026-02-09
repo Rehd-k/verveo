@@ -7,6 +7,7 @@ import LocationStep from './wizard/LocationStep';
 import ProductStep from './wizard/ProductStep';
 import DesignStep from './wizard/DesignStep';
 import CTAStep from './wizard/CTAStep';
+import { CircleX, Save } from 'lucide-react';
 
 export default function CampaignWizard({ onClose }: { onClose: () => void }) {
   const { user } = useAuth();
@@ -70,7 +71,7 @@ export default function CampaignWizard({ onClose }: { onClose: () => void }) {
             onClick={onClose}
             className="text-white/60 hover:text-white transition-colors"
           >
-            <span className="material-symbols-outlined">close</span>
+            <CircleX  className="size-4" />
           </button>
         </div>
 
@@ -80,9 +81,8 @@ export default function CampaignWizard({ onClose }: { onClose: () => void }) {
             {[1, 2, 3, 4].map((s) => (
               <div
                 key={s}
-                className={`flex-1 h-2 rounded-full transition-all ${
-                  s <= step ? 'bg-primary' : 'bg-white/10'
-                }`}
+                className={`flex-1 h-2 rounded-full transition-all ${s <= step ? 'bg-primary' : 'bg-white/10'
+                  }`}
               />
             ))}
           </div>

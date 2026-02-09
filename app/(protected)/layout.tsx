@@ -75,7 +75,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </Link>
                     <Link
                         className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:text-white hover:bg-white/5 transition-colors"
-                        href="/campaign/products"
+                        href="/campaign/design"
                     >
                         <Megaphone className="size-4" />
                         <span className="text-xs font-medium">Campaigns</span>
