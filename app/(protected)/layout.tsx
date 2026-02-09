@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/store/authStore";
 import { useCampaign } from "@/store/campaignStore";
-import { Radar, LayoutDashboard, Megaphone, ChartLine, CreditCard, Settings2, LogOut } from 'lucide-react';
+import { Radar, LayoutDashboard, Megaphone, ChartLine, CreditCard, Settings2, LogOut, CirclePlus } from 'lucide-react';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -44,9 +44,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         );
     }
 
-    return <section className="bg-background-light dark:bg-background-dark font-display text-white overflow-hidden h-screen w-full flex">
+    return <section className="bg-background-light dark:bg-background-dark font-display text-white min-h-screen w-full flex">
         {/* Sidebar Navigation */}
-        <aside className="w-52 bg-card-dark border-r border-white/5 flex flex-col justify-between shrink-0 h-full z-20">
+        <aside className="md:w-52 fixed hidden h-screen  bg-card-dark border-r border-white/5 md:flex flex-col justify-between shrink-0 z-20">
             <div className="flex flex-col gap-6 p-4">
                 {/* Brand */}
                 <div className="flex items-center gap-3 px-2">
@@ -75,7 +75,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </Link>
                     <Link
                         className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:text-white hover:bg-white/5 transition-colors"
-                        href="/campaign/design"
+                        href="/campaign/products"
                     >
                         <Megaphone className="size-4" />
                         <span className="text-xs font-medium">Campaigns</span>
@@ -89,7 +89,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </Link>
                     <Link
                         className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-secondary hover:text-white hover:bg-white/5 transition-colors"
-                        href="/dashboard/settings"
+                        href="/settings"
                     >
                         <CreditCard className="size-4" />
                         <span className="text-xs font-medium">Billing</span>
@@ -101,7 +101,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <button
                     onClick={() => setShowWizard(true)}
                     className="w-full cursor-pointer flex items-center justify-center gap-2 bg-primary hover:bg-blue-600 transition-colors text-white h-10 rounded-lg text-xs font-semibold shadow-lg shadow-primary/20">
-                    <span className="material-symbols-outlined text-xs">add</span>
+                    <CirclePlus className="size-4" />
                     Create Campaign
                 </button>
                 {/* User Menu */}
@@ -143,7 +143,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </div>
             </div>
         </aside>
-        <main className="w-full h-full">{children}</main>
+        <main className="w-full h-full flex">
+            <div className="md:w-52"></div>
+            {children}
+        </main>
     </section>
 
 }

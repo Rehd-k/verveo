@@ -5,6 +5,8 @@ import { useAuth } from '@/store/authStore';
 import { useCampaign } from '@/store/campaignStore';
 import Map, { GeolocateControl, Marker, NavigationControl, Popup } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { Caravan, ChartNoAxesCombined, Group, Layers, Save, StoreIcon, TrafficCone, Wallet } from 'lucide-react';
+import CampaignWizard from '@/components/CampaignWizard';
 
 
 export default function Dashboard() {
@@ -95,9 +97,7 @@ export default function Dashboard() {
             <span className="text-text-secondary text-xs font-medium uppercase tracking-wider">
               Active Campaigns
             </span>
-            <span className="material-symbols-outlined text-text-secondary text-[16px]">
-              campaign
-            </span>
+            <Caravan className='size-4 ml-4' />
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-bold text-white">0</span>
@@ -112,9 +112,7 @@ export default function Dashboard() {
             <span className="text-text-secondary text-xs font-medium uppercase tracking-wider">
               Wallet Balance
             </span>
-            <span className="material-symbols-outlined text-green-400 text-[16px]">
-              account_balance_wallet
-            </span>
+            <Wallet className='size-4 ml-4' />
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-bold text-white">₦ 450k</span>
@@ -126,11 +124,9 @@ export default function Dashboard() {
             <span className="text-text-secondary text-xs font-medium uppercase tracking-wider">
               Saved Drafts
             </span>
-            <span className="material-symbols-outlined text-text-secondary text-[16px]">
-              save
-            </span>
+            <Save className='size-4 ml-4' />
           </div>
-          <div className="flex items-baseline gap-2">
+          <div className="flex items-baseline gap-2" onClick={() => setShowWizard(true)}>
             <span className="text-2xl font-bold text-white">2</span>
             <span className="text-xs text-text-secondary font-medium">Pending</span>
           </div>
@@ -146,7 +142,7 @@ export default function Dashboard() {
           zoom: 14,
         }}
         style={{ width: "100%", height: "100%" }}
-        mapStyle="mapbox://styles/mapbox/dark-v11"
+        mapStyle="mapbox://styles/mapbox/streets-v12"
         onClick={handleMapClick} // close popup when tapping empty map area
       >
         {/* Map Controls: Zoom In/Out and Find Me */}
@@ -154,8 +150,10 @@ export default function Dashboard() {
           position="bottom-right"
           showCompass={false} // just zoom buttons
           visualizePitch={false}
+
         />
         <GeolocateControl
+
           position="bottom-right"
           positionOptions={{ enableHighAccuracy: true }}
           trackUserLocation={true} // optional: follow user
@@ -211,18 +209,10 @@ export default function Dashboard() {
             closeButton={true}
             closeOnClick={false}
             anchor="top"
-            offset={28} // more space for larger card
+            offset={0} // more space for larger card
             onClose={() => {
               setHovered(null);
               setSelected(null);
-            }}
-            // Keep open on hover over popup (for desktop)
-            onMouseEnter={() => {
-              if (timeoutRef.current) clearTimeout(timeoutRef.current);
-              setHovered(getActiveMarker); // reinforce hovered
-            }}
-            onMouseLeave={() => {
-              timeoutRef.current = setTimeout(() => setHovered(null), 200);
             }}
             // Style to match card width/appearance
             style={{
@@ -233,7 +223,16 @@ export default function Dashboard() {
             }}
           >
             {/* Custom Card Component */}
-            <div className="mt-4 bg-card-dark/95 backdrop-blur-xl border border-white/10 p-0 rounded-xl shadow-2xl w-64 overflow-hidden">
+            <div
+              className="mt-4 bg-card-dark/95 backdrop-blur-xl border border-white/10 p-0 rounded-xl shadow-2xl w-64 overflow-hidden"
+              onMouseEnter={() => {
+                if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                setHovered(getActiveMarker); // reinforce hovered
+              }}
+              onMouseLeave={() => {
+                timeoutRef.current = setTimeout(() => setHovered(null), 200);
+              }}
+            >
               <div
                 className="h-24 bg-cover bg-center relative"
                 data-alt={`${getActiveMarker.name} view`}
@@ -253,9 +252,7 @@ export default function Dashboard() {
               </div>
               <div className="p-3">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="material-symbols-outlined text-green-400 text-sm">
-                    trending_up
-                  </span>
+                  <ChartNoAxesCombined />
                   <span className="text-sm font-semibold text-white">
                     {getActiveMarker.dailyActive.toLocaleString()} daily active eaters
                   </span>
@@ -286,42 +283,31 @@ export default function Dashboard() {
       </Map>
 
       {/* Floating Bottom Controls */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
-        <div className="flex bg-card-dark/90 backdrop-blur-lg border border-white/10 rounded-full p-1.5 shadow-2xl gap-1">
-          <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-white text-xs font-semibold shadow-lg shadow-primary/25">
-            <span className="material-symbols-outlined text-[18px]">layers</span>
-            All Layers
+      <div className="absolute bottom-8 md:left-1/2 md:-translate-x-1/2 z-20 left-2">
+        <div className="md:flex flex-col md:flex-row bg-card-dark/90 backdrop-blur-lg border border-white/10 md:rounded-full p-1.5 shadow-2xl gap-1 rounded-xl">
+          <button className="flex items-center gap-2 px-4 md:py-2 py-4 rounded-full bg-primary text-white text-xs font-semibold shadow-lg shadow-primary/25">
+            <Layers className="size-4" />
+            <p className="hidden md:block">Layers</p>
+
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-white/5 text-text-secondary hover:text-white text-xs font-medium transition-colors">
-            <span className="material-symbols-outlined text-[18px]">traffic</span>
-            Traffic
+          <button className="flex items-center gap-2 px-4 md:py-2 py-4rounded-full hover:bg-white/5 text-text-secondary hover:text-white text-xs font-medium transition-colors">
+            <TrafficCone className="size-4" />
+            <p className="hidden md:block">Traffic</p>
+
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-white/5 text-text-secondary hover:text-white text-xs font-medium transition-colors">
-            <span className="material-symbols-outlined text-[18px]">
-              storefront
-            </span>
-            Inventory
+          <button className="flex items-center gap-2 px-4 md:py-2 py-4 rounded-full hover:bg-white/5 text-text-secondary hover:text-white text-xs font-medium transition-colors">
+            <StoreIcon className="size-4" />
+            <p className="hidden md:block">Inventory</p>
+
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-white/5 text-text-secondary hover:text-white text-xs font-medium transition-colors">
-            <span className="material-symbols-outlined text-[18px]">group</span>
-            Demographics
+          <button className="flex items-center gap-2 px-4 md:py-2 py-4 rounded-full hover:bg-white/5 text-text-secondary hover:text-white text-xs font-medium transition-colors">
+
+
+            <Group className="size-4" />
+            <p className="hidden md:block">Demographics</p>
           </button>
         </div>
       </div>
-      {/* Zoom Controls */}
-      <div className="absolute bottom-8 right-8 flex flex-col gap-2 z-20">
-        <button className="size-10 bg-card-dark/90 backdrop-blur border border-white/10 rounded-lg flex items-center justify-center text-white hover:bg-white/10 shadow-lg transition-colors">
-          <span className="material-symbols-outlined">add</span>
-        </button>
-        <button className="size-10 bg-card-dark/90 backdrop-blur border border-white/10 rounded-lg flex items-center justify-center text-white hover:bg-white/10 shadow-lg transition-colors">
-          <span className="material-symbols-outlined">remove</span>
-        </button>
-        <button className="size-10 bg-card-dark/90 backdrop-blur border border-white/10 rounded-lg flex items-center justify-center text-primary hover:bg-white/10 shadow-lg mt-2 transition-colors">
-          <span className="material-symbols-outlined">near_me</span>
-        </button>
-      </div>
-
-
     </div>
 
 
@@ -389,7 +375,7 @@ export default function Dashboard() {
         </div> */}
 
       {/* Campaign Wizard Modal */}
-      {/* {showWizard && <CampaignWizard onClose={() => setShowWizard(false)} />} */}
+      {showWizard && <CampaignWizard onClose={() => setShowWizard(false)} />}
       {/* </div> */}
     </>
 

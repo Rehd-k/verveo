@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { useAuth } from '@/store/authStore';
 
 if (process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
   mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -11,13 +12,14 @@ if (process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
 
 export default function AnalyticsPage() {
   const [campaigns, setCampaigns] = useState<any[]>([]);
+  const { user, logout } = useAuth();
   const [selected, setSelected] = useState<string | null>(null);
   const [series, setSeries] = useState<any[]>([]);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
 
   useEffect(() => {
-    fetch('/api/campaigns')
+    fetch(`/api/campaigns?userId=${user?.id || ''}`)
       .then((r) => r.json())
       .then((data) => {
         setCampaigns(data || []);

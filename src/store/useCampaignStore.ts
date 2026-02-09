@@ -1,14 +1,23 @@
 import { create } from 'zustand';
 
+interface Product {
+  id: string;
+  name: string;
+  specs: string;
+  eco: string;
+  dimensions: string;
+  image: string;
+  link: string;
+};
 interface CampaignState {
   step: number;
-  selectedProduct: string | null;
+  selectedProduct: Product | null;
   quantity: number;
   designConfig: {
     color: string;
     logo: string | null;
   };
-  setProduct: (id: string) => void;
+  setProduct: (product: Product) => void;
   setQuantity: (qty: number) => void;
   updateDesign: (config: Partial<CampaignState['designConfig']>) => void;
 }
@@ -18,8 +27,8 @@ export const useCampaignStore = create<CampaignState>((set) => ({
   selectedProduct: null,
   quantity: 1000,
   designConfig: { color: '#ffffff', logo: null },
-  setProduct: (id) => set({ selectedProduct: id }),
+  setProduct: (product) => set({ selectedProduct: product }),
   setQuantity: (qty) => set({ quantity: qty }),
-  updateDesign: (config) => 
+  updateDesign: (config) =>
     set((state) => ({ designConfig: { ...state.designConfig, ...config } })),
 }));
