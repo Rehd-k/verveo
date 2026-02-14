@@ -14,7 +14,7 @@ const PRODUCTS = [
     image: '☕',
     pricePerUnit: 85,
   },
-  {
+  { 
     id: 'box',
     name: 'Food Box (Standard)',
     size: 'Medium',

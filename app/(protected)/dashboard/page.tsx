@@ -7,6 +7,8 @@ import Map, { GeolocateControl, Marker, NavigationControl, Popup } from 'react-m
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Caravan, ChartNoAxesCombined, Group, Layers, Save, StoreIcon, TrafficCone, Wallet } from 'lucide-react';
 import CampaignWizard from '@/components/CampaignWizard';
+import { cities } from './cities';
+import Link from 'next/link';
 
 
 export default function Dashboard() {
@@ -21,7 +23,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!user) {
-
       return;
     }
 
@@ -43,37 +44,13 @@ export default function Dashboard() {
     setSelected(null); // or toggle if you prefer
   };
 
-  const markers = useMemo(() => [
-    {
-      id: "1",
-      name: "Ikeja Branch",
-      longitude: 3.3500,
-      latitude: 6.6000,
-      address: "Ikeja, Lagos",
-      backgroundImage: "https://example.com/ikeja-image.jpg", // replace with real URL or dynamic
-      subtitle: "Tech Hub & University District", // customize per marker
-      dailyActive: 5000,
-      inventory: "High",
-      screens: 12,
-    },
-    {
-      id: "2",
-      name: "VI Branch",
-      longitude: 3.4200,
-      latitude: 6.4300,
-      address: "Victoria Island, Lagos",
-      backgroundImage: "https://example.com/vi-image.jpg", // replace with real URL or dynamic
-      subtitle: "Business & Entertainment District",
-      dailyActive: 7500,
-      inventory: "Medium",
-      screens: 8,
-    },
-    // Add more markers with their specific data
-  ], []);
+  const markers = useMemo(() =>
+    cities
+    , []);
 
   const getActiveMarker = hovered || selected; // unified for Popup
 
-  return <main className="flex-1 relative flex flex-col bg-background-dark h-screen w-screen/2">
+  return <main className="flex-1 relative flex flex-col bg-background-dark md:h-[91.8vh] h-[95vh]">
     {/* Header / Overlay Controls */}
     <div className="absolute top-0 left-0 w-full z-10 p-6 pointer-events-none flex justify-between items-start">
       {/* Search Bar (Floating) */}
@@ -100,10 +77,11 @@ export default function Dashboard() {
             <Caravan className='size-4 ml-4' />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-white">0</span>
-            <span className="text-xs text-orange-400 font-medium">
+            <span className="text-2xl font-bold text-white">{campaigns.length}</span>
+            {campaigns.length < 1 ? <span className="text-xs text-orange-400 font-medium">
               Needs Action
-            </span>
+            </span> : <></>}
+
           </div>
         </div>
         {/* Stat 2 */}
@@ -126,10 +104,10 @@ export default function Dashboard() {
             </span>
             <Save className='size-4 ml-4' />
           </div>
-          <div className="flex items-baseline gap-2" onClick={() => setShowWizard(true)}>
+          <Link href={'/campaign'} className="flex items-baseline gap-2" onClick={() => setShowWizard(true)}>
             <span className="text-2xl font-bold text-white">2</span>
             <span className="text-xs text-text-secondary font-medium">Pending</span>
-          </div>
+          </Link>
         </div>
       </div>
     </div>
@@ -140,6 +118,8 @@ export default function Dashboard() {
           longitude: 3.3792,
           latitude: 6.5244,
           zoom: 14,
+          pitch: 60, // tilt for 3D effect
+          // bearing: -17, // rotation angle
         }}
         style={{ width: "100%", height: "100%" }}
         mapStyle="mapbox://styles/mapbox/streets-v12"
@@ -214,13 +194,13 @@ export default function Dashboard() {
               setHovered(null);
               setSelected(null);
             }}
-            // Style to match card width/appearance
             style={{
-              maxWidth: "none", // allow full card width
-              padding: 0,       // no extra padding
-              background: "transparent", // hide default bg
+              maxWidth: "none",
+              padding: 0,
+              background: "transparent",
               border: "none",
             }}
+
           >
             {/* Custom Card Component */}
             <div
@@ -254,13 +234,13 @@ export default function Dashboard() {
                 <div className="flex items-center gap-2 mb-3">
                   <ChartNoAxesCombined />
                   <span className="text-sm font-semibold text-white">
-                    {getActiveMarker.dailyActive.toLocaleString()} daily active eaters
+                    {(getActiveMarker.ExtPopulation || 0).toLocaleString()}{" "}<span className="text-xs">Extimated Population</span>
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="bg-white/5 p-2 rounded flex flex-col gap-1">
-                    <span className="text-text-secondary">Inventory</span>
-                    <span className="text-white font-medium">{getActiveMarker.inventory}</span>
+                    <span className="text-text-secondary">Density</span>
+                    <span className="text-white font-medium">{getActiveMarker.inventory?.toString() || "Unknown"}</span>
                   </div>
                   <div className="bg-white/5 p-2 rounded flex flex-col gap-1">
                     <span className="text-text-secondary">Screens</span>
@@ -284,13 +264,13 @@ export default function Dashboard() {
 
       {/* Floating Bottom Controls */}
       <div className="absolute bottom-8 md:left-1/2 md:-translate-x-1/2 z-20 left-2">
-        <div className="md:flex flex-col md:flex-row bg-card-dark/90 backdrop-blur-lg border border-white/10 md:rounded-full p-1.5 shadow-2xl gap-1 rounded-xl">
+        <div className="md:flex flex-col md:flex-row bg-card-dark/90 backdrop-blur-lg border border-white/10 md:rounded-full p-1.5 shadow-2xl gap-2 rounded-xl">
           <button className="flex items-center gap-2 px-4 md:py-2 py-4 rounded-full bg-primary text-white text-xs font-semibold shadow-lg shadow-primary/25">
             <Layers className="size-4" />
             <p className="hidden md:block">Layers</p>
 
           </button>
-          <button className="flex items-center gap-2 px-4 md:py-2 py-4rounded-full hover:bg-white/5 text-text-secondary hover:text-white text-xs font-medium transition-colors">
+          <button className="flex items-center gap-2 px-4 md:py-2 py-4 rounded-full hover:bg-white/5 text-text-secondary hover:text-white text-xs font-medium transition-colors">
             <TrafficCone className="size-4" />
             <p className="hidden md:block">Traffic</p>
 
@@ -301,8 +281,6 @@ export default function Dashboard() {
 
           </button>
           <button className="flex items-center gap-2 px-4 md:py-2 py-4 rounded-full hover:bg-white/5 text-text-secondary hover:text-white text-xs font-medium transition-colors">
-
-
             <Group className="size-4" />
             <p className="hidden md:block">Demographics</p>
           </button>

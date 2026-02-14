@@ -12,7 +12,8 @@ const PRODUCTS = [
         eco: "biodegradable",
         dimensions: '10" x 5" x 14"',
         image: '/assets/cup.png',
-        link: '120gsm Kraft'
+        link: '120gsm Kraft',
+        pricePerUnit: 85,
     },
     {
         id: '2',
@@ -21,7 +22,8 @@ const PRODUCTS = [
         eco: "biodegradable",
         dimensions: '10" x 5" x 14"',
         image: '/assets/box.png',
-        link: '120gsm Kraft'
+        link: '120gsm Kraft',
+        pricePerUnit: 85,
     },
     {
         id: '3',
@@ -30,7 +32,8 @@ const PRODUCTS = [
         eco: "biodegradable",
         dimensions: '10" x 5" x 14"',
         image: '/assets/bag.png',
-        link: '120gsm Kraft'
+        link: '120gsm Kraft',
+        pricePerUnit: 85,
     },
     {
         id: '4',
@@ -39,11 +42,19 @@ const PRODUCTS = [
         dimensions: '10" x 5" x 14"',
         specs: 'Kraft • Plastic',
         image: '/assets/takeaway.jpg',
-        link: '120gsm Kraft'
+        link: '120gsm Kraft',
+        pricePerUnit: 85,
     },
 ];
 
-export default function ProductSelectionPage() {
+interface LocationStepProps {
+    data: any;
+    updateData: (data: any) => void;
+    nextStage: () => void;
+    prevStage: () => void;
+}
+
+export default function ProductSelectionPage({ data, updateData, nextStage, prevStage }: LocationStepProps) {
     const { selectedProduct, setProduct, quantity, setQuantity } = useCampaignStore();
 
     return (
@@ -52,7 +63,7 @@ export default function ProductSelectionPage() {
         <div className="flex flex-col max-w-300 flex-1">
 
             {/* Progress Bar */}
-            <div className="flex flex-col gap-3 p-4 pb-6">
+            {/* <div className="flex flex-col gap-3 p-4 pb-6">
                 <div className="flex gap-6 justify-between items-end">
                     <p className="text-white text-base font-medium leading-normal">
                         Step B: Product Selection
@@ -67,7 +78,7 @@ export default function ProductSelectionPage() {
                         style={{ width: "50%" }}
                     />
                 </div>
-            </div>
+            </div> */}
             {/* Main Layout Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 pt-0">
                 {/* Left Column: Inventory Grid & Preview */}
@@ -241,11 +252,11 @@ export default function ProductSelectionPage() {
                         </div>
                         {/* Navigation Actions */}
                         <div className="flex flex-col gap-3 mt-2">
-                            <button className="flex w-full cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-primary text-background-dark text-base font-bold shadow hover:bg-[#d9ba0b] transition-colors">
+                            <button className="flex w-full cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-primary text-background-dark text-base font-bold shadow hover:bg-[#d9ba0b] transition-colors" onClick={nextStage}>
                                 Next: Customization
                                 <MoveRight className="ml-2 size-4" />
                             </button>
-                            <button className="flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-6 text-text-dim hover:text-white text-sm font-medium transition-colors">
+                            <button className="flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-6 text-text-dim hover:text-white text-sm font-medium transition-colors" onClick={prevStage}>
                                 <MoveLeft className="mr-2 size-4" />
                                 Back to Previous Step
                             </button>
