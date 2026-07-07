@@ -3,12 +3,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '@/store/authStore';
 import { useCampaign } from '@/store/campaignStore';
-import Map, { GeolocateControl, Marker, NavigationControl, Popup } from 'react-map-gl/mapbox';
+import Map, { GeolocateControl, Marker, NavigationControl, Popup, type MapRef } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Caravan, ChartNoAxesCombined, Group, Layers, Save, StoreIcon, TrafficCone, Wallet } from 'lucide-react';
-import CampaignWizard from '@/components/CampaignWizard';
 import { cities } from './cities';
 import Link from 'next/link';
+import { useMapUserLocation } from '@/hooks/useMapUserLocation';
+import { authHeaders } from '@/lib/fetchAuth';
 
 
 export default function Dashboard() {
@@ -17,8 +18,18 @@ export default function Dashboard() {
   const [hovered, setHovered] = useState<typeof markers[number] | null>(null);
   const [selected, setSelected] = useState<typeof markers[number] | null>(null); // for tap/click and persistent open
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const mapRef = useRef<MapRef>(null);
   const { user, logout } = useAuth();
-  const [showWizard, setShowWizard] = useState(false);
+  const mapLocation = useMapUserLocation();
+
+  useEffect(() => {
+    if (!mapLocation.ready || !mapRef.current) return;
+    mapRef.current.flyTo({
+      center: [mapLocation.longitude, mapLocation.latitude],
+      zoom: mapLocation.zoom,
+      duration: 1200,
+    });
+  }, [mapLocation.ready, mapLocation.longitude, mapLocation.latitude, mapLocation.zoom]);
 
 
   useEffect(() => {
@@ -48,7 +59,16 @@ export default function Dashboard() {
     cities
     , []);
 
-  const getActiveMarker = hovered || selected; // unified for Popup
+  const getActiveMarker = hovered || selected;
+
+  const populationLabel = (marker: (typeof markers)[number]) =>
+    (marker.dailyActive ?? marker.ExtPopulation ?? marker.possible_points ?? 0).toLocaleString();
+
+  const densityLabel = (marker: (typeof markers)[number]) =>
+    marker.inventory ?? marker.density ?? '—';
+
+  const screensLabel = (marker: (typeof markers)[number]) =>
+    marker.screens ?? marker.possible_points ?? '—';
 
   return <main className="flex-1 relative flex flex-col bg-background-dark md:h-[91.8vh] h-[95vh]">
     {/* Header / Overlay Controls */}
@@ -104,8 +124,8 @@ export default function Dashboard() {
             </span>
             <Save className='size-4 ml-4' />
           </div>
-          <Link href={'/campaign'} className="flex items-baseline gap-2" onClick={() => setShowWizard(true)}>
-            <span className="text-2xl font-bold text-white">2</span>
+          <Link href={'/campaigns'} className="flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-white">{campaigns.filter((c) => c.status === 'draft').length}</span>
             <span className="text-xs text-text-secondary font-medium">Pending</span>
           </Link>
         </div>
@@ -113,16 +133,15 @@ export default function Dashboard() {
     </div>
     <div className="relative w-[80wv] h-screen bg-[#111318]">
       <Map
+        ref={mapRef}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
         initialViewState={{
-          longitude: 3.3792,
-          latitude: 6.5244,
-          zoom: 14,
-          pitch: 60, // tilt for 3D effect
-          // bearing: -17, // rotation angle
+          longitude: mapLocation.longitude,
+          latitude: mapLocation.latitude,
+          zoom: mapLocation.zoom,
         }}
         style={{ width: "100%", height: "100%" }}
-        mapStyle="mapbox://styles/mapbox/streets-v12"
+        mapStyle="mapbox://styles/mapbox/dark-v11"
         onClick={handleMapClick} // close popup when tapping empty map area
       >
         {/* Map Controls: Zoom In/Out and Find Me */}
@@ -234,28 +253,28 @@ export default function Dashboard() {
                 <div className="flex items-center gap-2 mb-3">
                   <ChartNoAxesCombined />
                   <span className="text-sm font-semibold text-white">
-                    {(getActiveMarker.ExtPopulation || 0).toLocaleString()}{" "}<span className="text-xs">Extimated Population</span>
+                    {populationLabel(getActiveMarker)}{' '}
+                    <span className="text-xs">Estimated Population</span>
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="bg-white/5 p-2 rounded flex flex-col gap-1">
                     <span className="text-text-secondary">Density</span>
-                    <span className="text-white font-medium">{getActiveMarker.inventory?.toString() || "Unknown"}</span>
+                    <span className="text-white font-medium">{densityLabel(getActiveMarker)}</span>
                   </div>
                   <div className="bg-white/5 p-2 rounded flex flex-col gap-1">
                     <span className="text-text-secondary">Screens</span>
-                    <span className="text-white font-medium">{getActiveMarker.screens} Avail.</span>
+                    <span className="text-white font-medium">{screensLabel(getActiveMarker)} Avail.</span>
                   </div>
                 </div>
-                <button
-                  className="mt-3 w-full py-1.5 bg-primary/20 hover:bg-primary/30 text-primary hover:text-white border border-primary/20 rounded text-xs font-semibold transition-all"
-                  onClick={() => {
-                    // Add your "Target this Area" logic here, e.g., console.log or navigate
-                    alert(`Targeting ${getActiveMarker.name}`);
-                  }}
-                >
-                  Target this Area
-                </button>
+                <Link href={`/campaign?area=${getActiveMarker.name}&long=${getActiveMarker.longitude}&lat=${getActiveMarker.latitude}`}>
+                  <button
+                    className="mt-3 w-full py-1.5 bg-primary/20 hover:bg-primary/30 text-primary hover:text-white border border-primary/20 rounded text-xs font-semibold transition-all"
+
+                  >
+                    Target this Area
+                  </button>
+                </Link>
               </div>
             </div>
           </Popup>
@@ -322,7 +341,7 @@ export default function Dashboard() {
                       <button
                         onClick={async () => {
                           try {
-                            const res = await fetch(`/api/analytics/campaign/${campaign._id}`);
+                            const res = await fetch(`/api/analytics/campaign/${campaign._id}`, { headers: authHeaders() });
                             if (!res.ok) throw new Error('Analytics fetch failed');
                             const data = await res.json();
                             window.open('data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data)), '_blank');
@@ -352,9 +371,6 @@ export default function Dashboard() {
           )}
         </div> */}
 
-      {/* Campaign Wizard Modal */}
-      {showWizard && <CampaignWizard onClose={() => setShowWizard(false)} />}
-      {/* </div> */}
     </>
 
   </main>

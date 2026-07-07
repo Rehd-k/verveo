@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { Campaign } from '@/types';
+import { authHeaders } from '@/lib/fetchAuth';
 
 interface CampaignStore {
   campaigns: Campaign[];
@@ -8,9 +9,10 @@ interface CampaignStore {
   fetchCampaigns: (userId: string) => Promise<void>;
   createCampaign: (campaign: Partial<Campaign>) => Promise<void>;
   updateCampaign: (id: string, data: Partial<Campaign>) => Promise<void>;
+  deleteCampaign: (id: string) => Promise<void>;
   setCurrentCampaign: (campaign: Campaign | null) => void;
 }
-
+ 
 export const useCampaign = create<CampaignStore>((set) => ({
   campaigns: [],
   currentCampaign: null,
@@ -19,7 +21,9 @@ export const useCampaign = create<CampaignStore>((set) => ({
   fetchCampaigns: async (userId: string) => {
     set({ loading: true });
     try {
-      const res = await fetch(`/api/campaigns?userId=${userId}`);
+      const res = await fetch(`/api/campaigns?userId=${userId}`, {
+        headers: authHeaders(),
+      });
       if (!res.ok) throw new Error('Failed to fetch campaigns');
 
       const data = await res.json();
@@ -34,7 +38,7 @@ export const useCampaign = create<CampaignStore>((set) => ({
     try {
       const res = await fetch('/api/campaigns', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(campaign),
       });
 
@@ -54,7 +58,7 @@ export const useCampaign = create<CampaignStore>((set) => ({
     try {
       const res = await fetch(`/api/campaigns/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(data),
       });
 
@@ -62,12 +66,29 @@ export const useCampaign = create<CampaignStore>((set) => ({
 
       const updated = await res.json();
       set((state) => ({
-        campaigns: state.campaigns.map((c) => (c.id === id ? updated : c)),
+        campaigns: state.campaigns.map((c) => (c.id === id || c._id === id ? updated : c)),
       }));
     } catch (error) {
       console.error('Error updating campaign:', error);
       throw error;
     }
+  },
+
+  deleteCampaign: async (id: string) => {
+    const res = await fetch(`/api/campaigns/${id}`, {
+      method: 'DELETE',
+      headers: authHeaders(),
+    });
+
+    if (!res.ok) throw new Error('Failed to delete campaign');
+
+    set((state) => ({
+      campaigns: state.campaigns.filter((c) => c.id !== id && c._id !== id),
+      currentCampaign:
+        state.currentCampaign?.id === id || state.currentCampaign?._id === id
+          ? null
+          : state.currentCampaign,
+    }));
   },
 
   setCurrentCampaign: (campaign: Campaign | null) => {

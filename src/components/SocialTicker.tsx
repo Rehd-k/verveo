@@ -2,39 +2,41 @@
 
 import React from 'react';
 
-const logos = [
-  { name: 'Zenith', img: '/logos/zenith.svg' },
-  { name: 'Konga', img: '/logos/konga.svg' },
-  { name: 'Flutterwave', img: '/logos/flutterwave.svg' },
-  { name: 'Glovo', img: '/logos/glovo.svg' },
-  { name: 'FMCG', img: '/logos/fmcg.svg' },
+const PARTNERS = [
+  { name: 'Zenith' },
+  { name: 'Konga' },
+  { name: 'Flutterwave' },
+  { name: 'Glovo' },
+  { name: 'FMCG' },
 ];
 
 export default function SocialTicker() {
+  const items = (
+    <>
+      <div className="flex items-center gap-4">
+        <span className="font-bold text-white/80">1.2M Packs Distributed</span>
+      </div>
+      {PARTNERS.map((p) => (
+        <div key={p.name} className="flex items-center gap-3 opacity-90">
+          <span className="rounded-md border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold tracking-wider text-white/70">
+            {p.name}
+          </span>
+        </div>
+      ))}
+    </>
+  );
+
   return (
     <div className="w-full overflow-hidden border-t border-b border-white/5 bg-white/2">
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex items-center gap-6 py-3">
-          <div className="text-sm font-semibold text-white/70 uppercase tracking-widest">Trusted by</div>
-          <div className="ticker flex gap-10">
+          <div className="shrink-0 text-sm font-semibold uppercase tracking-widest text-white/70">
+            Trusted by
+          </div>
+          <div className="ticker flex-1 overflow-hidden">
             <div className="ticker-track flex gap-10">
-              <div className="flex items-center gap-4">
-                <span className="font-bold text-white/80">1.2M Packs Distributed</span>
-              </div>
-              {logos.map((l) => (
-                <div key={l.name} className="flex items-center gap-3 opacity-90">
-                  <img src={l.img} alt={l.name} className="h-6 w-auto grayscale opacity-80" />
-                </div>
-              ))}
-              {/* Repeat for smooth loop */}
-              <div className="flex items-center gap-4">
-                <span className="font-bold text-white/80">1.2M Packs Distributed</span>
-              </div>
-              {logos.map((l) => (
-                <div key={l.name + '-2'} className="flex items-center gap-3 opacity-90">
-                  <img src={l.img} alt={l.name} className="h-6 w-auto grayscale opacity-80" />
-                </div>
-              ))}
+              {items}
+              {items}
             </div>
           </div>
         </div>

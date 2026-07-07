@@ -32,7 +32,7 @@
 ### Phase 3: Campaign Wizard
 - [x] 4-step modal wizard
 - [x] Step 1: Location Targeting
-  - [x] Multi-select Lagos districts
+  - [x] Multi-select districts
   - [x] Venue type filtering
   - [x] Real-time reach calculation
 - [x] Step 2: Product Selection

@@ -1,90 +1,140 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/store/authStore';
+import { useEffect, useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
+import { Loader2, Lock, Mail } from 'lucide-react';
+import { AuthLayout } from '@/components/auth/AuthLayout';
+import { AuthInput } from '@/components/auth/AuthInput';
+import { useAuth } from '@/store/authStore';
+import { getRoleRedirect } from '@/lib/fetchAuth';
 
-export default function Login() {
+const REMEMBER_EMAIL_KEY = 'addizi_remember_email';
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
+
+  const redirect = searchParams.get('redirect');
+  const signupHref = redirect
+    ? `/auth/signup?redirect=${encodeURIComponent(redirect)}`
+    : '/auth/signup';
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem(REMEMBER_EMAIL_KEY);
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
     try {
-      await login(email, password);
-      router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Login failed');
+      const user = await login(email.trim(), password);
+      if (rememberMe) {
+        localStorage.setItem(REMEMBER_EMAIL_KEY, email.trim());
+      } else {
+        localStorage.removeItem(REMEMBER_EMAIL_KEY);
+      }
+      toast.success(`Welcome back, ${user.name.split(' ')[0]}!`);
+      router.push(getRoleRedirect(user.role, redirect));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Login failed';
+      setError(message);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-background-dark to-black px-6">
-      <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold text-white mb-2">AD-Lagos</h1>
-          <p className="text-white/60">Sign in to your account</p>
+    <AuthLayout
+      title="Welcome back"
+      subtitle="Sign in to manage campaigns, track scans, and monitor performance."
+    >
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {error && (
+          <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-400">
+            {error}
+          </div>
+        )}
+
+        <AuthInput
+          label="Email"
+          type="email"
+          icon={Mail}
+          required
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@company.com"
+        />
+
+        <AuthInput
+          label="Password"
+          type="password"
+          icon={Lock}
+          required
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Enter your password"
+        />
+
+        <div className="flex items-center justify-between gap-4">
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-text-secondary">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="size-4 rounded border-white/20 bg-white/5 text-primary focus:ring-primary/40"
+            />
+            Remember email
+          </label>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-6 rounded-2xl border border-white/5 bg-white/3 p-8 backdrop-blur-xl"
+        <button
+          type="submit"
+          disabled={loading}
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {error && (
-            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
-              {error}
-            </div>
+          {loading ? (
+            <>
+              <Loader2 className="size-4 animate-spin" />
+              Signing in...
+            </>
+          ) : (
+            'Sign In'
           )}
+        </button>
+      </form>
 
-          <div>
-            <label className="block text-sm font-medium text-white mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-white/30 focus:border-primary focus:outline-none"
-              placeholder="you@example.com"
-            />
-          </div>
+      <p className="mt-8 text-center text-sm text-text-secondary">
+        Don&apos;t have an account?{' '}
+        <Link href={signupHref} className="font-medium text-primary hover:underline">
+          Create one free
+        </Link>
+      </p>
+    </AuthLayout>
+  );
+}
 
-          <div>
-            <label className="block text-sm font-medium text-white mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-white/30 focus:border-primary focus:outline-none"
-              placeholder="••••••••"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-primary px-4 py-3 font-bold text-background-dark hover:brightness-110 disabled:opacity-50 transition-all"
-          >
-            {loading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-white/60">
-          Don't have an account?{' '}
-          <Link href="/auth/signup" className="text-primary hover:underline">
-            Sign up
-          </Link>
-        </p>
-      </div>
-    </div>
+export default function Login() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-background-dark">
+          <Loader2 className="size-8 animate-spin text-primary" />
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }

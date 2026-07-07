@@ -1,14 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useCampaign } from '@/store/campaignStore';
 import { useAuth } from '@/store/authStore';
-import LocationStep from './wizard/LocationStep';
 import ProductStep from './wizard/ProductStep';
 import DesignStep from './wizard/DesignStep';
 import CTAStep from './wizard/CTAStep';
+import type { CampaignDataShape } from '@/lib/campaignSummary';
 import { CircleX, Save } from 'lucide-react';
-import LocationPage from './wizard/locations';
 
 export default function CampaignWizard({ onClose }: { onClose: () => void }) {
   const { user } = useAuth();
@@ -26,6 +25,7 @@ export default function CampaignWizard({ onClose }: { onClose: () => void }) {
       colors: [] as string[],
     },
     ctaUrl: '',
+    qrCode: '',
     budget: 0,
   });
   const [loading, setLoading] = useState(false);
@@ -40,12 +40,11 @@ export default function CampaignWizard({ onClose }: { onClose: () => void }) {
 
   const handleSubmit = async () => {
     if (!user) return;
-
-    console.log('Submitting campaign with data:', campaignData);
     setLoading(true);
     try {
       await createCampaign({
         ...campaignData,
+        qrCode: campaignData.qrCode || undefined,
         title: campaignData.title || 'Untitled Campaign',
         userId: user.id,
         status: 'draft',
@@ -58,9 +57,14 @@ export default function CampaignWizard({ onClose }: { onClose: () => void }) {
     }
   };
 
-  const updateData = (newData: Partial<typeof campaignData>) => {
-    setCampaignData({ ...campaignData, ...newData });
-  };
+  const updateData = useCallback((newData: Partial<CampaignDataShape>) => {
+    setCampaignData((prev) => ({
+      ...prev,
+      ...newData,
+      productType: (newData.productType as typeof prev.productType) ?? prev.productType,
+      design: newData.design ? { ...prev.design, ...newData.design } : prev.design,
+    }));
+  }, []);
 
   return (
 
@@ -95,7 +99,8 @@ export default function CampaignWizard({ onClose }: { onClose: () => void }) {
       {/* Content */}
       <div className="px-8 py-6 min-h-96">
         {step === 1 && (
-          <LocationPage data={campaignData} updateData={updateData} nextStage={handleNext} />
+          // <LocationPage data={campaignData} updateData={updateData} nextStage={handleNext} />
+          <></>
         )}
         {step === 2 && (
           <ProductStep data={campaignData} updateData={updateData} />
@@ -104,7 +109,13 @@ export default function CampaignWizard({ onClose }: { onClose: () => void }) {
           <DesignStep data={campaignData} updateData={updateData} />
         )}
         {step === 4 && (
-          <CTAStep data={campaignData} updateData={updateData} />
+          <CTAStep
+            data={campaignData}
+            updateData={updateData}
+            onSubmit={handleSubmit}
+            loading={loading}
+            variant="embedded"
+          />
         )}
       </div>
 
@@ -127,7 +138,7 @@ export default function CampaignWizard({ onClose }: { onClose: () => void }) {
         ) : (
           <button
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={loading || !campaignData.ctaUrl?.trim()}
             className="px-6 py-3 rounded-lg bg-primary text-background-dark font-bold hover:brightness-110 disabled:opacity-50 transition-all"
           >
             {loading ? 'Creating...' : 'Create Campaign'}

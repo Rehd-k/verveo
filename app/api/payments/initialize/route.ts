@@ -2,18 +2,37 @@ import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 import dbConnect from '@/lib/mongodb';
 import { Order } from '@/models/Order';
+import { Campaign } from '@/models/Campaign';
+import { requireAuth, isAuthUser } from '@/lib/apiAuth';
 
 export async function POST(request: NextRequest) {
   try {
+    const auth = await requireAuth(request);
+    if (!isAuthUser(auth)) return auth;
+
     await dbConnect();
     const body = await request.json();
-    const { userId, campaignId, amount, email, callback_url } = body;
+    const { campaignId, amount, email, callback_url } = body;
 
-    if (!userId || !campaignId || !amount || !email) {
+    if (!campaignId || !amount || !email) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const order = await Order.create({ userId, campaignId, amount, status: 'pending' });
+    const campaign = await Campaign.findById(campaignId);
+    if (!campaign) {
+      return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
+    }
+
+    if (campaign.userId.toString() !== auth.id && auth.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const order = await Order.create({
+      userId: auth.id,
+      campaignId,
+      amount,
+      status: 'pending',
+    });
 
     const secret = process.env.PAYSTACK_SECRET_KEY;
     if (!secret) {
@@ -30,7 +49,6 @@ export async function POST(request: NextRequest) {
 
     const data = res.data;
 
-    // return Paystack initialization data + order id
     return NextResponse.json({ orderId: order._id, paystack: data });
   } catch (error) {
     console.error('Payment initialize error:', error);

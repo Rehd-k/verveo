@@ -1,106 +1,131 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useCampaign } from '@/store/campaignStore';
 import { useAuth } from '@/store/authStore';
-import { CircleX, MoveRight, Save } from 'lucide-react';
-import LocationPage from '@/components/wizard/locations';
+import { useSearchParams } from 'next/navigation';
+import { useCampaignStore } from '@/store/useCampaignStore';
+import { designConfigToCampaignDesign } from '@/lib/designStudio';
 import CTAStep from '@/components/wizard/CTAStep';
-import DesignStep from '@/components/wizard/DesignStep';
-import ProductStep from '@/components/wizard/ProductStep';
 import ProductSelectionPage from './products/page';
 import DesignStudioPage from './design/page';
+import LocationPage from './location/page';
 
 export default function CampaignWizardPage() {
-    const { user } = useAuth();
-    const { createCampaign } = useCampaign();
-    const [step, setStep] = useState(1);
-    const [campaignData, setCampaignData] = useState({
-        title: '',
-        locations: [] as string[],
-        venueTypes: [] as string[],
-        productType: 'box' as 'cup' | 'box' | 'bag' | 'pizza-box',
-        quantity: 1000,
-        design: {
-            imageUrl: '',
-            text: '',
-            colors: [] as string[],
-        },
-        ctaUrl: '',
-        budget: 0,
-    });
-    const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const area = searchParams.get('area');
+  const longitude = searchParams.get('long');
+  const latitude = searchParams.get('lat');
+  const { selectedBusinesses, designConfig } = useCampaignStore();
+  const { user } = useAuth();
+  const router = useRouter();
+  const { createCampaign } = useCampaign();
+  const [step, setStep] = useState(1);
 
-    const handleNext = () => {
-        if (step < 4) setStep(step + 1);
-    };
+  const [campaignData, setCampaignData] = useState({
+    title: '',
+    locations: [] as string[],
+    venueTypes: [] as string[],
+    productType: 'box' as 'cup' | 'box' | 'bag' | 'pizza-box',
+    quantity: 1000,
+    design: {
+      imageUrl: '',
+      text: '',
+      colors: [] as string[],
+    },
+    ctaUrl: '',
+    qrCode: '',
+    budget: 0,
+  });
+  const [loading, setLoading] = useState(false);
 
-    const handlePrev = () => {
-        if (step > 1) setStep(step - 1);
-    };
+  const handleNext = () => {
+    if (step < 4) setStep(step + 1);
+  };
 
-    const handleSubmit = async () => {
-        if (!user) return;
+  const handlePrev = () => {
+    if (step > 1) setStep(step - 1);
+  };
 
-        console.log('Submitting campaign with data:', campaignData);
-        setLoading(true);
-        try {
-            await createCampaign({
-                ...campaignData,
-                title: campaignData.title || 'Untitled Campaign',
-                userId: user.id,
-                status: 'draft',
-            });
+  const handleSubmit = async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const locationNames =
+        campaignData.locations.length > 0
+          ? campaignData.locations
+          : [...new Set(selectedBusinesses.map((b: { area: string }) => b.area))];
 
-        } catch (error) {
-            console.error('Failed to create campaign:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+      await createCampaign({
+        ...campaignData,
+        locations: locationNames,
+        venueTypes:
+          campaignData.venueTypes.length > 0
+            ? campaignData.venueTypes
+            : [],
+        design: campaignData.design.imageUrl
+          ? campaignData.design
+          : designConfigToCampaignDesign(designConfig),
+        productType: (campaignData.productType ||
+          designConfig.productType) as 'cup' | 'box' | 'bag' | 'pizza-box',
+        qrCode: campaignData.qrCode || undefined,
+        title: campaignData.title || 'Untitled Campaign',
+        userId: user.id,
+        status: 'draft',
+      });
+      router.push('/campaigns');
+    } catch (error) {
+      console.error('Failed to create campaign:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const updateData = (newData: Partial<typeof campaignData>) => {
-        setCampaignData({ ...campaignData, ...newData });
-    };
+  const updateData = useCallback((newData: Partial<typeof campaignData>) => {
+    setCampaignData((prev) => ({ ...prev, ...newData }));
+  }, []);
 
-    return (
+  const initialCenter =
+    latitude && longitude ? ([Number(longitude), Number(latitude)] as [number, number]) : undefined;
 
-        <div className="w-full bg-background-dark border border-white/10">
-            {/* Header */}
-
-
-            {/* Progress */}
-            {/* <div className="px-8 pt-6">
-                <div className="flex gap-2">
-                    {[1, 2, 3, 4].map((s) => (
-                        <div
-                            key={s}
-                            className={`flex-1 h-2 rounded-full transition-all ${s <= step ? 'bg-primary' : 'bg-white/10'
-                                }`}
-                        />
-                    ))}
-                </div>
-                <p className="mt-4 text-sm text-white/60">
-                    Step {step} of 4
-                </p>
-            </div> */}
-
-            {/* Content */}
-
-            {step === 1 && (
-                <LocationPage data={campaignData} updateData={updateData} nextStage={handleNext} />
-            )}
-            {step === 2 && (
-                <ProductSelectionPage prevStage={handlePrev} nextStage={handleNext} data={campaignData} updateData={updateData} />
-            )}
-            {step === 3 && (
-                // data={campaignData} updateData={updateData}
-                <DesignStudioPage prevStage={handlePrev} nextStage={handleNext} data={campaignData} updateData={updateData} />
-            )}
-            {step === 4 && (
-                <CTAStep data={campaignData} updateData={updateData} />
-            )}
-        </div>
-
-    );
+  return (
+    <div className="w-full bg-background-dark border border-white/10">
+      {step === 1 && (
+        <LocationPage
+          data={campaignData}
+          updateData={updateData}
+          nextStage={handleNext}
+          initialDistrict={area || undefined}
+          initialCenter={initialCenter}
+        />
+      )}
+      {step === 2 && (
+        <ProductSelectionPage
+          prevStage={handlePrev}
+          nextStage={handleNext}
+          data={campaignData}
+          updateData={updateData}
+        />
+      )}
+      {step === 3 && (
+        <DesignStudioPage
+          prevStage={handlePrev}
+          nextStage={handleNext}
+          data={campaignData}
+          updateData={updateData}
+        />
+      )}
+      {step === 4 && (
+        <CTAStep
+          data={campaignData}
+          updateData={updateData}
+          prevStage={handlePrev}
+          onSubmit={handleSubmit}
+          loading={loading}
+          variant="fullPage"
+        />
+      )}
+    </div>
+  );
 }

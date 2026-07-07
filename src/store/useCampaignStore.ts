@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { PRODUCT_NAME_TO_SLUG } from '@/lib/designStudio';
 
 interface Product {
   id: string;
@@ -8,6 +9,7 @@ interface Product {
   dimensions: string;
   image: string;
   link: string;
+  pricePerUnit: number
 };
 interface DesignConfig {
   // Base properties
@@ -42,15 +44,24 @@ interface CampaignState {
   selectedProduct: Product | null;
   quantity: number;
   designConfig: DesignConfig;
+  targetLocation: string;
+  selectedBusinesses: any[];
+  estimatedReach: number;
   setProduct: (product: Product) => void;
   setQuantity: (qty: number) => void;
   updateDesign: (config: Partial<DesignConfig>) => void;
+  setTargetLocation: (location: string) => void;
+  setSelectedBusinesses: (businesses: any[]) => void;
+  setEstimatedReach: (reach: number) => void;
 }
 
 export const useCampaignStore = create<CampaignState>((set) => ({
   step: 1,
   selectedProduct: null,
   quantity: 1000,
+  targetLocation: '',
+  selectedBusinesses: [],
+  estimatedReach: 0,
   designConfig: {
     color: '#ffffff',
     logo: null,
@@ -67,8 +78,18 @@ export const useCampaignStore = create<CampaignState>((set) => ({
     decalPosition: 'center',
     decalScale: 1,
   },
-  setProduct: (product) => set({ selectedProduct: product }),
+  setProduct: (product) =>
+    set((state) => ({
+      selectedProduct: product,
+      designConfig: {
+        ...state.designConfig,
+        productType: PRODUCT_NAME_TO_SLUG[product.name] ?? 'box',
+      },
+    })),
   setQuantity: (qty) => set({ quantity: qty }),
+  setTargetLocation: (location: string) => set({ targetLocation: location }),
+  setSelectedBusinesses: (businesses: any[]) => set({ selectedBusinesses: businesses }),
+  setEstimatedReach: (reach: number) => set({ estimatedReach: reach }),
   updateDesign: (config) =>
     set((state) => ({ designConfig: { ...state.designConfig, ...config } })),
-}));
+})); 

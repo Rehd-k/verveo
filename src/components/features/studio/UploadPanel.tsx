@@ -1,7 +1,7 @@
 'use client';
 import { useCampaignStore } from '@/store/useCampaignStore';
-import { CheckCircle, ChevronDown, ChevronUp, Gem, Image, Info, Palette, Plus, ShieldCheck, ShoppingBag, TextInitial } from 'lucide-react';
-import { useState, useRef } from 'react';
+import { CheckCircle, ChevronDown, ChevronUp, Gem, Image, Info, Palette, Plus, ShieldCheck, TextInitial, X } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 
 const LOGOS = [
     { id: 'zenith', name: 'Zenith Bank', dark: true, color: '#1a1a2e' },
@@ -42,8 +42,9 @@ interface UploadPanelProps {
 
 // { product }: UploadPanelProps
 export function UploadPanel({ name }: UploadPanelProps) {
-    const { updateDesign, designConfig } = useCampaignStore();
+    const { updateDesign, designConfig, selectedProduct } = useCampaignStore();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [uploadError, setUploadError] = useState<string | null>(null);
     const [expandedSections, setExpandedSections] = useState({
         product: true,
         colors: false,
@@ -51,6 +52,12 @@ export function UploadPanel({ name }: UploadPanelProps) {
         branding: false,
         materials: false,
     });
+
+    useEffect(() => {
+        if (designConfig.textureUrl) {
+            setExpandedSections((prev) => ({ ...prev, texture: true }));
+        }
+    }, [designConfig.textureUrl]);
 
     const toggleSection = (section: keyof typeof expandedSections) => {
         setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -66,16 +73,33 @@ export function UploadPanel({ name }: UploadPanelProps) {
 
     const handleTextureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const dataUrl = event.target?.result as string;
-                console.log('Texture uploaded:', dataUrl);
-                updateDesign({ textureUrl: dataUrl });
-            };
-            
-            reader.readAsDataURL(file);
+        setUploadError(null);
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            setUploadError('Please upload an image file (PNG, JPG, etc.)');
+            return;
         }
+
+        if (file.size > 10 * 1024 * 1024) {
+            setUploadError('Image must be under 10MB');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const dataUrl = event.target?.result as string;
+            updateDesign({ textureUrl: dataUrl });
+            setExpandedSections((prev) => ({ ...prev, texture: true }));
+        };
+        reader.readAsDataURL(file);
+        e.target.value = '';
+    };
+
+    const handleClearTexture = () => {
+        updateDesign({ textureUrl: null });
+        setUploadError(null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
     const handleBrandTextChange = (text: string) => {
@@ -91,7 +115,9 @@ export function UploadPanel({ name }: UploadPanelProps) {
             {/* Header */}
             <div className="p-5 border-b border-border-dark sticky top-0 bg-[#1c1a15]/95 backdrop-blur">
                 <h3 className="text-base font-bold text-white">Design Studio</h3>
-                <p className="text-xs text-text-dim mt-1">Customize your product</p>
+                <p className="text-xs text-text-dim mt-1">
+                    {selectedProduct?.name ?? name} — customize your product
+                </p>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 custom-scrollbar space-y-4">
@@ -170,15 +196,35 @@ export function UploadPanel({ name }: UploadPanelProps) {
                             <input
                                 ref={fileInputRef}
                                 type="file"
-                                accept="image/*"
+                                accept="image/png,image/jpeg,image/webp,image/*"
                                 onChange={handleTextureUpload}
                                 className="hidden"
                             />
+                            {uploadError && (
+                                <p className="text-xs text-red-400">{uploadError}</p>
+                            )}
                             {designConfig.textureUrl && (
-                                <div className="text-xs text-green-400 flex items-center gap-2">
-                                    <CheckCircle className="size-4" />
-                                    Texture applied
-                                </div>
+                                <>
+                                    <div className="relative rounded-lg overflow-hidden border border-border-dark">
+                                        <img
+                                            src={designConfig.textureUrl}
+                                            alt="Uploaded texture"
+                                            className="w-full h-24 object-cover"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={handleClearTexture}
+                                            className="absolute top-2 right-2 p-1 rounded-full bg-black/60 text-white hover:bg-red-500/80 transition-colors"
+                                            title="Remove texture"
+                                        >
+                                            <X className="size-3" />
+                                        </button>
+                                    </div>
+                                    <div className="text-xs text-green-400 flex items-center gap-2">
+                                        <CheckCircle className="size-4" />
+                                        Texture applied
+                                    </div>
+                                </>
                             )}
                             <div className="space-y-2">
                                 <label className="text-xs font-semibold text-text-dim block">Scale: {designConfig.textureScale.toFixed(1)}x</label>
@@ -189,6 +235,20 @@ export function UploadPanel({ name }: UploadPanelProps) {
                                     step="0.1"
                                     value={designConfig.textureScale}
                                     onChange={(e) => updateDesign({ textureScale: parseFloat(e.target.value) })}
+                                    className="w-full"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-semibold text-text-dim block">
+                                    Rotation: {((designConfig.textureRotation * 180) / Math.PI).toFixed(0)}°
+                                </label>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max={Math.PI * 2}
+                                    step="0.1"
+                                    value={designConfig.textureRotation}
+                                    onChange={(e) => updateDesign({ textureRotation: parseFloat(e.target.value) })}
                                     className="w-full"
                                 />
                             </div>

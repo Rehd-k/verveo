@@ -1,8 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { authHeaders } from '@/lib/fetchAuth';
+import { useAuth } from '@/store/authStore';
 
 export default function CheckoutPage() {
+  const { user } = useAuth();
   const [campaignId, setCampaignId] = useState<string | null>(null);
   const [campaign, setCampaign] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -16,7 +19,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (campaignId) {
-      fetch(`/api/campaigns/${campaignId}`)
+      fetch(`/api/campaigns/${campaignId}`, { headers: authHeaders() })
         .then((r) => r.json())
         .then(setCampaign)
         .catch((e) => console.error(e));
@@ -29,8 +32,12 @@ export default function CheckoutPage() {
     try {
       const res = await fetch('/api/payments/initialize', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: campaign.userId, campaignId: campaign.id, amount: campaign.budget, email: 'buyer@example.com' }),
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({
+          campaignId: campaign._id || campaign.id,
+          amount: campaign.budget,
+          email: user?.email || 'buyer@example.com',
+        }),
       });
       const data = await res.json();
       const url = data.paystack?.data?.authorization_url;

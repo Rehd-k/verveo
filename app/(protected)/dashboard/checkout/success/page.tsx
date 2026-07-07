@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { authHeaders } from '@/lib/fetchAuth';
 
 export default function CheckoutSuccess() {
   const [reference, setReference] = useState<string | null>(null);
@@ -21,7 +22,7 @@ export default function CheckoutSuccess() {
       try {
         const res = await fetch('/api/payments/verify', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
           body: JSON.stringify({ reference, orderId }),
         });
         const data = await res.json();

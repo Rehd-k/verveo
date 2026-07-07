@@ -2,6 +2,7 @@
 import { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { NIGERIA_CENTER } from '@/hooks/useMapUserLocation';
 
 // Ensure you have NEXT_PUBLIC_MAPBOX_TOKEN in .env.local
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
@@ -16,8 +17,8 @@ export default function WarRoomMap() {
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
             style: 'mapbox://styles/mapbox/dark-v11', // Matches the dark theme
-            center: [3.3792, 6.5244], // Lagos coordinates (from mockup context)
-            zoom: 11,
+            center: [NIGERIA_CENTER.longitude, NIGERIA_CENTER.latitude],
+            zoom: NIGERIA_CENTER.zoom,
             pitch: 45, // Adds 3D perspective
         });
 

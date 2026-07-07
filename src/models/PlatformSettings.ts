@@ -1,0 +1,25 @@
+import mongoose from 'mongoose';
+
+const platformSettingsSchema = new mongoose.Schema(
+  {
+    productPricing: {
+      cup: { type: Number, default: 400 },
+      box: { type: Number, default: 450 },
+      bag: { type: Number, default: 400 },
+      'pizza-box': { type: Number, default: 450 },
+    },
+    defaultWalletCredit: {
+      type: Number,
+      default: 0,
+    },
+    maintenanceMode: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true }
+);
+
+export const PlatformSettings =
+  mongoose.models.PlatformSettings ||
+  mongoose.model('PlatformSettings', platformSettingsSchema);

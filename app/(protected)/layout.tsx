@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/store/authStore";
 import { useCampaign } from "@/store/campaignStore";
-import { Radar, LayoutDashboard, Megaphone, ChartLine, CreditCard, Settings2, LogOut, CirclePlus, BarChart3, Bell, Settings, User, MenuIcon, SidebarClose } from 'lucide-react';
+import { Radar, LayoutDashboard, Megaphone, ChartLine, CreditCard, Settings2, LogOut, CirclePlus, BarChart3, Bell, Settings, User, MenuIcon, SidebarClose, Shield } from 'lucide-react';
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
-    const { user, logout } = useAuth();
+    const { user, logout, initialized } = useAuth();
     const pathname = usePathname();
     const { campaigns, fetchCampaigns } = useCampaign();
     const [loading, setLoading] = useState(true);
@@ -28,18 +28,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
 
     useEffect(() => {
-        if (!user) {
+        if (!initialized) return;
 
+        if (!user) {
             router.push('/auth/login');
             return;
         }
 
-        // Fetch campaigns
+        if (user.role === 'retailer') {
+            router.push('/retailer/dashboard');
+            return;
+        }
+
         fetchCampaigns(user.id || '');
         setLoading(false);
-    }, [user, router, fetchCampaigns]);
+    }, [user, initialized, router, fetchCampaigns]);
 
-    if (loading || !user) {
+    if (!initialized || loading || !user) {
         return (
             <div className="flex items-center justify-center min-h-screen bg-background-dark">
                 <div className="animate-spin">
@@ -84,9 +89,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         <span className={`text-white text-xs font-medium ${showUserMenu ? '' : 'hidden'}`}>Dashboard</span>
                     </Link>
                     <Link
-                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg ${pathname === '/campaign' ? 'bg-primary/10 border-l-2 border-primary ' : ''}`}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg ${pathname.startsWith('/campaigns') ? 'bg-primary/10 border-l-2 border-primary ' : ''}`}
 
-                        href="/campaign"
+                        href="/campaigns"
                     >
                         <Megaphone className="size-4" />
                         <span className={`text-xs font-medium ${showUserMenu ? '' : 'hidden'}`}>Campaigns</span>
@@ -105,6 +110,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         <CreditCard className="size-4" />
                         <span className={`text-xs font-medium  ${showUserMenu ? '' : 'hidden'}`}>Billing</span>
                     </Link>
+                    {user.role === 'admin' && (
+                    <Link
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg ${pathname.startsWith('/admin') ? 'bg-primary/10 border-l-2 border-primary ' : ''}`}
+                        href="/admin"
+                    >
+                        <Shield className="size-4" />
+                        <span className={`text-xs font-medium  ${showUserMenu ? '' : 'hidden'}`}>Admin Panel</span>
+                    </Link>
+                    )}
                 </nav>
             </div>
             <div className="flex flex-col p-4 gap-2">
@@ -152,7 +166,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             {user.name}
                         </span>
                         <span className="text-xs text-text-secondary truncate">
-                            Advertiser Admin
+                            {user.role === 'admin' ? 'Admin' : user.role === 'retailer' ? 'Retailer' : 'Advertiser'}
                         </span>
                     </div>
                 </div>

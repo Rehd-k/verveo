@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import { Campaign } from '@/models/Campaign';
+import { requireOwnerOrAdmin, isAuthUser } from '@/lib/apiAuth';
 
 export async function GET(
   request: NextRequest,
@@ -17,6 +18,9 @@ export async function GET(
         { status: 404 }
       );
     }
+
+    const auth = await requireOwnerOrAdmin(request, campaign.userId.toString());
+    if (!isAuthUser(auth)) return auth;
 
     return NextResponse.json(campaign);
   } catch (error) {
@@ -36,19 +40,21 @@ export async function PUT(
     const { id } = await params;
     await dbConnect();
 
-    const body = await request.json();
-    const campaign = await Campaign.findByIdAndUpdate(
-      id,
-      body,
-      { new: true }
-    );
-
-    if (!campaign) {
+    const existing = await Campaign.findById(id);
+    if (!existing) {
       return NextResponse.json(
         { error: 'Campaign not found' },
         { status: 404 }
       );
     }
+
+    const auth = await requireOwnerOrAdmin(request, existing.userId.toString());
+    if (!isAuthUser(auth)) return auth;
+
+    const body = await request.json();
+    const { userId: _userId, ...updates } = body;
+
+    const campaign = await Campaign.findByIdAndUpdate(id, updates, { new: true });
 
     return NextResponse.json(campaign);
   } catch (error) {
@@ -68,13 +74,18 @@ export async function DELETE(
     const { id } = await params;
     await dbConnect();
 
-    const campaign = await Campaign.findByIdAndDelete(id);
-    if (!campaign) {
+    const existing = await Campaign.findById(id);
+    if (!existing) {
       return NextResponse.json(
         { error: 'Campaign not found' },
         { status: 404 }
       );
     }
+
+    const auth = await requireOwnerOrAdmin(request, existing.userId.toString());
+    if (!isAuthUser(auth)) return auth;
+
+    await Campaign.findByIdAndDelete(id);
 
     return NextResponse.json({ success: true });
   } catch (error) {

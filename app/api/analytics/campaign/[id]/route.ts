@@ -1,35 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
-import { Scan } from '@/models/Scan';
-import mongoose from 'mongoose';
+import { Campaign } from '@/models/Campaign';
+import { getCampaignAnalytics, type AnalyticsRange } from '@/lib/analytics';
+import { requireOwnerOrAdmin, isAuthUser } from '@/lib/apiAuth';
+
+const VALID_RANGES: AnalyticsRange[] = ['24h', '7d', '30d'];
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
+    const { searchParams } = new URL(request.url);
+    const rangeParam = searchParams.get('range') || '24h';
+    const range = VALID_RANGES.includes(rangeParam as AnalyticsRange)
+      ? (rangeParam as AnalyticsRange)
+      : '24h';
+
     await dbConnect();
 
-    const campaignId = new mongoose.Types.ObjectId(id);
+    const campaign = await Campaign.findById(id);
+    if (!campaign) {
+      return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
+    }
 
-    // Aggregate scans by hour for last 48 hours
-    const since = new Date(Date.now() - 1000 * 60 * 60 * 48);
+    const auth = await requireOwnerOrAdmin(request, campaign.userId.toString());
+    if (!isAuthUser(auth)) return auth;
 
-    const data = await Scan.aggregate([
-      { $match: { campaignId, createdAt: { $gte: since } } },
-      {
-        $group: {
-          _id: {
-            year: { $year: '$createdAt' },
-            month: { $month: '$createdAt' },
-            day: { $dayOfMonth: '$createdAt' },
-            hour: { $hour: '$createdAt' },
-          },
-          count: { $sum: 1 },
-        },
+    const analytics = await getCampaignAnalytics(id, campaign.quantity || 0, range);
+
+    return NextResponse.json({
+      campaign: {
+        id: campaign._id,
+        title: campaign.title,
+        quantity: campaign.quantity,
       },
-      { $sort: { '_id.year': 1, '_id.month': 1, '_id.day': 1, '_id.hour': 1 } },
-    ]);
-
-    return NextResponse.json({ data });
+      range,
+      ...analytics,
+    });
   } catch (error) {
     console.error('Analytics error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

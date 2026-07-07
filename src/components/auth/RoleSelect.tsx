@@ -1,0 +1,71 @@
+'use client';
+
+import { Megaphone, Store } from 'lucide-react';
+
+export type SignupRole = 'advertiser' | 'retailer';
+
+interface RoleSelectProps {
+  value: SignupRole;
+  onChange: (role: SignupRole) => void;
+}
+
+const ROLES: {
+  value: SignupRole;
+  label: string;
+  description: string;
+  icon: typeof Megaphone;
+}[] = [
+  {
+    value: 'advertiser',
+    label: 'Advertiser',
+    description: 'Launch and track QR campaigns on everyday packaging.',
+    icon: Megaphone,
+  },
+  {
+    value: 'retailer',
+    label: 'Retail Partner',
+    description: 'Distribute branded packs and earn from partner campaigns.',
+    icon: Store,
+  },
+];
+
+export function RoleSelect({ value, onChange }: RoleSelectProps) {
+  return (
+    <div className="space-y-2">
+      <p className="text-sm font-medium text-white">Account type</p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {ROLES.map((role) => {
+          const selected = value === role.value;
+          return (
+            <button
+              key={role.value}
+              type="button"
+              onClick={() => onChange(role.value)}
+              className={`rounded-xl border p-4 text-left transition-all ${
+                selected
+                  ? 'border-primary/50 bg-primary/10 ring-1 ring-primary/30'
+                  : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/[0.07]'
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                <div
+                  className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${
+                    selected ? 'bg-primary/20 text-primary' : 'bg-white/10 text-text-secondary'
+                  }`}
+                >
+                  <role.icon className="size-4" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-white">{role.label}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-text-secondary">
+                    {role.description}
+                  </p>
+                </div>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

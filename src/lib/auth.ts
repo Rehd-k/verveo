@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
 const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'your-secret-key';
+export const SESSION_DURATION = '7d';
 
 export async function hashPassword(password: string) {
   return bcrypt.hash(password, 10);
@@ -15,7 +16,7 @@ export function generateToken(userId: string, role: string) {
   return jwt.sign(
     { userId, role },
     JWT_SECRET,
-    { expiresIn: '30d' }
+    { expiresIn: SESSION_DURATION }
   );
 }
 

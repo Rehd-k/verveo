@@ -1,20 +1,62 @@
 import { create } from 'zustand';
 import { User } from '@/types';
+import { setAuthCookie, clearAuthCookie } from '@/lib/fetchAuth';
 
 interface AuthStore {
   user: User | null;
   token: string | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, name: string, role?: string) => Promise<void>;
+  initialized: boolean;
+  login: (email: string, password: string) => Promise<User>;
+  signup: (email: string, password: string, name: string, role?: string) => Promise<User>;
   logout: () => void;
   setUser: (user: User | null, token?: string) => void;
+  initializeAuth: () => Promise<void>;
 }
 
-export const useAuth = create<AuthStore>((set) => ({
+export const useAuth = create<AuthStore>((set, get) => ({
   user: null,
   token: null,
   loading: false,
+  initialized: false,
+
+  initializeAuth: async () => {
+    if (get().initialized) return;
+
+    const storedToken = localStorage.getItem('token');
+    if (!storedToken) {
+      set({ initialized: true });
+      return;
+    }
+
+    set({ loading: true });
+    try {
+      const res = await fetch('/api/auth/me', {
+        headers: { Authorization: `Bearer ${storedToken}` },
+      });
+
+      if (!res.ok) {
+        localStorage.removeItem('token');
+        clearAuthCookie();
+        set({ user: null, token: null, loading: false, initialized: true });
+        return;
+      }
+
+      const data = await res.json();
+      const token = data.token ?? storedToken;
+      setAuthCookie(token);
+      set({
+        user: data.user,
+        token,
+        loading: false,
+        initialized: true,
+      });
+    } catch {
+      localStorage.removeItem('token');
+      clearAuthCookie();
+      set({ user: null, token: null, loading: false, initialized: true });
+    }
+  },
 
   login: async (email: string, password: string) => {
     set({ loading: true });
@@ -25,11 +67,15 @@ export const useAuth = create<AuthStore>((set) => ({
         body: JSON.stringify({ email, password }),
       });
 
-      if (!res.ok) throw new Error('Login failed');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
 
-      const data = await res.json();
       localStorage.setItem('token', data.token);
+      setAuthCookie(data.token);
       set({ user: data.user, token: data.token, loading: false });
+      return data.user;
     } catch (error) {
       set({ loading: false });
       throw error;
@@ -45,11 +91,15 @@ export const useAuth = create<AuthStore>((set) => ({
         body: JSON.stringify({ email, password, name, role }),
       });
 
-      if (!res.ok) throw new Error('Signup failed');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || 'Signup failed');
+      }
 
-      const data = await res.json();
       localStorage.setItem('token', data.token);
+      setAuthCookie(data.token);
       set({ user: data.user, token: data.token, loading: false });
+      return data.user;
     } catch (error) {
       set({ loading: false });
       throw error;
@@ -58,10 +108,12 @@ export const useAuth = create<AuthStore>((set) => ({
 
   logout: () => {
     localStorage.removeItem('token');
+    clearAuthCookie();
     set({ user: null, token: null });
   },
 
   setUser: (user: User | null, token?: string) => {
+    if (token) setAuthCookie(token);
     set({ user, token: token || null });
   },
 }));

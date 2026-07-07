@@ -13,7 +13,7 @@ const PRODUCTS = [
         dimensions: '10" x 5" x 14"',
         image: '/assets/cup.png',
         link: '120gsm Kraft',
-        pricePerUnit: 85,
+        pricePerUnit: 400,
     },
     {
         id: '2',
@@ -23,7 +23,7 @@ const PRODUCTS = [
         dimensions: '10" x 5" x 14"',
         image: '/assets/box.png',
         link: '120gsm Kraft',
-        pricePerUnit: 85,
+        pricePerUnit: 450,
     },
     {
         id: '3',
@@ -33,7 +33,7 @@ const PRODUCTS = [
         dimensions: '10" x 5" x 14"',
         image: '/assets/bag.png',
         link: '120gsm Kraft',
-        pricePerUnit: 85,
+        pricePerUnit: 200,
     },
     {
         id: '4',
@@ -43,7 +43,7 @@ const PRODUCTS = [
         specs: 'Kraft • Plastic',
         image: '/assets/takeaway.jpg',
         link: '120gsm Kraft',
-        pricePerUnit: 85,
+        pricePerUnit: 490,
     },
 ];
 
@@ -54,13 +54,24 @@ interface LocationStepProps {
     prevStage: () => void;
 }
 
-export default function ProductSelectionPage({ data, updateData, nextStage, prevStage }: LocationStepProps) {
-    const { selectedProduct, setProduct, quantity, setQuantity } = useCampaignStore();
+export default function ProductSelectionPage({ nextStage, prevStage, updateData }: LocationStepProps) {
+    const { selectedProduct, setProduct, quantity, setQuantity, designConfig } = useCampaignStore();
+
+    const handleNext = () => {
+        if (selectedProduct && updateData) {
+            updateData({
+                productType: designConfig.productType as 'cup' | 'box' | 'bag' | 'pizza-box',
+                budget: quantity * (selectedProduct.pricePerUnit || 0),
+                quantity,
+            });
+        }
+        nextStage();
+    };
 
     return (
 
 
-        <div className="flex flex-col max-w-300 flex-1">
+        <div className="flex flex-col max-w-300 flex-1 mx-auto">
 
             {/* Progress Bar */}
             {/* <div className="flex flex-col gap-3 p-4 pb-6">
@@ -80,7 +91,7 @@ export default function ProductSelectionPage({ data, updateData, nextStage, prev
                 </div>
             </div> */}
             {/* Main Layout Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 pt-0">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 md:p-6 pt-0">
                 {/* Left Column: Inventory Grid & Preview */}
                 <div className="lg:col-span-8 flex flex-col gap-6">
                     {/* Page Heading */}
@@ -206,15 +217,6 @@ export default function ProductSelectionPage({ data, updateData, nextStage, prev
                                         {quantity.toLocaleString()}
                                     </span>
                                 </div>
-                                {/* <input
-                                    type="range"
-                                    min="1000"
-                                    max="100000"
-                                    step="1000"
-                                    value={quantity}
-                                    onChange={(e) => setQuantity(Number(e.target.value))}
-                                    className="w-full h-2 bg-bg-dark rounded-lg appearance-none cursor-pointer accent-primary"
-                                /> */}
 
                                 <input
                                     type="range"
@@ -233,7 +235,7 @@ export default function ProductSelectionPage({ data, updateData, nextStage, prev
                             <div className="flex flex-col gap-2 border-t border-dashed border-border-dark pt-4">
                                 <div className="flex justify-between text-sm">
                                     <span className="text-text-dim">Unit Price</span>
-                                    <span className="text-white">$0.45</span>
+                                    <span className="text-white">₦{selectedProduct?.pricePerUnit || 0}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
                                     <span className="text-text-dim">Bulk Discount</span>
@@ -244,7 +246,7 @@ export default function ProductSelectionPage({ data, updateData, nextStage, prev
                                 <p className="text-text-dim text-xs mb-1">Estimated Total</p>
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-3xl font-bold text-white">
-                                        ${(quantity * 0.45).toLocaleString()}
+                                        ₦{(quantity * Number(selectedProduct?.pricePerUnit || 0)).toLocaleString()}
                                     </span>
                                     <span className="text-lg text-text-dim">.00</span>
                                 </div>
@@ -252,7 +254,7 @@ export default function ProductSelectionPage({ data, updateData, nextStage, prev
                         </div>
                         {/* Navigation Actions */}
                         <div className="flex flex-col gap-3 mt-2">
-                            <button className="flex w-full cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-primary text-background-dark text-base font-bold shadow hover:bg-[#d9ba0b] transition-colors" onClick={nextStage}>
+                            <button className="flex w-full cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-primary text-background-dark text-base font-bold shadow hover:bg-[#d9ba0b] transition-colors" onClick={handleNext}>
                                 Next: Customization
                                 <MoveRight className="ml-2 size-4" />
                             </button>

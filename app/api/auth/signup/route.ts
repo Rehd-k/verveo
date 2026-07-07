@@ -17,6 +17,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (role === 'admin') {
+      return NextResponse.json(
+        { error: 'Invalid role' },
+        { status: 400 }
+      );
+    }
+
+    const signupRole = role === 'retailer' ? 'retailer' : 'advertiser';
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json(
@@ -31,7 +40,7 @@ export async function POST(request: NextRequest) {
       email,
       password: hashedPassword,
       name,
-      role: role || 'advertiser',
+      role: signupRole,
     });
 
     const token = generateToken(newUser._id.toString(), newUser.role);
