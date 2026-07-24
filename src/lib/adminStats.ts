@@ -4,7 +4,7 @@ import { Campaign } from '@/models/Campaign';
 import { Order } from '@/models/Order';
 import { Scan } from '@/models/Scan';
 import { Proof } from '@/models/Proof';
-import type { AdminStats } from '@/types';
+import type { AdminStats, OrderWithDetails } from '@/types';
 
 export async function getAdminStats(): Promise<AdminStats> {
   await dbConnect();
@@ -121,9 +121,9 @@ export async function getAdminStats(): Promise<AdminStats> {
       paymentMethod: o.paymentMethod,
       transactionId: o.transactionId,
       createdAt: o.createdAt,
-      campaign: o.campaignId as { _id?: string; title?: string; status?: string },
-      user: o.userId as { _id?: string; email?: string; name?: string },
-    })),
+      campaign: o.campaignId,
+      user: o.userId,
+    })) as OrderWithDetails[],
     recentScans: recentScans.map((s) => ({
       _id: s._id?.toString(),
       campaignId: (s.campaignId as { _id?: { toString(): string } })?._id?.toString() || s.campaignId?.toString(),

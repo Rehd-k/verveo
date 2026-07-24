@@ -4,16 +4,16 @@ import { useState } from 'react';
 import PackagingCanvas from '@/components/features/studio/PackagingCanvas';
 import { UploadPanel } from '@/components/features/studio/UploadPanel';
 import { useCampaignStore } from '@/store/useCampaignStore';
-import { designConfigToCampaignDesign } from '@/lib/designStudio';
+import { designConfigToCampaignDesign, type ProductSlug } from '@/lib/designStudio';
 import { ArrowLeft, BadgeCheck, ChevronDown, Info, Settings2, X } from 'lucide-react';
 
 interface DesignStepProps {
   data: {
-    productType: string;
+    productType: ProductSlug;
     design: { imageUrl: string; text: string; colors: string[] };
   };
   updateData: (data: Partial<{
-    productType: string;
+    productType: ProductSlug;
     design: { imageUrl: string; text: string; colors: string[] };
   }>) => void;
   nextStage: () => void;
@@ -81,7 +81,7 @@ export default function DesignStudioPage({ prevStage, nextStage, updateData }: D
 
   const handleConfirmDesign = () => {
     updateData({
-      productType: designConfig.productType as 'cup' | 'box' | 'bag' | 'pizza-box',
+      productType: designConfig.productType as ProductSlug,
       design: designConfigToCampaignDesign(designConfig),
     });
     nextStage();

@@ -12,7 +12,7 @@ export interface CampaignDataShape {
   title?: string;
   locations?: string[];
   venueTypes?: string[];
-  productType?: string;
+  productType?: ProductSlug;
   quantity?: number;
   design?: {
     imageUrl?: string;

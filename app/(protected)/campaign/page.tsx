@@ -7,6 +7,7 @@ import { useAuth } from '@/store/authStore';
 import { useSearchParams } from 'next/navigation';
 import { useCampaignStore } from '@/store/useCampaignStore';
 import { designConfigToCampaignDesign } from '@/lib/designStudio';
+import type { CampaignDataShape } from '@/lib/campaignSummary';
 import CTAStep from '@/components/wizard/CTAStep';
 import ProductSelectionPage from './products/page';
 import DesignStudioPage from './design/page';
@@ -82,8 +83,13 @@ export default function CampaignWizardPage() {
     }
   };
 
-  const updateData = useCallback((newData: Partial<typeof campaignData>) => {
-    setCampaignData((prev) => ({ ...prev, ...newData }));
+  const updateData = useCallback((newData: Partial<CampaignDataShape>) => {
+    setCampaignData((prev) => ({
+      ...prev,
+      ...newData,
+      productType: (newData.productType as typeof prev.productType) ?? prev.productType,
+      design: newData.design ? { ...prev.design, ...newData.design } : prev.design,
+    }));
   }, []);
 
   const initialCenter =
