@@ -44,6 +44,40 @@ export default function AdminOrdersPage() {
       render: (row: Record<string, unknown>) => `₦${((row.amount as number) || 0).toLocaleString()}`,
     },
     {
+      key: 'paymentMethod',
+      label: 'Method',
+      render: (row: Record<string, unknown>) => {
+        const method = (row.paymentMethod as string) || '—';
+        const isPendingProof =
+          method === 'bank_transfer' && row.status === 'pending';
+        return (
+          <span className={isPendingProof ? 'text-amber-400 font-medium' : ''}>
+            {method.replace('_', ' ')}
+            {isPendingProof ? ' (review)' : ''}
+          </span>
+        );
+      },
+    },
+    {
+      key: 'proofImageUrl',
+      label: 'Proof',
+      render: (row: Record<string, unknown>) => {
+        const url = row.proofImageUrl as string | undefined;
+        if (!url) return '—';
+        return (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="text-primary hover:underline"
+          >
+            View
+          </a>
+        );
+      },
+    },
+    {
       key: 'status',
       label: 'Status',
       render: (row: Record<string, unknown>) => (

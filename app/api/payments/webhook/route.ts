@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import dbConnect from '@/lib/mongodb';
-import { Order } from '@/models/Order';
-import { Campaign } from '@/models/Campaign';
+import { markOrderPaid } from '@/lib/payments/markOrderPaid';
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,11 +27,7 @@ export async function POST(request: NextRequest) {
 
       if (orderId) {
         await dbConnect();
-        await Order.findByIdAndUpdate(orderId, { status: 'paid', transactionId: reference });
-        const order = await Order.findById(orderId);
-        if (order) {
-          await Campaign.findByIdAndUpdate(order.campaignId, { status: 'processing' });
-        }
+        await markOrderPaid(orderId, reference);
       }
     }
 

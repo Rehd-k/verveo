@@ -19,7 +19,7 @@ export default function PartnerBenefits() {
           <SectionHeader
             label="Partner benefits"
             title="A low-effort way to monetize the packs already leaving your counter."
-            description="Addizi keeps the workflow simple: receive stock, distribute naturally, upload proof, and keep your operation moving."
+            description="Verveo keeps the workflow simple: receive stock, distribute naturally, upload proof, and keep your operation moving."
           />
         </ScrollReveal>
 

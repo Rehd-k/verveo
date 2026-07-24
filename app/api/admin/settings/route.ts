@@ -26,6 +26,12 @@ export async function GET(request: NextRequest) {
       settings,
       env: {
         paystackConfigured: !!process.env.PAYSTACK_SECRET_KEY,
+        flutterwaveConfigured: !!process.env.FLUTTERWAVE_SECRET_KEY,
+        bankTransferConfigured: !!(
+          process.env.BANK_ACCOUNT_NAME &&
+          process.env.BANK_ACCOUNT_NUMBER &&
+          process.env.BANK_NAME
+        ),
         mapboxConfigured: !!process.env.NEXT_PUBLIC_MAPBOX_TOKEN,
         appUrl: process.env.NEXT_PUBLIC_APP_URL || '',
       },

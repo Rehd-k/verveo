@@ -67,7 +67,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </div>
                     <div className={`flex flex-col ${showUserMenu ? '' : 'hidden'}`}>
                         <h1 className="text-white text-sm font-bold tracking-tight">
-                            Addizi
+                            Verveo
                         </h1>
                         <p className="text-text-secondary text-xs font-medium uppercase tracking-wider">
                             War Room
@@ -136,7 +136,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 {/* User Menu */}
                 <div className="flex flex-col gap-1 border-t border-white/5 pt-4">
                     <Link
-                        className="flex items-center gap-3 px-3 py-2 rounded-lg text-text-secondary hover:text-white hover:bg-white/5"
+                        className={`flex items-center gap-3 px-3 py-2 rounded-lg ${pathname === '/dashboard/settings' ? 'bg-white/10 text-white' : 'text-text-secondary hover:text-white hover:bg-white/5'}`}
                         href="/dashboard/settings"
                     >
                         <Settings2 className="size-4" />
@@ -184,15 +184,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         <div className="flex items-center gap-3">
 
                             <div className="h-8 w-px bg-gray-500 dark:bg-border-dark mx-2" />
-                            <button className="flex items-center justify-center rounded-lg p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors">
+                            <Link
+                                href="/dashboard/settings"
+                                className="flex items-center justify-center rounded-lg p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors"
+                            >
                                 <Settings className="size-4" />
-                            </button>
+                            </Link>
                             <button className="flex items-center justify-center rounded-lg p-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors">
                                 <Bell className="size-4" />
                             </button>
-                            <button className="flex items-center justify-center rounded-full p-2 bg-primary text-background-dark font-bold ml-2">
+                            <Link
+                                href="/dashboard/settings"
+                                className="flex items-center justify-center rounded-full p-2 bg-primary text-background-dark font-bold ml-2"
+                            >
                                 <User className="size-4" />
-                            </button>
+                            </Link>
                         </div>
                     </header>
                     {children}

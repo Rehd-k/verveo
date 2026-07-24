@@ -159,7 +159,7 @@ function SignupForm() {
         />
 
         <p className="text-xs leading-relaxed text-text-secondary">
-          By creating an account, you agree to use Addizi for lawful advertising and retail partnerships.
+          By creating an account, you agree to use Verveo for lawful advertising and retail partnerships.
         </p>
 
         <button

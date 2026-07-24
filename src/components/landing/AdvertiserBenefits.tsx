@@ -64,14 +64,14 @@ const BENEFITS = [
 
 export default function AdvertiserBenefits() {
   return (
-    <section id="why-addizi" className="relative px-6 py-20 md:py-28">
+    <section id="why-verveo" className="relative px-6 py-20 md:py-28">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(25,93,230,0.1),transparent_55%)]" />
       <div className="relative mx-auto max-w-6xl">
         <ScrollReveal>
           <SectionHeader
-            label="Why Addizi"
+            label="Why Verveo"
             title="The best channel for advertisers who refuse to guess."
-            description="Addizi combines the intimacy of physical media with the accountability of digital advertising. Here is why performance-focused brands choose us over billboards, flyers, and social-only campaigns."
+            description="Verveo combines the intimacy of physical media with the accountability of digital advertising. Here is why performance-focused brands choose us over billboards, flyers, and social-only campaigns."
           />
         </ScrollReveal>
 

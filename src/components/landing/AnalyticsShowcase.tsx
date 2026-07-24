@@ -20,7 +20,7 @@ export default function AnalyticsShowcase() {
           <SectionHeader
             label="Analytics"
             title="Every scan. Every city. One live dashboard."
-            description="Stop guessing whether your media spend worked. Addizi logs every QR interaction with device, timestamp, and location data — giving you the attribution layer physical advertising has always lacked."
+            description="Stop guessing whether your media spend worked. Verveo logs every QR interaction with device, timestamp, and location data — giving you the attribution layer physical advertising has always lacked."
           />
         </ScrollReveal>
 

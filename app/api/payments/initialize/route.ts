@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import axios from 'axios';
 import dbConnect from '@/lib/mongodb';
 import { Order } from '@/models/Order';
 import { Campaign } from '@/models/Campaign';
 import { requireAuth, isAuthUser } from '@/lib/apiAuth';
+import { initializePaystack } from '@/lib/payments/paystack';
+import { initializeFlutterwave } from '@/lib/payments/flutterwave';
+import type { OnlinePaymentMethod } from '@/lib/payments/types';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,10 +14,14 @@ export async function POST(request: NextRequest) {
 
     await dbConnect();
     const body = await request.json();
-    const { campaignId, amount, email, callback_url } = body;
+    const { campaignId, amount, email, callback_url, paymentMethod = 'paystack' } = body;
 
     if (!campaignId || !amount || !email) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    if (!['paystack', 'flutterwave'].includes(paymentMethod)) {
+      return NextResponse.json({ error: 'Invalid payment method' }, { status: 400 });
     }
 
     const campaign = await Campaign.findById(campaignId);
@@ -32,26 +38,35 @@ export async function POST(request: NextRequest) {
       campaignId,
       amount,
       status: 'pending',
+      paymentMethod,
     });
 
-    const secret = process.env.PAYSTACK_SECRET_KEY;
-    if (!secret) {
-      return NextResponse.json({ error: 'Paystack not configured' }, { status: 500 });
-    }
+    const baseUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || '';
+    const cb =
+      callback_url ||
+      `${baseUrl}/dashboard/checkout/success?orderId=${order._id}&paymentMethod=${paymentMethod}`;
 
-    const cb = callback_url || `${process.env.NEXTAUTH_URL}/dashboard/checkout/success?orderId=${order._id}`;
+    const initParams = {
+      amount,
+      email,
+      orderId: order._id.toString(),
+      callbackUrl: cb,
+    };
 
-    const res = await axios.post(
-      'https://api.paystack.co/transaction/initialize',
-      { amount: Math.round(amount) * 100, email, callback_url: cb, metadata: { orderId: order._id.toString() } },
-      { headers: { Authorization: `Bearer ${secret}` } }
-    );
+    const result =
+      paymentMethod === 'flutterwave'
+        ? await initializeFlutterwave(initParams)
+        : await initializePaystack(initParams);
 
-    const data = res.data;
-
-    return NextResponse.json({ orderId: order._id, paystack: data });
+    return NextResponse.json({
+      orderId: order._id,
+      paymentMethod: paymentMethod as OnlinePaymentMethod,
+      redirectUrl: result.redirectUrl,
+      reference: result.reference,
+    });
   } catch (error) {
     console.error('Payment initialize error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Internal server error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

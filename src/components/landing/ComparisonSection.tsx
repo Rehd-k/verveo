@@ -3,14 +3,14 @@ import ScrollReveal from './ScrollReveal';
 import SectionHeader from './SectionHeader';
 
 const FEATURES = [
-  { label: 'Measurable scans & conversions', billboard: false, social: true, addizi: true },
-  { label: 'Physical brand presence', billboard: true, social: false, addizi: true },
-  { label: 'Geo-targeted by city & venue', billboard: false, social: true, addizi: true },
-  { label: '15–30 min dwell time', billboard: false, social: false, addizi: true },
-  { label: 'Real-time dashboard', billboard: false, social: true, addizi: true },
-  { label: 'Transparent per-unit pricing', billboard: false, social: false, addizi: true },
-  { label: 'Launch in days', billboard: false, social: true, addizi: true },
-  { label: 'Ad-blocker proof', billboard: true, social: false, addizi: true },
+  { label: 'Measurable scans & conversions', billboard: false, social: true, verveo: true },
+  { label: 'Physical brand presence', billboard: true, social: false, verveo: true },
+  { label: 'Geo-targeted by city & venue', billboard: false, social: true, verveo: true },
+  { label: '15–30 min dwell time', billboard: false, social: false, verveo: true },
+  { label: 'Real-time dashboard', billboard: false, social: true, verveo: true },
+  { label: 'Transparent per-unit pricing', billboard: false, social: false, verveo: true },
+  { label: 'Launch in days', billboard: false, social: true, verveo: true },
+  { label: 'Ad-blocker proof', billboard: true, social: false, verveo: true },
 ];
 
 function Cell({ value, highlight }: { value: boolean; highlight?: boolean }) {
@@ -32,7 +32,7 @@ export default function ComparisonSection() {
         <ScrollReveal>
           <SectionHeader
             label="Compare channels"
-            title="Addizi vs. billboards vs. social ads"
+            title="Verveo vs. billboards vs. social ads"
             description="See how packaging media stacks up against the channels advertisers already know — and why the combination of physical + digital wins."
             align="center"
           />
@@ -46,7 +46,7 @@ export default function ComparisonSection() {
                   <th className="px-4 py-4 text-left font-medium text-white/50">Capability</th>
                   <th className="px-4 py-4 text-center font-medium text-white/50">Billboards</th>
                   <th className="px-4 py-4 text-center font-medium text-white/50">Social Ads</th>
-                  <th className="px-4 py-4 text-center font-semibold text-primary">Addizi</th>
+                  <th className="px-4 py-4 text-center font-semibold text-primary">Verveo</th>
                 </tr>
               </thead>
               <tbody>
@@ -55,7 +55,7 @@ export default function ComparisonSection() {
                     <td className="px-4 py-3 text-white/80">{row.label}</td>
                     <Cell value={row.billboard} />
                     <Cell value={row.social} />
-                    <Cell value={row.addizi} highlight />
+                    <Cell value={row.verveo} highlight />
                   </tr>
                 ))}
               </tbody>

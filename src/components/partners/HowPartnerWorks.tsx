@@ -5,7 +5,7 @@ const STEPS = [
   ['01', 'Apply', 'Create a retailer account and complete your business profile.'],
   ['02', 'Get packs', 'Once approved, receive branded stock allocated to your city and venue type.'],
   ['03', 'Distribute', 'Use the packs during normal service across meals, drinks, and takeaways.'],
-  ['04', 'Upload proof', 'Submit photos in the portal so Addizi can verify execution and track status.'],
+  ['04', 'Upload proof', 'Submit photos in the portal so Verveo can verify execution and track status.'],
 ];
 
 export default function HowPartnerWorks() {

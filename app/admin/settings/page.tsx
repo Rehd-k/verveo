@@ -78,6 +78,8 @@ export default function AdminSettingsPage() {
       <div className="rounded-xl border border-white/10 bg-card-dark p-5 space-y-2 text-sm">
         <h3 className="font-semibold text-white">Environment (read-only)</h3>
         <div className="flex justify-between"><span className="text-text-secondary">Paystack</span><span>{env.paystackConfigured ? 'Configured' : 'Not configured'}</span></div>
+        <div className="flex justify-between"><span className="text-text-secondary">Flutterwave</span><span>{env.flutterwaveConfigured ? 'Configured' : 'Not configured'}</span></div>
+        <div className="flex justify-between"><span className="text-text-secondary">Bank transfer</span><span>{env.bankTransferConfigured ? 'Configured' : 'Not configured'}</span></div>
         <div className="flex justify-between"><span className="text-text-secondary">Mapbox</span><span>{env.mapboxConfigured ? 'Configured' : 'Not configured'}</span></div>
         <div className="flex justify-between"><span className="text-text-secondary">App URL</span><span className="truncate max-w-xs">{String(env.appUrl || '—')}</span></div>
       </div>

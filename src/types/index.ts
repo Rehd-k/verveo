@@ -79,10 +79,14 @@ export interface Order {
   userId: string;
   amount: number;
   status: 'pending' | 'paid' | 'failed';
-  paymentMethod: 'paystack' | 'flutterwave';
+  paymentMethod: 'paystack' | 'flutterwave' | 'bank_transfer';
   transactionId?: string;
+  proofImageUrl?: string;
+  proofNote?: string;
+  proofSubmittedAt?: Date | string;
   createdAt?: Date;
   updatedAt?: Date;
+  campaign?: { title?: string };
 }
 
 export interface Scan {

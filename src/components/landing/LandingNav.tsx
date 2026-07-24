@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Radar, Menu, X } from 'lucide-react';
 
 const NAV_LINKS = [
-  { href: '#why-addizi', label: 'Why Addizi' },
+  { href: '#why-verveo', label: 'Why Verveo' },
   { href: '#how-it-works', label: 'How it works' },
   { href: '#analytics', label: 'Analytics' },
   { href: '#reach', label: 'Reach' },
@@ -37,7 +37,7 @@ export default function LandingNav() {
           <div className="flex size-9 items-center justify-center rounded-lg bg-linear-to-tr from-primary to-blue-400">
             <Radar className="size-4 text-white" />
           </div>
-          <span className="font-display text-lg font-bold tracking-tight">Addizi</span>
+          <span className="font-display text-lg font-bold tracking-tight">Verveo</span>
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">

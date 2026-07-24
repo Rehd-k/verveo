@@ -32,7 +32,7 @@ export default function NationwideReach() {
           <SectionHeader
             label="Nationwide reach"
             title="From Abuja to Calabar — your brand, everywhere people eat."
-            description="Addizi partners with fast-food outlets, cafés, and bakeries across Nigeria. Pick the cities that matter to your audience and scale as you grow."
+            description="Verveo partners with fast-food outlets, cafés, and bakeries across Nigeria. Pick the cities that matter to your audience and scale as you grow."
           />
         </ScrollReveal>
 
@@ -67,7 +67,7 @@ export default function NationwideReach() {
           <div className="mt-12 rounded-2xl border border-white/10 bg-white/3 p-8 md:p-10">
             <p className="text-lg font-medium leading-relaxed text-white/80">
               &ldquo;Whether you&apos;re launching in the federal capital, expanding into the South-East, or
-              testing a new product in the North — Addizi lets you{' '}
+              testing a new product in the North — Verveo lets you{' '}
               <span className="text-primary">target precisely</span>, measure honestly, and scale
               confidently.&rdquo;
             </p>

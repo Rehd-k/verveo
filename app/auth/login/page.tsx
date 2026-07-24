@@ -10,7 +10,7 @@ import { AuthInput } from '@/components/auth/AuthInput';
 import { useAuth } from '@/store/authStore';
 import { getRoleRedirect } from '@/lib/fetchAuth';
 
-const REMEMBER_EMAIL_KEY = 'addizi_remember_email';
+const REMEMBER_EMAIL_KEY = 'verveo_remember_email';
 
 function LoginForm() {
   const router = useRouter();

@@ -53,7 +53,7 @@ export default function RetailerSidebar({
               <Radar className="size-5" />
             </div>
             <div>
-              <p className="font-semibold">Addizi</p>
+              <p className="font-semibold">Verveo</p>
               <p className="text-xs uppercase tracking-[0.2em] text-text-secondary">Partner Portal</p>
             </div>
           </Link>

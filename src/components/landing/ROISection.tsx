@@ -96,7 +96,7 @@ export default function ROISection() {
           <SectionHeader
             label="Return on investment"
             title="Numbers that make the case for packaging media."
-            description="Addizi advertisers see measurable returns because every pack is both an impression and a conversion opportunity."
+            description="Verveo advertisers see measurable returns because every pack is both an impression and a conversion opportunity."
             align="center"
           />
         </ScrollReveal>

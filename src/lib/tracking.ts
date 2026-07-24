@@ -57,13 +57,13 @@ export interface ParsedLocation {
 export function appendUtmParams(url: string, campaignId: string): string {
   try {
     const parsed = new URL(url);
-    parsed.searchParams.set('utm_source', 'addizi');
+    parsed.searchParams.set('utm_source', 'verveo');
     parsed.searchParams.set('utm_medium', 'qr');
     parsed.searchParams.set('utm_campaign', campaignId);
     return parsed.toString();
   } catch {
     const separator = url.includes('?') ? '&' : '?';
-    return `${url}${separator}utm_source=addizi&utm_medium=qr&utm_campaign=${campaignId}`;
+    return `${url}${separator}utm_source=verveo&utm_medium=qr&utm_campaign=${campaignId}`;
   }
 }
 

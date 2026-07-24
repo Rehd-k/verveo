@@ -8,7 +8,7 @@ import SectionHeader from './SectionHeader';
 const TESTIMONIALS = [
   {
     quote:
-      'We shifted 30% of our OOH budget to Addizi and finally had data to show the board. Scans from Enugu and Port Harcourt outperformed our Abuja billboard three to one.',
+      'We shifted 30% of our OOH budget to Verveo and finally had data to show the board. Scans from Enugu and Port Harcourt outperformed our Abuja billboard three to one.',
     name: 'Adaeze O.',
     role: 'Marketing Director, FMCG Brand',
     city: 'Abuja',
@@ -29,7 +29,7 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      'Addizi let us reach customers in Calabar and Uyo without flying a team there. The dashboard showed exactly which venues drove the most scans.',
+      'Verveo let us reach customers in Calabar and Uyo without flying a team there. The dashboard showed exactly which venues drove the most scans.',
     name: 'Emeka T.',
     role: 'Head of Digital, Retail Chain',
     city: 'Port Harcourt',

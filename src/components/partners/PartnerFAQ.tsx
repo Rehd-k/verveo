@@ -7,12 +7,12 @@ import SectionHeader from '@/components/landing/SectionHeader';
 
 const FAQS = [
   ['How do I become a partner?', 'Create a retailer account, complete onboarding, and wait for admin approval. Once approved, your portal will show matched campaigns and stock details.'],
-  ['Do I need to pay for branded packs?', 'No. Addizi allocates campaign stock to approved venues. Your job is to distribute packs properly and keep proof up to date.'],
+  ['Do I need to pay for branded packs?', 'No. Verveo allocates campaign stock to approved venues. Your job is to distribute packs properly and keep proof up to date.'],
   ['Which venues qualify?', 'Fast-food outlets, cafes, bakeries, corporate canteens, university-area vendors, shopping mall food spots, and entertainment venues are strong fits.'],
   ['How are campaigns matched to my venue?', 'Campaigns are matched by your city and venue type, so you only see advertiser campaigns relevant to your operation.'],
   ['What is proof of execution?', 'Proof is a clear photo showing branded packs in real customer-facing use at your venue. Admin reviews each submission.'],
   ['Can I request more stock?', 'Yes. The stock page lets you request replenishment and track request status.'],
-  ['What cities are supported?', 'Addizi is built for nationwide growth, including Abuja, Enugu, Port Harcourt, Kano, Ibadan, Calabar, and more.'],
+  ['What cities are supported?', 'Verveo is built for nationwide growth, including Abuja, Enugu, Port Harcourt, Kano, Ibadan, Calabar, and more.'],
   ['Can I update my venue details later?', 'Yes. Your profile can be updated through the retailer profile API, and admin can also manage your partner status.'],
 ];
 

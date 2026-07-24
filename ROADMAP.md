@@ -1,4 +1,4 @@
-# Addizi Development Roadmap
+# Verveo Development Roadmap
 
 ## ✅ Completed (Phase 0-3)
 
@@ -153,7 +153,7 @@ components/
 ```
 PAYSTACK_PUBLIC_KEY=pk_live_...
 PAYSTACK_SECRET_KEY=sk_live_...
-PAYSTACK_EMAIL=support@addizi.com
+PAYSTACK_EMAIL=support@joinverveo.com
 ```
 
 ---

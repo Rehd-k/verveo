@@ -15,7 +15,7 @@ export default function PartnersHero() {
               Earn more from the packaging your customers already use.
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-white/70 md:text-lg">
-              Addizi connects food venues, cafes, bakeries, and quick-service restaurants with national
+              Verveo connects food venues, cafes, bakeries, and quick-service restaurants with national
               brand campaigns across Nigeria. Receive branded packs, distribute them naturally, upload
               proof, and grow a new revenue line from everyday operations.
             </p>

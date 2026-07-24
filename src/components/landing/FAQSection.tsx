@@ -7,12 +7,12 @@ import SectionHeader from './SectionHeader';
 
 const FAQS = [
   {
-    q: 'How is Addizi different from billboards or flyers?',
-    a: 'Billboards offer reach but no attribution. Flyers get thrown away. Addizi puts your brand on packaging people actively hold for 15–30 minutes, with a QR code that tracks every scan, device, and location in real time.',
+    q: 'How is Verveo different from billboards or flyers?',
+    a: 'Billboards offer reach but no attribution. Flyers get thrown away. Verveo puts your brand on packaging people actively hold for 15–30 minutes, with a QR code that tracks every scan, device, and location in real time.',
   },
   {
     q: 'Which cities can I target?',
-    a: 'Addizi covers cities across Nigeria including Abuja, Enugu, Port Harcourt, Kano, Ibadan, Calabar, and more. You select specific cities and venue types during campaign setup — no spray-and-pray distribution.',
+    a: 'Verveo covers cities across Nigeria including Abuja, Enugu, Port Harcourt, Kano, Ibadan, Calabar, and more. You select specific cities and venue types during campaign setup — no spray-and-pray distribution.',
   },
   {
     q: 'What does a campaign cost?',
@@ -40,7 +40,7 @@ const FAQS = [
   },
   {
     q: 'What types of businesses distribute the packaging?',
-    a: 'Addizi partners with fast-food chains, cafés, bakeries, and quick-service restaurants nationwide. You choose venue types that match your target audience during campaign setup.',
+    a: 'Verveo partners with fast-food chains, cafés, bakeries, and quick-service restaurants nationwide. You choose venue types that match your target audience during campaign setup.',
   },
   {
     q: 'How do I get started?',

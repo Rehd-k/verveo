@@ -27,7 +27,7 @@ export default function ProofGalleryCard({ proof }: ProofGalleryCardProps) {
   return (
     <div className="overflow-hidden rounded-2xl border border-white/10 bg-card-dark/80">
       <div
-        className="aspect-[4/3] bg-cover bg-center bg-background-dark"
+        className="aspect-4/3 bg-cover bg-center bg-background-dark"
         style={{ backgroundImage: `url(${proof.imageUrl})` }}
       />
       <div className="space-y-2 p-4">

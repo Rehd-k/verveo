@@ -75,7 +75,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="flex items-center gap-2">
           <Shield className="size-5 text-primary" />
           <div>
-            <p className="text-sm font-bold">Addizi Admin</p>
+            <p className="text-sm font-bold">Verveo Admin</p>
             <p className="text-[10px] uppercase tracking-wider text-text-secondary">Control Center</p>
           </div>
         </div>

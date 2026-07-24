@@ -52,7 +52,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
                   <Radar className="size-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-lg font-bold tracking-tight">Addizi</p>
+                  <p className="text-lg font-bold tracking-tight">Verveo</p>
                   <p className="text-xs font-medium uppercase tracking-[0.2em] text-text-secondary">
                     Physical ads, digital precision
                   </p>
@@ -124,7 +124,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
               <div className="flex size-10 items-center justify-center rounded-xl bg-linear-to-tr from-primary to-blue-400">
                 <Radar className="size-5 text-white" />
               </div>
-              <p className="text-lg font-bold">Addizi</p>
+              <p className="text-lg font-bold">Verveo</p>
             </div>
           </div>
 

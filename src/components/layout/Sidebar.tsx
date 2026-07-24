@@ -22,7 +22,7 @@ export function Sidebar() {
             <span className="material-symbols-outlined text-white text-2xl">radar</span>
           </div>
           <div className="flex flex-col">
-            <h1 className="text-white text-base font-bold tracking-tight">AdPlatform</h1>
+            <h1 className="text-white text-base font-bold tracking-tight">Verveo</h1>
             <p className="text-text-dim text-xs font-medium uppercase tracking-wider">War Room</p>
           </div>
         </div>

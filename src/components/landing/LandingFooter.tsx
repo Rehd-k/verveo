@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Radar } from 'lucide-react';
 
 const FOOTER_LINKS = [
-  { href: '#why-addizi', label: 'Why Addizi' },
+  { href: '#why-verveo', label: 'Why Verveo' },
   { href: '#how-it-works', label: 'How it works' },
   { href: '#analytics', label: 'Analytics' },
   { href: '#faq', label: 'FAQ' },
@@ -20,7 +20,7 @@ export default function LandingFooter() {
             <div className="flex size-9 items-center justify-center rounded-lg bg-linear-to-tr from-primary to-blue-400">
               <Radar className="size-4 text-white" />
             </div>
-            <span className="font-display text-lg font-bold">Addizi</span>
+            <span className="font-display text-lg font-bold">Verveo</span>
           </div>
           <p className="max-w-xs text-sm text-white/50">
             Physical advertising with digital precision. Built for advertisers who demand measurable
@@ -42,7 +42,7 @@ export default function LandingFooter() {
       </div>
 
       <div className="mx-auto mt-10 max-w-7xl border-t border-white/5 pt-6 text-center text-xs text-white/40 md:text-left">
-        &copy; {new Date().getFullYear()} Addizi. All rights reserved.
+        &copy; {new Date().getFullYear()} Verveo. All rights reserved.
       </div>
     </footer>
   );

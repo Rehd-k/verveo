@@ -8,7 +8,7 @@ import { requireAdmin, isAuthUser } from '@/lib/apiAuth';
 const patchOrderSchema = z.object({
   status: z.enum(['pending', 'paid', 'failed']).optional(),
   transactionId: z.string().optional(),
-  paymentMethod: z.enum(['paystack', 'flutterwave']).optional(),
+  paymentMethod: z.enum(['paystack', 'flutterwave', 'bank_transfer']).optional(),
 });
 
 export async function PATCH(

@@ -29,7 +29,7 @@ export default function PartnersNav() {
           <div className="flex size-9 items-center justify-center rounded-lg bg-linear-to-tr from-primary to-blue-400">
             <Radar className="size-4" />
           </div>
-          <span className="font-display text-lg font-bold">Addizi Partners</span>
+          <span className="font-display text-lg font-bold">Verveo Partners</span>
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">

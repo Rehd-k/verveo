@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import axios from 'axios';
 import dbConnect from '@/lib/mongodb';
 import { Order } from '@/models/Order';
-import { Campaign } from '@/models/Campaign';
 import { requireAuth, isAuthUser } from '@/lib/apiAuth';
+import { verifyPaystack } from '@/lib/payments/paystack';
+import { verifyFlutterwave } from '@/lib/payments/flutterwave';
+import { markOrderPaid } from '@/lib/payments/markOrderPaid';
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,10 +12,10 @@ export async function POST(request: NextRequest) {
     if (!isAuthUser(auth)) return auth;
 
     await dbConnect();
-    const { reference, orderId } = await request.json();
+    const { reference, orderId, transaction_id, tx_ref, paymentMethod } = await request.json();
 
-    if (!reference || !orderId) {
-      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+    if (!orderId) {
+      return NextResponse.json({ error: 'Missing orderId' }, { status: 400 });
     }
 
     const order = await Order.findById(orderId);
@@ -26,29 +27,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const secret = process.env.PAYSTACK_SECRET_KEY;
-    if (!secret) {
-      return NextResponse.json({ error: 'Paystack not configured' }, { status: 500 });
+    if (order.status === 'paid') {
+      return NextResponse.json({ success: true, alreadyPaid: true });
     }
 
-    const res = await axios.get(`https://api.paystack.co/transaction/verify/${reference}`, {
-      headers: { Authorization: `Bearer ${secret}` },
-    });
+    const method = paymentMethod || order.paymentMethod;
+    let verifyResult;
 
-    const { data } = res;
-    if (data.status && data.data && data.data.status === 'success') {
-      await Order.findByIdAndUpdate(orderId, { status: 'paid', transactionId: reference });
-
-      if (order) {
-        await Campaign.findByIdAndUpdate(order.campaignId, { status: 'processing' });
+    if (method === 'flutterwave') {
+      if (!transaction_id) {
+        return NextResponse.json({ error: 'Missing transaction_id' }, { status: 400 });
       }
-
-      return NextResponse.json({ success: true, data });
+      verifyResult = await verifyFlutterwave({
+        transactionId: String(transaction_id),
+        txRef: tx_ref,
+      });
+    } else {
+      if (!reference) {
+        return NextResponse.json({ error: 'Missing reference' }, { status: 400 });
+      }
+      verifyResult = await verifyPaystack({ reference });
     }
 
-    return NextResponse.json({ success: false, data });
+    if (verifyResult.success) {
+      await markOrderPaid(orderId, verifyResult.transactionId);
+      return NextResponse.json({ success: true, data: verifyResult.raw });
+    }
+
+    return NextResponse.json({ success: false, data: verifyResult.raw });
   } catch (error) {
     console.error('Payment verify error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Internal server error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

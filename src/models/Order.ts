@@ -23,9 +23,12 @@ const orderSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ['paystack', 'flutterwave'],
+      enum: ['paystack', 'flutterwave', 'bank_transfer'],
     },
     transactionId: String,
+    proofImageUrl: String,
+    proofNote: String,
+    proofSubmittedAt: Date,
   },
   { timestamps: true }
 );

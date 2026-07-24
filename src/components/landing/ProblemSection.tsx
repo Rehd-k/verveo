@@ -32,7 +32,7 @@ export default function ProblemSection() {
           <SectionHeader
             label="The problem"
             title="Billboards are blind. Social feeds are noisy. Advertisers deserve better."
-            description="Most media channels either lack measurement or lack physical presence. Addizi bridges both — putting your brand on packaging people actually hold, with QR tracking that proves every interaction."
+            description="Most media channels either lack measurement or lack physical presence. Verveo bridges both — putting your brand on packaging people actually hold, with QR tracking that proves every interaction."
           />
         </ScrollReveal>
 
