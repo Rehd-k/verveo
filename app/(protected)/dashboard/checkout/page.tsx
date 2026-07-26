@@ -112,20 +112,20 @@ export default function CheckoutPage() {
     }
   };
 
-  if (!campaignId) return <div className="p-8 text-white">Missing campaignId</div>;
+  if (!campaignId) return <div className="p-8 text-foreground">Missing campaignId</div>;
 
   if (submitted) {
     return (
       <div className="p-8">
-        <h2 className="text-2xl font-bold text-white">Proof Submitted</h2>
-        <div className="mt-4 rounded-lg border border-white/10 bg-white/3 p-6">
-          <p className="text-white/80">
+        <h2 className="text-2xl font-bold text-foreground">Proof Submitted</h2>
+        <div className="mt-4 rounded-lg border border-border bg-card p-6">
+          <p className="text-muted-foreground">
             Your payment proof has been submitted and is pending admin review. You will be notified once
             your payment is confirmed.
           </p>
           <Link
             href="/settings"
-            className="mt-6 inline-block rounded-full bg-primary px-6 py-3 font-bold text-black"
+            className="mt-6 inline-block rounded-full bg-primary px-6 py-3 font-bold text-primary-foreground"
           >
             View billing status
           </Link>
@@ -136,22 +136,22 @@ export default function CheckoutPage() {
 
   return (
     <div className="p-8">
-      <h2 className="text-2xl font-bold text-white">Checkout</h2>
+      <h2 className="text-2xl font-bold text-foreground">Checkout</h2>
       {campaign ? (
-        <div className="mt-4 max-w-xl rounded-lg border border-white/5 bg-white/3 p-6">
-          <h3 className="font-bold text-white">{campaign.title}</h3>
-          <p className="text-white/60">
+        <div className="mt-4 max-w-xl rounded-lg border border-border bg-card p-6">
+          <h3 className="font-bold text-foreground">{campaign.title}</h3>
+          <p className="text-muted-foreground">
             {campaign.quantity.toLocaleString()} units • {campaign.productType}
           </p>
-          <p className="mt-4 text-xl font-bold text-white">Total: ₦{campaign.budget?.toLocaleString()}</p>
+          <p className="mt-4 text-xl font-bold text-foreground">Total: ₦{campaign.budget?.toLocaleString()}</p>
 
           <div className="mt-6 space-y-3">
-            <p className="text-sm font-medium text-white/70">Payment method</p>
+            <p className="text-sm font-medium text-muted-foreground">Payment method</p>
             {(['paystack', 'flutterwave', 'bank_transfer'] as PaymentMethod[]).map((method) => (
               <label
                 key={method}
                 className={`flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 ${
-                  paymentMethod === method ? 'border-primary bg-primary/10' : 'border-white/10'
+                  paymentMethod === method ? 'border-primary bg-primary/10' : 'border-border'
                 }`}
               >
                 <input
@@ -162,7 +162,7 @@ export default function CheckoutPage() {
                   onChange={() => setPaymentMethod(method)}
                   className="accent-primary"
                 />
-                <span className="text-sm text-white">
+                <span className="text-sm text-foreground">
                   {method === 'paystack' && 'Paystack (Card, Bank, USSD)'}
                   {method === 'flutterwave' && 'Flutterwave (Card, Bank, Mobile Money)'}
                   {method === 'bank_transfer' && 'Bank transfer (upload proof)'}
@@ -174,8 +174,8 @@ export default function CheckoutPage() {
           {paymentMethod === 'bank_transfer' ? (
             <div className="mt-6 space-y-4">
               {bankDetails?.configured ? (
-                <div className="rounded-lg border border-white/10 bg-background-dark/50 p-4 text-sm text-white/80">
-                  <p className="font-semibold text-white">Transfer to:</p>
+                <div className="rounded-lg border border-border bg-background/50 p-4 text-sm text-muted-foreground">
+                  <p className="font-semibold text-foreground">Transfer to:</p>
                   <p className="mt-2">Bank: {bankDetails.bankName}</p>
                   <p>Account name: {bankDetails.accountName}</p>
                   <p>Account number: {bankDetails.accountNumber}</p>
@@ -189,32 +189,32 @@ export default function CheckoutPage() {
                 </p>
               )}
 
-              <label className="block text-sm font-medium text-white/70">
+              <label className="block text-sm font-medium text-muted-foreground">
                 Transfer reference / note (optional)
                 <input
                   value={proofNote}
                   onChange={(e) => setProofNote(e.target.value)}
                   placeholder="e.g. TXN reference from your bank"
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+                  className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
                 />
               </label>
 
               <div>
-                <p className="text-sm font-medium text-white/70">Upload payment proof</p>
+                <p className="text-sm font-medium text-muted-foreground">Upload payment proof</p>
                 <input
                   ref={fileInputRef}
                   type="file"
                   accept="image/jpeg,image/png,image/webp,application/pdf"
-                  className="mt-2 w-full text-sm text-white/70"
+                  className="mt-2 w-full text-sm text-muted-foreground"
                   onChange={(e) => setProofFile(e.target.files?.[0] || null)}
                 />
-                <p className="mt-1 text-xs text-white/50">JPG, PNG, WEBP, or PDF up to 5MB</p>
+                <p className="mt-1 text-xs text-muted-foreground">JPG, PNG, WEBP, or PDF up to 5MB</p>
               </div>
 
               <button
                 onClick={handleProofSubmit}
                 disabled={loading || !proofFile}
-                className="rounded-full bg-primary px-6 py-3 font-bold text-black disabled:opacity-50"
+                className="rounded-full bg-primary px-6 py-3 font-bold text-primary-foreground disabled:opacity-50"
               >
                 {loading ? 'Submitting...' : 'Submit proof of payment'}
               </button>
@@ -224,7 +224,7 @@ export default function CheckoutPage() {
               <button
                 onClick={handleOnlinePay}
                 disabled={loading}
-                className="rounded-full bg-primary px-6 py-3 font-bold text-black disabled:opacity-50"
+                className="rounded-full bg-primary px-6 py-3 font-bold text-primary-foreground disabled:opacity-50"
               >
                 {loading ? 'Initializing...' : `Pay with ${paymentMethod === 'paystack' ? 'Paystack' : 'Flutterwave'}`}
               </button>
@@ -232,7 +232,7 @@ export default function CheckoutPage() {
           )}
         </div>
       ) : (
-        <div className="mt-4 text-white/60">Loading campaign...</div>
+        <div className="mt-4 text-muted-foreground">Loading campaign...</div>
       )}
     </div>
   );

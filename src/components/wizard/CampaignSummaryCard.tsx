@@ -19,10 +19,10 @@ function SummarySection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-3">
+    <div className="rounded-xl border border-border bg-card p-4 space-y-3">
       <div className="flex items-center gap-2 text-primary">
         {icon}
-        <h4 className="text-sm font-bold uppercase tracking-wider text-white">{title}</h4>
+        <h4 className="text-sm font-bold uppercase tracking-wider text-foreground">{title}</h4>
       </div>
       {children}
     </div>
@@ -32,8 +32,8 @@ function SummarySection({
 function StatRow({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="flex justify-between gap-4 text-sm">
-      <span className="text-white/50">{label}</span>
-      <span className="text-white font-medium text-right">{value}</span>
+      <span className="text-muted-foreground">{label}</span>
+      <span className="text-foreground font-medium text-right">{value}</span>
     </div>
   );
 }
@@ -54,7 +54,7 @@ export default function CampaignSummaryCard({
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
           placeholder="Name your campaign..."
-          className="w-full text-2xl font-bold bg-transparent border-b border-white/10 pb-2 text-white placeholder:text-white/30 focus:outline-none focus:border-primary"
+          className="w-full text-2xl font-bold bg-transparent border-b border-border pb-2 text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-primary"
         />
       </div>
 
@@ -80,14 +80,14 @@ export default function CampaignSummaryCard({
           <StatRow label="Packaging" value={summary.productLabel} />
           <StatRow label="Quantity" value={`${summary.quantity.toLocaleString()} units`} />
           <StatRow label="Unit price" value={`₦${summary.unitPrice.toLocaleString()}`} />
-          <div className="pt-2 border-t border-white/10">
+          <div className="pt-2 border-t border-border">
             <StatRow label="Estimated total" value={`₦${summary.budget.toLocaleString()}`} />
           </div>
         </SummarySection>
 
         <SummarySection icon={<Palette className="size-4" />} title="Design">
           {summary.designImageUrl ? (
-            <div className="rounded-lg overflow-hidden border border-white/10 mb-2">
+            <div className="rounded-lg overflow-hidden border border-border mb-2">
               <img
                 src={summary.designImageUrl}
                 alt="Design preview"
@@ -95,19 +95,19 @@ export default function CampaignSummaryCard({
               />
             </div>
           ) : (
-            <p className="text-sm text-white/40">No texture uploaded</p>
+            <p className="text-sm text-foreground/40">No texture uploaded</p>
           )}
           {summary.brandText && (
             <StatRow label="Brand text" value={`"${summary.brandText}"`} />
           )}
           {summary.colors.length > 0 && (
             <div className="flex items-center gap-2 pt-1">
-              <span className="text-sm text-white/50">Colors</span>
+              <span className="text-sm text-muted-foreground">Colors</span>
               <div className="flex gap-1.5 ml-auto">
                 {summary.colors.map((color) => (
                   <div
                     key={color}
-                    className="w-6 h-6 rounded-md border border-white/20"
+                    className="w-6 h-6 rounded-md border border-border"
                     style={{ backgroundColor: color }}
                     title={color}
                   />
@@ -123,7 +123,7 @@ export default function CampaignSummaryCard({
           {summary.ctaUrl ? (
             <div className="flex items-start gap-2 pt-1 text-sm">
               <Link2 className="size-4 text-primary shrink-0 mt-0.5" />
-              <span className="text-white/70 break-all">{summary.ctaUrl}</span>
+              <span className="text-muted-foreground break-all">{summary.ctaUrl}</span>
             </div>
           ) : (
             <p className="text-sm text-amber-400/80">Add a CTA URL to complete setup</p>

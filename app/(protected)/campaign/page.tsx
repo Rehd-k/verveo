@@ -96,7 +96,7 @@ export default function CampaignWizardPage() {
     latitude && longitude ? ([Number(longitude), Number(latitude)] as [number, number]) : undefined;
 
   return (
-    <div className="w-full bg-background-dark border border-white/10">
+    <div className={step === 3 ? 'w-full min-w-0' : 'w-full min-w-0 border border-border bg-background'}>
       {step === 1 && (
         <LocationPage
           data={campaignData}

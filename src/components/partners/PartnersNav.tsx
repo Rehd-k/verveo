@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Menu, Radar, X } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
 
 const LINKS = [
   { href: '#benefits', label: 'Benefits' },
@@ -23,47 +24,85 @@ export default function PartnersNav() {
   }, []);
 
   return (
-    <header className={`fixed inset-x-0 top-0 z-50 transition-all ${scrolled ? 'border-b border-white/10 bg-background-dark/80 py-3 backdrop-blur-xl' : 'py-5'}`}>
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-2.5">
-          <div className="flex size-9 items-center justify-center rounded-lg bg-linear-to-tr from-primary to-blue-400">
-            <Radar className="size-4" />
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-all ${
+        scrolled
+          ? 'border-b border-border bg-background py-3 text-foreground'
+          : 'py-5 text-foreground'
+      }`}
+    >
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
+        <Link href="/" className="flex min-w-0 items-center gap-2.5">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-linear-to-tr from-primary to-blue-400">
+            <Radar className="size-5 text-primary-foreground" />
           </div>
-          <span className="font-display text-lg font-bold">Verveo Partners</span>
+          <span className="font-display truncate text-lg font-bold">Verveo Partners</span>
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-6 lg:flex xl:gap-8">
           {LINKS.map((link) => (
-            <a key={link.href} href={link.href} className="text-sm text-white/60 hover:text-white">
+            <a
+              key={link.href}
+              href={link.href}
+              className="text-sm text-muted-foreground hover:text-foreground"
+            >
               {link.label}
             </a>
           ))}
-          <Link href="/" className="text-sm text-white/60 hover:text-white">
+          <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">
             For Advertisers
           </Link>
         </nav>
 
-        <Link href="/auth/signup?role=retailer" className="hidden rounded-full bg-primary px-5 py-2 text-sm font-semibold text-white md:inline-flex">
-          Apply to Partner
-        </Link>
+        <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle compact />
+          <Link
+            href="/auth/signup?role=retailer"
+            className="inline-flex min-h-10 items-center rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground"
+          >
+            Apply to Partner
+          </Link>
+        </div>
 
-        <button type="button" className="flex size-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 md:hidden" onClick={() => setOpen(!open)} aria-label="Toggle menu">
-          {open ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle compact />
+          <button
+            type="button"
+            className="flex size-10 items-center justify-center rounded-lg border border-border bg-card"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+            aria-expanded={open}
+          >
+            {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
       </div>
 
       {open && (
-        <div className="border-t border-white/10 bg-background-dark/95 px-6 py-4 md:hidden">
-          <nav className="flex flex-col gap-3">
+        <div className="border-t border-border bg-background px-4 py-4 md:hidden">
+          <nav className="flex flex-col gap-1">
             {LINKS.map((link) => (
-              <a key={link.href} href={link.href} className="py-2 text-sm text-white/70" onClick={() => setOpen(false)}>
+              <a
+                key={link.href}
+                href={link.href}
+                className="rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-accent"
+                onClick={() => setOpen(false)}
+              >
                 {link.label}
               </a>
             ))}
-            <Link href="/" className="py-2 text-sm text-white/70" onClick={() => setOpen(false)}>
+            <Link
+              href="/"
+              className="rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-accent"
+              onClick={() => setOpen(false)}
+            >
               For Advertisers
             </Link>
-            <Link href="/auth/signup?role=retailer" className="mt-2 rounded-full bg-primary px-5 py-2.5 text-center text-sm font-semibold text-white" onClick={() => setOpen(false)}>
+            <Link
+              href="/auth/signup?role=retailer"
+              className="mt-2 inline-flex min-h-11 items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
+              onClick={() => setOpen(false)}
+            >
               Apply to Partner
             </Link>
           </nav>

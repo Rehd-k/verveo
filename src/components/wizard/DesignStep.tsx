@@ -87,7 +87,7 @@ export default function DesignStep({ data, updateData }: DesignStepProps) {
           className={`flex-1 p-4 rounded-lg border transition-all ${
             designMode === 'upload'
               ? 'border-primary bg-primary/10 text-primary'
-              : 'border-white/10 bg-white/5 text-white'
+              : 'border-border bg-card text-foreground'
           }`}
         >
           Upload Design
@@ -97,7 +97,7 @@ export default function DesignStep({ data, updateData }: DesignStepProps) {
           className={`flex-1 p-4 rounded-lg border transition-all ${
             designMode === 'editor'
               ? 'border-primary bg-primary/10 text-primary'
-              : 'border-white/10 bg-white/5 text-white'
+              : 'border-border bg-card text-foreground'
           }`}
         >
           Design Editor
@@ -106,7 +106,7 @@ export default function DesignStep({ data, updateData }: DesignStepProps) {
 
       {designMode === 'upload' ? (
         <div className="space-y-4">
-          <div className="border-2 border-dashed border-white/20 rounded-lg p-8 text-center hover:border-primary/50 transition-all">
+          <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary/50 transition-all">
             <input
               ref={fileInputRef}
               type="file"
@@ -116,19 +116,19 @@ export default function DesignStep({ data, updateData }: DesignStepProps) {
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="text-white/60 hover:text-white transition-colors w-full"
+              className="text-muted-foreground hover:text-foreground transition-colors w-full"
             >
               <div className="text-4xl mb-2">📄</div>
               <p className="font-semibold">Drag and drop your design</p>
-              <p className="text-sm text-white/40 mt-1">
+              <p className="text-sm text-foreground/40 mt-1">
                 or click to select (PNG, JPG, WEBP)
               </p>
             </button>
           </div>
-          {uploadError && <p className="text-sm text-red-400">{uploadError}</p>}
+          {uploadError && <p className="text-sm text-destructive">{uploadError}</p>}
           {texturePreview && (
-            <div className="p-4 rounded-lg bg-white/5 border border-white/10">
-              <p className="text-sm text-white/60 mb-2">File uploaded</p>
+            <div className="p-4 rounded-lg bg-card border border-border">
+              <p className="text-sm text-muted-foreground mb-2">File uploaded</p>
               <img
                 src={texturePreview}
                 alt="Design preview"
@@ -140,18 +140,18 @@ export default function DesignStep({ data, updateData }: DesignStepProps) {
       ) : (
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-white mb-2">Add Text</label>
+            <label className="block text-sm font-medium text-foreground mb-2">Add Text</label>
             <input
               type="text"
               value={designConfig.brandText || data.design?.text || ''}
               onChange={(e) => handleTextChange(e.target.value)}
               placeholder="Enter your text here"
-              className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-white/30"
+              className="w-full rounded-lg bg-card border border-border px-4 py-3 text-foreground placeholder-white/30"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-white mb-2">Brand Colors</label>
+            <label className="block text-sm font-medium text-foreground mb-2">Brand Colors</label>
             <div className="flex gap-3 flex-wrap">
               {colors.map((color: string, idx: number) => (
                 <button
@@ -159,7 +159,7 @@ export default function DesignStep({ data, updateData }: DesignStepProps) {
                   type="button"
                   onClick={() => handleColorPick(color)}
                   className={`w-12 h-12 rounded-lg border-2 ${
-                    designConfig.color === color ? 'border-primary' : 'border-white/10'
+                    designConfig.color === color ? 'border-primary' : 'border-border'
                   }`}
                   style={{ backgroundColor: color }}
                 />
@@ -173,7 +173,7 @@ export default function DesignStep({ data, updateData }: DesignStepProps) {
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-white">Texture Scale</label>
+            <label className="block text-sm font-medium text-foreground">Texture Scale</label>
             <input
               type="range"
               min="0.5"
@@ -185,14 +185,14 @@ export default function DesignStep({ data, updateData }: DesignStepProps) {
             />
           </div>
 
-          <div className="rounded-xl overflow-hidden border border-white/10">
+          <div className="rounded-xl overflow-hidden border border-border">
             <PackagingCanvas compact />
           </div>
         </div>
       )}
 
       <div className="mt-6 p-4 rounded-lg bg-primary/10 border border-primary/20">
-        <p className="text-sm text-white/80">
+        <p className="text-sm text-muted-foreground">
           <span className="font-semibold text-primary">Design Tip:</span> Ensure your design
           has proper bleed lines and high DPI (300+) for printing.
         </p>

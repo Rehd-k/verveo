@@ -63,15 +63,15 @@ export default function RetailerOnboardingPage() {
     <div className="flex min-h-screen items-center justify-center px-4 py-10">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-lg rounded-2xl border border-white/10 bg-card-dark p-6 md:p-8"
+        className="w-full max-w-lg rounded-2xl border border-border bg-card p-6 md:p-8"
       >
         <div className="flex items-center gap-3">
           <div className="flex size-12 items-center justify-center rounded-xl bg-primary/15 text-primary">
             <Store className="size-6" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-white">Set up your partner profile</h1>
-            <p className="text-sm text-text-secondary">
+            <h1 className="text-xl font-bold text-foreground">Set up your partner profile</h1>
+            <p className="text-sm text-muted-foreground">
               Tell us about your venue so we can match you with live campaigns.
             </p>
           </div>
@@ -81,23 +81,23 @@ export default function RetailerOnboardingPage() {
           After setup, an admin will review and activate your account before you can request stock or submit proofs.
         </p>
 
-        <label className="mt-6 block text-sm font-medium text-white/70">
+        <label className="mt-6 block text-sm font-medium text-muted-foreground">
           Business name
           <input
             required
             value={businessName}
             onChange={(e) => setBusinessName(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+            className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
             placeholder="e.g. Quick Bite Surulere"
           />
         </label>
 
-        <label className="mt-4 block text-sm font-medium text-white/70">
+        <label className="mt-4 block text-sm font-medium text-muted-foreground">
           Venue type
           <select
             value={venueType}
             onChange={(e) => setVenueType(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+            className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
           >
             {VENUE_CATEGORIES.map((category) => (
               <option key={category} value={category}>
@@ -107,12 +107,12 @@ export default function RetailerOnboardingPage() {
           </select>
         </label>
 
-        <label className="mt-4 block text-sm font-medium text-white/70">
+        <label className="mt-4 block text-sm font-medium text-muted-foreground">
           City
           <select
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+            className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
           >
             {RETAILER_CITIES.map((cityName) => (
               <option key={cityName} value={cityName}>
@@ -122,12 +122,12 @@ export default function RetailerOnboardingPage() {
           </select>
         </label>
 
-        <label className="mt-4 block text-sm font-medium text-white/70">
+        <label className="mt-4 block text-sm font-medium text-muted-foreground">
           Address
           <input
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+            className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
             placeholder="Street address or landmark"
           />
         </label>
@@ -136,7 +136,7 @@ export default function RetailerOnboardingPage() {
           <button
             type="button"
             onClick={useLocation}
-            className="flex items-center gap-2 rounded-xl border border-white/10 px-4 py-2.5 text-sm text-text-secondary transition hover:border-primary/40 hover:text-white"
+            className="flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
           >
             <MapPin className="size-4" />
             {coords
@@ -148,7 +148,7 @@ export default function RetailerOnboardingPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-600 disabled:opacity-60"
+          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-blue-600 disabled:opacity-60"
         >
           {submitting && <Loader2 className="size-4 animate-spin" />}
           {submitting ? 'Creating profile...' : 'Complete setup'}

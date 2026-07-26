@@ -41,7 +41,7 @@ export default function NationwideReach() {
             {CITIES.map((city) => (
               <span
                 key={city}
-                className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-white/70 transition hover:border-primary/40 hover:text-white"
+                className="rounded-full border border-border bg-accent px-4 py-1.5 text-sm text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
               >
                 {city}
               </span>
@@ -55,17 +55,17 @@ export default function NationwideReach() {
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {STATS.map((stat, i) => (
             <ScrollReveal key={stat.label} delay={i * 80}>
-              <div className="rounded-2xl border border-white/10 bg-card-dark/60 p-6 text-center transition hover:border-primary/30">
+              <div className="rounded-2xl border border-border bg-card p-6 text-center transition hover:border-primary/30">
                 <p className="text-3xl font-bold text-primary">{stat.value}</p>
-                <p className="mt-2 text-sm text-white/50">{stat.label}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{stat.label}</p>
               </div>
             </ScrollReveal>
           ))}
         </div>
 
         <ScrollReveal delay={200}>
-          <div className="mt-12 rounded-2xl border border-white/10 bg-white/3 p-8 md:p-10">
-            <p className="text-lg font-medium leading-relaxed text-white/80">
+          <div className="mt-12 rounded-2xl border border-border bg-card p-8 md:p-10">
+            <p className="text-lg font-medium leading-relaxed text-muted-foreground">
               &ldquo;Whether you&apos;re launching in the federal capital, expanding into the South-East, or
               testing a new product in the North — Verveo lets you{' '}
               <span className="text-primary">target precisely</span>, measure honestly, and scale

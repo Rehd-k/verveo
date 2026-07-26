@@ -75,7 +75,7 @@ export default function AdminUsersPage() {
           value={row.role as string}
           onClick={(e) => e.stopPropagation()}
           onChange={(e) => handleRoleChange(row.id as string, e.target.value)}
-          className="rounded border border-white/10 bg-white/5 px-2 py-1 text-xs text-white"
+          className="rounded border border-border bg-card px-2 py-1 text-xs text-foreground"
         >
           <option value="advertiser">advertiser</option>
           <option value="retailer">retailer</option>
@@ -95,7 +95,7 @@ export default function AdminUsersPage() {
       render: (row: Record<string, unknown>) => (
         <button
           onClick={(e) => { e.stopPropagation(); setDeleteId(row.id as string); }}
-          className="text-xs text-red-400 hover:underline"
+          className="text-xs text-destructive hover:underline"
         >
           Delete
         </button>
@@ -107,12 +107,12 @@ export default function AdminUsersPage() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-white">Users</h2>
-          <p className="text-sm text-text-secondary">{usersTotal} total</p>
+          <h2 className="text-lg font-bold text-foreground">Users</h2>
+          <p className="text-sm text-muted-foreground">{usersTotal} total</p>
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-background-dark"
+          className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
         >
           <Plus className="size-4" /> Create User
         </button>
@@ -120,18 +120,18 @@ export default function AdminUsersPage() {
 
       <div className="flex flex-wrap gap-3">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" />
+          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search users..."
-            className="w-full rounded-lg border border-white/10 bg-white/5 py-2 pl-10 pr-4 text-sm text-white placeholder:text-text-secondary focus:border-primary focus:outline-none"
+            className="w-full rounded-lg border border-border bg-card py-2 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
           />
         </div>
         <select
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
-          className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white"
+          className="rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground"
         >
           <option value="">All roles</option>
           <option value="advertiser">Advertiser</option>
@@ -157,20 +157,20 @@ export default function AdminUsersPage() {
       />
 
       {showCreate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <form onSubmit={handleCreate} className="w-full max-w-md rounded-xl border border-white/10 bg-card-dark p-6 space-y-4">
-            <h3 className="text-lg font-bold text-white">Create User</h3>
-            <input required placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white" />
-            <input required type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white" />
-            <input required type="password" placeholder="Password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white" />
-            <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
+          <form onSubmit={handleCreate} className="w-full max-w-md rounded-xl border border-border bg-card p-6 space-y-4">
+            <h3 className="text-lg font-bold text-foreground">Create User</h3>
+            <input required placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground" />
+            <input required type="email" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground" />
+            <input required type="password" placeholder="Password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground" />
+            <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground">
               <option value="advertiser">Advertiser</option>
               <option value="retailer">Retailer</option>
               <option value="admin">Admin</option>
             </select>
             <div className="flex justify-end gap-2">
-              <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 text-sm text-white/70">Cancel</button>
-              <button type="submit" className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-background-dark">Create</button>
+              <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 text-sm text-muted-foreground">Cancel</button>
+              <button type="submit" className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">Create</button>
             </div>
           </form>
         </div>

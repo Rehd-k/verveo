@@ -1,6 +1,7 @@
 'use client';
 
 import { Megaphone, Store } from 'lucide-react';
+import { cn } from '@/lib/cn';
 
 export type SignupRole = 'advertiser' | 'retailer';
 
@@ -31,33 +32,39 @@ const ROLES: {
 
 export function RoleSelect({ value, onChange }: RoleSelectProps) {
   return (
-    <div className="space-y-2">
-      <p className="text-sm font-medium text-white">Account type</p>
-      <div className="grid gap-3 sm:grid-cols-2">
+    <fieldset className="space-y-2">
+      <legend className="text-sm font-medium text-foreground">Account type</legend>
+      <div className="grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label="Account type">
         {ROLES.map((role) => {
           const selected = value === role.value;
           return (
             <button
               key={role.value}
               type="button"
+              role="radio"
+              aria-checked={selected}
               onClick={() => onChange(role.value)}
-              className={`rounded-xl border p-4 text-left transition-all ${
+              className={cn(
+                'min-h-11 rounded-xl border p-4 text-left transition-all',
                 selected
                   ? 'border-primary/50 bg-primary/10 ring-1 ring-primary/30'
-                  : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/[0.07]'
-              }`}
+                  : 'border-border bg-card hover:bg-accent'
+              )}
             >
               <div className="flex items-start gap-3">
                 <div
-                  className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${
-                    selected ? 'bg-primary/20 text-primary' : 'bg-white/10 text-text-secondary'
-                  }`}
+                  className={cn(
+                    'flex size-9 shrink-0 items-center justify-center rounded-lg',
+                    selected
+                      ? 'bg-primary/20 text-primary'
+                      : 'bg-muted text-muted-foreground'
+                  )}
                 >
                   <role.icon className="size-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-white">{role.label}</p>
-                  <p className="mt-1 text-xs leading-relaxed text-text-secondary">
+                  <p className="text-sm font-semibold text-foreground">{role.label}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                     {role.description}
                   </p>
                 </div>
@@ -66,6 +73,6 @@ export function RoleSelect({ value, onChange }: RoleSelectProps) {
           );
         })}
       </div>
-    </div>
+    </fieldset>
   );
 }

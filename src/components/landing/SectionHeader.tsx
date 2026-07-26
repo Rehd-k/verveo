@@ -18,7 +18,7 @@ export default function SectionHeader({
       <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/90">{label}</p>
       <h2 className="mt-3 text-2xl font-semibold sm:text-3xl md:text-4xl">{title}</h2>
       {description && (
-        <p className="mt-4 text-sm text-white/70 sm:text-base">{description}</p>
+        <p className="mt-4 text-sm text-muted-foreground sm:text-base">{description}</p>
       )}
     </div>
   );

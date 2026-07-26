@@ -57,23 +57,23 @@ export default function AdminCampaignsPage() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-bold text-white">Campaigns</h2>
-        <p className="text-sm text-text-secondary">{campaignsTotal} total</p>
+        <h2 className="text-lg font-bold text-foreground">Campaigns</h2>
+        <p className="text-sm text-muted-foreground">{campaignsTotal} total</p>
       </div>
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <div className="relative flex-1 min-w-0 sm:min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" />
+          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search campaigns..."
-            className="w-full rounded-lg border border-white/10 bg-white/5 py-2 pl-10 pr-4 text-sm text-white placeholder:text-text-secondary focus:border-primary focus:outline-none"
+            className="w-full rounded-lg border border-border bg-card py-2 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
           />
         </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white sm:w-auto"
+          className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground sm:w-auto"
         >
           <option value="">All statuses</option>
           {['draft', 'processing', 'printing', 'dispatched', 'live', 'completed'].map((s) => (
@@ -85,7 +85,7 @@ export default function AdminCampaignsPage() {
       {/* Mobile card list */}
       <div className="space-y-3 md:hidden">
         {rows.length === 0 ? (
-          <div className="rounded-xl border border-white/10 bg-card-dark p-8 text-center text-text-secondary">
+          <div className="rounded-xl border border-border bg-card p-8 text-center text-muted-foreground">
             No data
           </div>
         ) : (
@@ -99,29 +99,29 @@ export default function AdminCampaignsPage() {
                 key={id}
                 type="button"
                 onClick={() => router.push(`/admin/campaigns/${id}`)}
-                className="w-full rounded-xl border border-white/10 bg-card-dark p-4 text-left transition-colors hover:border-white/20 hover:bg-white/5"
+                className="w-full rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-border hover:bg-accent"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-semibold text-white truncate">{String(row.title)}</h3>
+                  <h3 className="font-semibold text-foreground truncate">{String(row.title)}</h3>
                   <StatusBadge status={row.status as string} />
                 </div>
-                <p className="mt-1 text-xs text-text-secondary truncate">{owner?.email || '—'}</p>
+                <p className="mt-1 text-xs text-muted-foreground truncate">{owner?.email || '—'}</p>
                 <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
                   <div>
-                    <span className="text-text-secondary">Product</span>
-                    <p className="font-medium text-white">{String(row.productType)}</p>
+                    <span className="text-muted-foreground">Product</span>
+                    <p className="font-medium text-foreground">{String(row.productType)}</p>
                   </div>
                   <div>
-                    <span className="text-text-secondary">Qty</span>
-                    <p className="font-medium text-white">{String(row.quantity)}</p>
+                    <span className="text-muted-foreground">Qty</span>
+                    <p className="font-medium text-foreground">{String(row.quantity)}</p>
                   </div>
                   <div>
-                    <span className="text-text-secondary">Budget</span>
-                    <p className="font-medium text-white">₦{((row.budget as number) || 0).toLocaleString()}</p>
+                    <span className="text-muted-foreground">Budget</span>
+                    <p className="font-medium text-foreground">₦{((row.budget as number) || 0).toLocaleString()}</p>
                   </div>
                   <div>
-                    <span className="text-text-secondary">Scans</span>
-                    <p className="font-medium text-white">{stats?.scans ?? 0}</p>
+                    <span className="text-muted-foreground">Scans</span>
+                    <p className="font-medium text-foreground">{stats?.scans ?? 0}</p>
                   </div>
                 </div>
               </button>

@@ -78,10 +78,10 @@ export default function AdminRetailersPage() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold text-white">Retailers</h2>
-          <p className="text-sm text-text-secondary">{total} total</p>
+          <h2 className="text-lg font-bold text-foreground">Retailers</h2>
+          <p className="text-sm text-muted-foreground">{total} total</p>
         </div>
-        <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-background-dark">
+        <button onClick={() => setShowCreate(true)} className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
           <Plus className="size-4" /> Add Retailer
         </button>
       </div>
@@ -94,8 +94,8 @@ export default function AdminRetailersPage() {
             onClick={() => setStatusFilter(status)}
             className={`rounded-full px-3 py-1.5 text-xs font-semibold capitalize transition ${
               statusFilter === status
-                ? 'bg-primary text-white'
-                : 'border border-white/10 bg-card-dark text-text-secondary hover:text-white'
+                ? 'bg-primary text-primary-foreground'
+                : 'border border-border bg-card text-muted-foreground hover:text-foreground'
             }`}
           >
             {status}
@@ -108,24 +108,24 @@ export default function AdminRetailersPage() {
         onRowClick={(row) => router.push(`/admin/retailers/${row.id}`)}
       />
       {showCreate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <form onSubmit={handleCreate} className="w-full max-w-md rounded-xl border border-white/10 bg-card-dark p-6 space-y-3">
-            <h3 className="text-lg font-bold text-white">Add Retailer</h3>
-            <input required placeholder="User ID" value={form.userId} onChange={(e) => setForm({ ...form, userId: e.target.value })} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white" />
-            <input required placeholder="Business Name" value={form.businessName} onChange={(e) => setForm({ ...form, businessName: e.target.value })} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white" />
-            <input required placeholder="Venue Type" value={form.venueType} onChange={(e) => setForm({ ...form, venueType: e.target.value })} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white" />
-            <input required placeholder="City" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white" />
-            <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
+          <form onSubmit={handleCreate} className="w-full max-w-md rounded-xl border border-border bg-card p-6 space-y-3">
+            <h3 className="text-lg font-bold text-foreground">Add Retailer</h3>
+            <input required placeholder="User ID" value={form.userId} onChange={(e) => setForm({ ...form, userId: e.target.value })} className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground" />
+            <input required placeholder="Business Name" value={form.businessName} onChange={(e) => setForm({ ...form, businessName: e.target.value })} className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground" />
+            <input required placeholder="Venue Type" value={form.venueType} onChange={(e) => setForm({ ...form, venueType: e.target.value })} className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground" />
+            <input required placeholder="City" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground" />
+            <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground">
               <option value="pending">pending</option>
               <option value="active">active</option>
               <option value="suspended">suspended</option>
             </select>
-            <input placeholder="Address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white" />
-            <input type="number" placeholder="Allowance" value={form.allowance} onChange={(e) => setForm({ ...form, allowance: Number(e.target.value) })} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white" />
-            <input type="number" placeholder="Current Stock" value={form.currentStock} onChange={(e) => setForm({ ...form, currentStock: Number(e.target.value) })} className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white" />
+            <input placeholder="Address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground" />
+            <input type="number" placeholder="Allowance" value={form.allowance} onChange={(e) => setForm({ ...form, allowance: Number(e.target.value) })} className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground" />
+            <input type="number" placeholder="Current Stock" value={form.currentStock} onChange={(e) => setForm({ ...form, currentStock: Number(e.target.value) })} className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground" />
             <div className="flex justify-end gap-2 pt-2">
-              <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 text-sm text-white/70">Cancel</button>
-              <button type="submit" className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-background-dark">Create</button>
+              <button type="button" onClick={() => setShowCreate(false)} className="px-4 py-2 text-sm text-muted-foreground">Cancel</button>
+              <button type="submit" className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">Create</button>
             </div>
           </form>
         </div>

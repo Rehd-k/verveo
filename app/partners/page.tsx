@@ -9,7 +9,7 @@ import PartnersFooter from '@/components/partners/PartnersFooter';
 
 export default function PartnersPage() {
   return (
-    <main className="min-h-screen bg-background-dark text-white">
+    <main className="min-h-screen bg-background text-foreground">
       <PartnersNav />
       <PartnersHero />
       <PartnerBenefits />

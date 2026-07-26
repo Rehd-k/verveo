@@ -93,7 +93,7 @@ function SignupForm() {
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
-          <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-400">
+          <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
             {error}
           </div>
         )}
@@ -158,14 +158,14 @@ function SignupForm() {
           error={fieldErrors.confirmPassword}
         />
 
-        <p className="text-xs leading-relaxed text-text-secondary">
+        <p className="text-xs leading-relaxed text-muted-foreground">
           By creating an account, you agree to use Verveo for lawful advertising and retail partnerships.
         </p>
 
         <button
           type="submit"
           disabled={loading}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? (
             <>
@@ -178,7 +178,7 @@ function SignupForm() {
         </button>
       </form>
 
-      <p className="mt-8 text-center text-sm text-text-secondary">
+      <p className="mt-8 text-center text-sm text-muted-foreground">
         Already have an account?{' '}
         <Link href={loginHref} className="font-medium text-primary hover:underline">
           Sign in
@@ -192,7 +192,7 @@ export default function Signup() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-background-dark">
+        <div className="flex min-h-screen items-center justify-center bg-background">
           <Loader2 className="size-8 animate-spin text-primary" />
         </div>
       }

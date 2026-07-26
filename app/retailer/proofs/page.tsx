@@ -58,7 +58,7 @@ export default function RetailerProofsPage() {
         {canUpload ? (
           <PhotoUploader campaigns={campaignOptions} onUploaded={() => fetchProofs()} />
         ) : (
-          <div className="rounded-2xl border border-white/10 bg-card-dark/80 p-6 text-sm text-text-secondary">
+          <div className="rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">
             Proof uploads will unlock once your partner account is active.
           </div>
         )}
@@ -72,8 +72,8 @@ export default function RetailerProofsPage() {
                 onClick={() => setFilter(item.value)}
                 className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                   filter === item.value
-                    ? 'bg-primary text-white'
-                    : 'border border-white/10 bg-card-dark text-text-secondary hover:text-white'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'border border-border bg-card text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {item.label}
@@ -86,7 +86,7 @@ export default function RetailerProofsPage() {
               <Loader2 className="size-8 animate-spin text-primary" />
             </div>
           ) : filtered.length === 0 ? (
-            <div className="rounded-2xl border border-white/10 bg-card-dark/80 p-8 text-center text-sm text-text-secondary">
+            <div className="rounded-2xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
               No proofs in this category yet.
             </div>
           ) : (

@@ -69,8 +69,8 @@ function RetailerLayoutInner({ children }: { children: React.ReactNode }) {
 
   if (!initialized || !user || checkingProfile) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background-dark">
-        <Loader2 className="size-8 animate-spin text-primary" />
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="size-8 animate-spin text-primary" aria-label="Loading" />
       </div>
     );
   }
@@ -79,7 +79,7 @@ function RetailerLayoutInner({ children }: { children: React.ReactNode }) {
   const activeProfile = profile || localProfile;
 
   return (
-    <section className="min-h-screen bg-background-dark text-white">
+    <section className="min-h-screen bg-background text-foreground">
       {!isOnboarding && (
         <RetailerSidebar
           mobileOpen={mobileOpen}
@@ -87,7 +87,7 @@ function RetailerLayoutInner({ children }: { children: React.ReactNode }) {
           profile={activeProfile}
         />
       )}
-      <main className={isOnboarding ? '' : 'md:pl-64'}>{children}</main>
+      <main className={isOnboarding ? 'min-w-0' : 'min-w-0 md:pl-64'}>{children}</main>
     </section>
   );
 }

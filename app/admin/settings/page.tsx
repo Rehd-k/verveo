@@ -39,28 +39,28 @@ export default function AdminSettingsPage() {
     }
   };
 
-  if (!settings) return <div className="text-text-secondary">Loading...</div>;
+  if (!settings) return <div className="text-muted-foreground">Loading...</div>;
 
   return (
     <div className="space-y-6 max-w-2xl">
-      <h2 className="text-lg font-bold text-white">Platform Settings</h2>
+      <h2 className="text-lg font-bold text-foreground">Platform Settings</h2>
 
-      <div className="rounded-xl border border-white/10 bg-card-dark p-5 space-y-4">
-        <h3 className="font-semibold text-white">Product Pricing (₦ per unit)</h3>
+      <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+        <h3 className="font-semibold text-foreground">Product Pricing (₦ per unit)</h3>
         {(['cup', 'box', 'bag', 'pizza-box'] as const).map((key) => (
           <div key={key} className="flex items-center justify-between">
-            <label className="text-sm capitalize text-text-secondary">{key}</label>
+            <label className="text-sm capitalize text-muted-foreground">{key}</label>
             <input
               type="number"
               value={pricing[key]}
               onChange={(e) => setPricing({ ...pricing, [key]: Number(e.target.value) })}
-              className="w-32 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white text-right"
+              className="w-32 rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground text-right"
             />
           </div>
         ))}
       </div>
 
-      <div className="rounded-xl border border-white/10 bg-card-dark p-5">
+      <div className="rounded-xl border border-border bg-card p-5">
         <label className="flex items-center gap-3 cursor-pointer">
           <input
             type="checkbox"
@@ -69,22 +69,22 @@ export default function AdminSettingsPage() {
             className="size-4 rounded"
           />
           <div>
-            <p className="font-medium text-white">Maintenance Mode</p>
-            <p className="text-xs text-text-secondary">Blocks new campaign creation for advertisers</p>
+            <p className="font-medium text-foreground">Maintenance Mode</p>
+            <p className="text-xs text-muted-foreground">Blocks new campaign creation for advertisers</p>
           </div>
         </label>
       </div>
 
-      <div className="rounded-xl border border-white/10 bg-card-dark p-5 space-y-2 text-sm">
-        <h3 className="font-semibold text-white">Environment (read-only)</h3>
-        <div className="flex justify-between"><span className="text-text-secondary">Paystack</span><span>{env.paystackConfigured ? 'Configured' : 'Not configured'}</span></div>
-        <div className="flex justify-between"><span className="text-text-secondary">Flutterwave</span><span>{env.flutterwaveConfigured ? 'Configured' : 'Not configured'}</span></div>
-        <div className="flex justify-between"><span className="text-text-secondary">Bank transfer</span><span>{env.bankTransferConfigured ? 'Configured' : 'Not configured'}</span></div>
-        <div className="flex justify-between"><span className="text-text-secondary">Mapbox</span><span>{env.mapboxConfigured ? 'Configured' : 'Not configured'}</span></div>
-        <div className="flex justify-between"><span className="text-text-secondary">App URL</span><span className="truncate max-w-xs">{String(env.appUrl || '—')}</span></div>
+      <div className="rounded-xl border border-border bg-card p-5 space-y-2 text-sm">
+        <h3 className="font-semibold text-foreground">Environment (read-only)</h3>
+        <div className="flex justify-between"><span className="text-muted-foreground">Paystack</span><span>{env.paystackConfigured ? 'Configured' : 'Not configured'}</span></div>
+        <div className="flex justify-between"><span className="text-muted-foreground">Flutterwave</span><span>{env.flutterwaveConfigured ? 'Configured' : 'Not configured'}</span></div>
+        <div className="flex justify-between"><span className="text-muted-foreground">Bank transfer</span><span>{env.bankTransferConfigured ? 'Configured' : 'Not configured'}</span></div>
+        <div className="flex justify-between"><span className="text-muted-foreground">Mapbox</span><span>{env.mapboxConfigured ? 'Configured' : 'Not configured'}</span></div>
+        <div className="flex justify-between"><span className="text-muted-foreground">App URL</span><span className="truncate max-w-xs">{String(env.appUrl || '—')}</span></div>
       </div>
 
-      <button onClick={save} className="rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-background-dark hover:brightness-110">
+      <button onClick={save} className="rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:brightness-110">
         Save Settings
       </button>
     </div>

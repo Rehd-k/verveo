@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import type { CampaignAnalytics } from '@/lib/analytics';
 import { NIGERIA_CENTER } from '@/hooks/useMapUserLocation';
+import { useChartColors } from '@/hooks/useChartColors';
 
 if (process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
   mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -58,6 +59,7 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const chartColors = useChartColors();
 
   useEffect(() => {
     if (!user?.id) return;
@@ -162,22 +164,20 @@ export default function AnalyticsPage() {
   const peakHour = analytics?.peakHour;
 
   return (
-    <section className="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-100 min-h-screen flex flex-col overflow-hidden relative">
-      <div className="h-18" />
-
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full flex flex-col md:flex-row">
-          <main className="flex-1 flex flex-col h-full overflow-y-auto p-6 gap-6 relative no-scrollbar">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <h1 className="text-2xl font-bold text-white">Campaign Analytics</h1>
-                <p className="text-sm text-gray-400">Track scans, users, and conversion in real time</p>
+    <section className="relative flex min-h-0 flex-col overflow-hidden font-display text-foreground">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <div className="flex h-full min-w-0 flex-col md:flex-row">
+          <main className="relative flex h-full min-w-0 flex-1 flex-col gap-6 overflow-y-auto no-scrollbar">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0">
+                <h1 className="text-2xl font-bold text-foreground">Campaign Analytics</h1>
+                <p className="text-sm text-muted-foreground">Track scans, users, and conversion in real time</p>
               </div>
               <div className="flex flex-wrap gap-3">
                 <select
                   value={selected || ''}
                   onChange={(e) => setSelected(e.target.value)}
-                  className="bg-gray-100 dark:bg-background-dark text-gray-700 dark:text-gray-300 text-sm border border-white/10 rounded-lg px-3 py-2 focus:ring-1 focus:ring-primary cursor-pointer min-w-48"
+                  className="min-w-0 max-w-full cursor-pointer rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:ring-1 focus:ring-ring sm:min-w-48"
                   disabled={campaigns.length === 0}
                 >
                   {campaigns.length === 0 ? (
@@ -193,7 +193,7 @@ export default function AnalyticsPage() {
                 <select
                   value={range}
                   onChange={(e) => setRange(e.target.value as AnalyticsRange)}
-                  className="bg-gray-100 dark:bg-background-dark text-gray-700 dark:text-gray-300 text-sm border border-white/10 rounded-lg px-3 py-2 focus:ring-1 focus:ring-primary cursor-pointer"
+                  className="cursor-pointer rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground focus:ring-1 focus:ring-ring"
                 >
                   <option value="24h">Last 24 Hours</option>
                   <option value="7d">Last 7 Days</option>
@@ -203,32 +203,32 @@ export default function AnalyticsPage() {
             </div>
 
             {loading && !analytics ? (
-              <div className="flex items-center justify-center py-24 text-gray-400">Loading analytics...</div>
+              <div className="flex items-center justify-center py-24 text-muted-foreground">Loading analytics...</div>
             ) : !selected || !summary ? (
-              <div className="flex items-center justify-center py-24 text-gray-400">
+              <div className="flex items-center justify-center py-24 text-muted-foreground">
                 {campaigns.length === 0
                   ? 'Create a campaign to start tracking scans.'
                   : 'No analytics data available yet.'}
               </div>
             ) : (
               <>
-                <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="flex flex-col gap-1 rounded-xl p-6 bg-card-dark border border-white/5 shadow-sm group hover:border-primary/50 transition-all duration-300">
+                <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
+                  <div className="group flex flex-col gap-1 rounded-xl border border-border bg-card p-5 shadow-sm transition-all duration-300 hover:border-primary/50 sm:p-6">
                     <div className="flex items-center justify-between">
-                      <p className="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider">
+                      <p className="text-muted-foreground text-sm font-medium uppercase tracking-wider">
                         Total Scans
                       </p>
                       <BarChart3 size={20} className="text-primary/50 group-hover:text-primary transition-colors" />
                     </div>
                     <div className="flex items-baseline gap-2 mt-2">
-                      <p className="text-gray-900 dark:text-white text-4xl font-extrabold tracking-tight">
+                      <p className="text-foreground text-4xl font-extrabold tracking-tight">
                         {formatNumber(summary.totalScans)}
                       </p>
                       <span
                         className={`flex items-center text-sm font-bold px-1.5 py-0.5 rounded ${
                           summary.changes.totalScans >= 0
-                            ? 'text-green-500 bg-green-500/10'
-                            : 'text-red-500 bg-red-500/10'
+                            ? 'text-success bg-success/10'
+                            : 'text-destructive bg-red-500/10'
                         }`}
                       >
                         {summary.changes.totalScans >= 0 ? (
@@ -239,25 +239,25 @@ export default function AnalyticsPage() {
                         {formatDelta(summary.changes.totalScans)}
                       </span>
                     </div>
-                    <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">Vs. previous period</p>
+                    <p className="text-muted-foreground text-xs mt-1">Vs. previous period</p>
                   </div>
 
-                  <div className="flex flex-col gap-1 rounded-xl p-6 bg-card-dark border border-white/5 shadow-sm group hover:border-primary/50 transition-all duration-300">
+                  <div className="flex flex-col gap-1 rounded-xl p-6 bg-card border border-border shadow-sm group hover:border-primary/50 transition-all duration-300">
                     <div className="flex items-center justify-between">
-                      <p className="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider">
+                      <p className="text-muted-foreground text-sm font-medium uppercase tracking-wider">
                         Unique Users
                       </p>
                       <Users size={20} className="text-primary/50 group-hover:text-primary transition-colors" />
                     </div>
                     <div className="flex items-baseline gap-2 mt-2">
-                      <p className="text-gray-900 dark:text-white text-4xl font-extrabold tracking-tight">
+                      <p className="text-foreground text-4xl font-extrabold tracking-tight">
                         {formatNumber(summary.uniqueUsers)}
                       </p>
                       <span
                         className={`flex items-center text-sm font-bold px-1.5 py-0.5 rounded ${
                           summary.changes.uniqueUsers >= 0
-                            ? 'text-green-500 bg-green-500/10'
-                            : 'text-red-500 bg-red-500/10'
+                            ? 'text-success bg-success/10'
+                            : 'text-destructive bg-red-500/10'
                         }`}
                       >
                         {summary.changes.uniqueUsers >= 0 ? (
@@ -268,27 +268,27 @@ export default function AnalyticsPage() {
                         {formatDelta(summary.changes.uniqueUsers)}
                       </span>
                     </div>
-                    <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">
+                    <p className="text-muted-foreground text-xs mt-1">
                       ~{summary.scansPerUser} scans per user
                     </p>
                   </div>
 
-                  <div className="flex flex-col gap-1 rounded-xl p-6 bg-card-dark border border-white/5 shadow-sm group hover:border-primary/50 transition-all duration-300">
+                  <div className="flex flex-col gap-1 rounded-xl p-6 bg-card border border-border shadow-sm group hover:border-primary/50 transition-all duration-300">
                     <div className="flex items-center justify-between">
-                      <p className="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wider">
+                      <p className="text-muted-foreground text-sm font-medium uppercase tracking-wider">
                         Conversion Rate
                       </p>
                       <ShoppingCart size={20} className="text-primary/50 group-hover:text-primary transition-colors" />
                     </div>
                     <div className="flex items-baseline gap-2 mt-2">
-                      <p className="text-gray-900 dark:text-white text-4xl font-extrabold tracking-tight">
+                      <p className="text-foreground text-4xl font-extrabold tracking-tight">
                         {summary.conversionRate}%
                       </p>
                       <span
                         className={`flex items-center text-sm font-bold px-1.5 py-0.5 rounded ${
                           summary.changes.conversionRate >= 0
-                            ? 'text-green-500 bg-green-500/10'
-                            : 'text-red-500 bg-red-500/10'
+                            ? 'text-success bg-success/10'
+                            : 'text-destructive bg-red-500/10'
                         }`}
                       >
                         {summary.changes.conversionRate >= 0 ? (
@@ -300,48 +300,49 @@ export default function AnalyticsPage() {
                         {summary.changes.conversionRate}%
                       </span>
                     </div>
-                    <p className="text-gray-400 dark:text-gray-500 text-xs mt-1">
+                    <p className="text-muted-foreground text-xs mt-1">
                       {formatNumber(summary.totalScans)} scans / {formatNumber(summary.impressions)} impressions
                     </p>
                   </div>
                 </section>
 
                 <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-100">
-                  <div className="lg:col-span-2 rounded-xl bg-card-dark border border-white/5 p-6 flex flex-col shadow-sm min-h-80">
+                  <div className="lg:col-span-2 rounded-xl bg-card border border-border p-6 flex flex-col shadow-sm min-h-80">
                     <div className="flex justify-between items-start mb-6">
                       <div>
-                        <h3 className="text-gray-900 dark:text-white text-lg font-bold">Scan Volume</h3>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">
+                        <h3 className="text-foreground text-lg font-bold">Scan Volume</h3>
+                        <p className="text-muted-foreground text-sm">
                           Traffic over the selected period
                         </p>
                       </div>
                     </div>
                     <div className="flex-1 w-full min-h-64">
                       {chartData.length === 0 ? (
-                        <div className="flex items-center justify-center h-full text-gray-500">
+                        <div className="flex items-center justify-center h-full text-muted-foreground">
                           No scans in this period yet
                         </div>
                       ) : (
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={chartData}>
-                            <CartesianGrid strokeDasharray="4 4" stroke="#374151" />
-                            <XAxis dataKey="label" tick={{ fill: '#9CA3AF', fontSize: 12 }} />
-                            <YAxis tick={{ fill: '#9CA3AF', fontSize: 12 }} allowDecimals={false} />
+                            <CartesianGrid strokeDasharray="4 4" stroke={chartColors.border} />
+                            <XAxis dataKey="label" tick={{ fill: chartColors.muted, fontSize: 12 }} />
+                            <YAxis tick={{ fill: chartColors.muted, fontSize: 12 }} allowDecimals={false} />
                             <Tooltip
                               contentStyle={{
-                                backgroundColor: '#1f2937',
-                                border: '1px solid rgba(242,208,13,0.3)',
+                                backgroundColor: chartColors.card,
+                                border: `1px solid ${chartColors.border}`,
                                 borderRadius: '8px',
+                                color: chartColors.foreground,
                               }}
-                              labelStyle={{ color: '#9CA3AF' }}
+                              labelStyle={{ color: chartColors.muted }}
                             />
                             <Line
                               type="monotone"
                               dataKey="count"
-                              stroke="#f2d00d"
+                              stroke={chartColors.chart4}
                               strokeWidth={2}
                               dot={false}
-                              activeDot={{ r: 4, fill: '#fff' }}
+                              activeDot={{ r: 4, fill: chartColors.foreground }}
                             />
                           </LineChart>
                         </ResponsiveContainer>
@@ -349,22 +350,22 @@ export default function AnalyticsPage() {
                     </div>
                   </div>
 
-                  <div className="bg-card-dark border-r border-white/5 px-2 py-6 flex flex-col shadow-sm rounded-md">
+                  <div className="bg-card border-r border-border px-2 py-6 flex flex-col shadow-sm rounded-md">
                     <div className="mb-6 px-4">
-                      <h3 className="text-gray-900 dark:text-white text-lg font-bold">Top Districts</h3>
-                      <p className="text-gray-500 dark:text-gray-400 text-sm">Scan density by location</p>
+                      <h3 className="text-foreground text-lg font-bold">Top Districts</h3>
+                      <p className="text-muted-foreground text-sm">Scan density by location</p>
                     </div>
                     <div className="flex-1 flex flex-col justify-center gap-5 px-4">
                       {(analytics?.topLocations || []).length === 0 ? (
-                        <p className="text-sm text-gray-500">No location data yet</p>
+                        <p className="text-sm text-muted-foreground">No location data yet</p>
                       ) : (
                         analytics?.topLocations.map((loc) => (
                           <div key={loc.name} className="group">
                             <div className="flex justify-between mb-2 text-sm">
-                              <span className="font-medium text-gray-300">{loc.name}</span>
+                              <span className="font-medium text-muted-foreground">{loc.name}</span>
                               <span className="font-bold text-primary">{formatNumber(loc.count)}</span>
                             </div>
-                            <div className="w-full bg-gray-800 rounded-full h-2">
+                            <div className="w-full bg-muted rounded-full h-2">
                               <div
                                 className="bg-primary h-2 rounded-full"
                                 style={{ width: `${Math.max(loc.percent, 4)}%` }}
@@ -377,37 +378,37 @@ export default function AnalyticsPage() {
                   </div>
                 </section>
 
-                <section className="rounded-xl bg-card-dark border border-white/5 overflow-hidden min-h-64">
-                  <div className="p-4 border-b border-white/5">
-                    <h3 className="text-white font-bold">Scan Locations</h3>
-                    <p className="text-sm text-gray-400">Geographic distribution of QR scans</p>
+                <section className="rounded-xl bg-card border border-border overflow-hidden min-h-64">
+                  <div className="p-4 border-b border-border">
+                    <h3 className="text-foreground font-bold">Scan Locations</h3>
+                    <p className="text-sm text-muted-foreground">Geographic distribution of QR scans</p>
                   </div>
                   <div ref={mapContainer} className="h-64 w-full" />
                 </section>
 
                 <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="rounded-xl p-5 bg-card-dark border-r border-white/5 shadow-sm flex items-center justify-between">
+                  <div className="rounded-xl p-5 bg-card border-r border-border shadow-sm flex items-center justify-between">
                     <div>
-                      <p className="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase mb-1">
+                      <p className="text-muted-foreground text-sm font-medium uppercase mb-1">
                         Top Device OS
                       </p>
-                      <h4 className="text-2xl font-bold text-white">
+                      <h4 className="text-2xl font-bold text-foreground">
                         {topDevice ? topDevice.os : '—'}
                       </h4>
                       <p className="text-primary text-sm font-medium mt-1">
                         {topDevice ? `${topDevice.percent}% of total scans` : 'No device data yet'}
                       </p>
                     </div>
-                    <Smartphone size={48} className="text-gray-400" />
+                    <Smartphone size={48} className="text-muted-foreground" />
                   </div>
 
-                  <div className="rounded-xl p-5 bg-card-dark border border-white/5 shadow-sm flex items-center justify-between">
+                  <div className="rounded-xl p-5 bg-card border border-border shadow-sm flex items-center justify-between">
                     <div>
-                      <p className="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase mb-1">
+                      <p className="text-muted-foreground text-sm font-medium uppercase mb-1">
                         Peak Hour
                       </p>
-                      <h4 className="text-2xl font-bold text-white">{peakHour?.label || '—'}</h4>
-                      <p className="text-gray-400 text-sm font-medium mt-1">
+                      <h4 className="text-2xl font-bold text-foreground">{peakHour?.label || '—'}</h4>
+                      <p className="text-muted-foreground text-sm font-medium mt-1">
                         {peakHour?.count
                           ? `${formatNumber(peakHour.count)} scans at peak`
                           : 'No scan data yet'}
@@ -420,27 +421,27 @@ export default function AnalyticsPage() {
             )}
           </main>
 
-          <aside className="w-full md:w-96 border-l border-gray-200 dark:border-border-dark bg-gray-50 dark:bg-background-dark flex flex-col h-125 md:h-auto">
-            <div className="p-5 border-b border-gray-500 dark:border-border-dark flex justify-between items-center bg-gray-800 dark:bg-surface-dark">
-              <h3 className="font-bold text-gray-900 dark:text-white">Recent Activity</h3>
+          <aside className="flex h-80 w-full shrink-0 flex-col border-t border-border bg-card md:h-auto md:w-80 md:border-l md:border-t-0 lg:w-96">
+            <div className="flex items-center justify-between border-b border-border bg-card p-5">
+              <h3 className="font-bold text-foreground">Recent Activity</h3>
               <div className="flex items-center gap-1.5">
-                <span className="block w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-xs font-mono text-gray-500 dark:text-gray-400">LIVE</span>
+                <span className="block size-2 animate-pulse rounded-full bg-success" />
+                <span className="font-mono text-xs text-muted-foreground">LIVE</span>
               </div>
             </div>
-            <div className="flex-1 overflow-y-auto relative no-scrollbar p-0">
+            <div className="relative flex-1 overflow-y-auto p-0 no-scrollbar">
               <div className="flex flex-col">
                 {(analytics?.recentScans || []).length === 0 ? (
-                  <p className="p-5 text-sm text-gray-500">No scans recorded yet</p>
+                  <p className="p-5 text-sm text-muted-foreground">No scans recorded yet</p>
                 ) : (
                   analytics?.recentScans.map((item, idx) => (
                     <div
                       key={`${item.createdAt}-${idx}`}
-                      className="relative px-5 py-4 border-b border-gray-200 dark:border-border-dark/50 hover:bg-white/5 transition-colors group"
+                      className="group relative border-b border-border px-5 py-4 transition-colors hover:bg-accent"
                     >
-                      <div className="absolute left-0 top-0 bottom-0 w-0.75 bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="absolute bottom-0 left-0 top-0 w-0.75 bg-primary opacity-0 transition-opacity group-hover:opacity-100" />
                       <div className="flex items-start gap-3">
-                        <div className="mt-1 p-2 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 group-hover:bg-primary group-hover:text-black transition-colors">
+                        <div className="mt-1 rounded-full bg-secondary p-2 text-muted-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                           {item.device.toLowerCase().includes('ipad') ||
                           item.device.toLowerCase().includes('tablet') ? (
                             <Monitor size={18} />
@@ -448,14 +449,16 @@ export default function AnalyticsPage() {
                             <Smartphone size={18} />
                           )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start">
-                            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="truncate text-sm font-semibold text-foreground">
                               {item.device}
                             </p>
-                            <span className="text-xs font-mono text-gray-400">{item.timeAgo}</span>
+                            <span className="shrink-0 font-mono text-xs text-muted-foreground">
+                              {item.timeAgo}
+                            </span>
                           </div>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 flex items-center gap-1">
+                          <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
                             <MapPin size={14} />
                             {item.location}
                           </p>
@@ -465,13 +468,13 @@ export default function AnalyticsPage() {
                   ))
                 )}
               </div>
-              <div className="absolute bottom-0 left-0 right-0 h-24 bg-linear-to-t from-background-light dark:from-background-dark to-transparent pointer-events-none" />
+              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 bg-linear-to-t from-card to-transparent" />
             </div>
-            <div className="p-4 border-t border-gray-200 dark:border-border-dark text-center">
+            <div className="border-t border-border p-4 text-center">
               <button
                 type="button"
                 onClick={fetchAnalytics}
-                className="text-sm text-primary hover:text-white transition-colors font-semibold flex items-center justify-center gap-2 w-full py-2 rounded hover:bg-surface-dark"
+                className="flex w-full items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold text-primary transition-colors hover:bg-accent hover:text-foreground"
               >
                 Refresh
                 <Activity size={16} />

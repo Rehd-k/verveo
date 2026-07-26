@@ -43,11 +43,11 @@ export default function AdminProofsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-white">Proof of Placement</h2>
+        <h2 className="text-lg font-bold text-foreground">Proof of Placement</h2>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white"
+          className="rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground"
         >
           <option value="pending">Pending</option>
           <option value="approved">Approved</option>
@@ -56,7 +56,7 @@ export default function AdminProofsPage() {
         </select>
       </div>
       {proofs.length === 0 ? (
-        <div className="rounded-xl border border-white/10 bg-card-dark p-8 text-center text-text-secondary">
+        <div className="rounded-xl border border-border bg-card p-8 text-center text-muted-foreground">
           No proofs in this queue
         </div>
       ) : (

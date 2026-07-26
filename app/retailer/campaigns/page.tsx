@@ -34,12 +34,12 @@ export default function RetailerCampaignsPage() {
 
       <div className="space-y-6 p-4 md:p-8">
         <div className="relative max-w-md">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-secondary" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search campaigns..."
-            className="w-full rounded-xl border border-white/10 bg-card-dark py-2.5 pl-10 pr-4 text-sm text-white outline-none focus:border-primary/70"
+            className="w-full rounded-xl border border-border bg-card py-2.5 pl-10 pr-4 text-sm text-foreground outline-none focus:border-primary/70"
           />
         </div>
 
@@ -48,9 +48,9 @@ export default function RetailerCampaignsPage() {
             <Loader2 className="size-8 animate-spin text-primary" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="rounded-2xl border border-white/10 bg-card-dark/80 p-8 text-center">
-            <p className="font-semibold text-white">No matched campaigns yet</p>
-            <p className="mt-2 text-sm text-text-secondary">
+          <div className="rounded-2xl border border-border bg-card p-8 text-center">
+            <p className="font-semibold text-foreground">No matched campaigns yet</p>
+            <p className="mt-2 text-sm text-muted-foreground">
               Campaigns appear here when advertisers target your city and venue type with live or dispatched status.
             </p>
           </div>

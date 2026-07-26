@@ -52,13 +52,13 @@ export default function RetailerStockPage() {
           {canOrder ? (
             <OrderForm onCreated={() => fetchOrders()} />
           ) : (
-            <div className="rounded-2xl border border-white/10 bg-card-dark/80 p-6 text-sm text-text-secondary">
+            <div className="rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">
               Stock requests will unlock once your partner account is active.
             </div>
           )}
 
           <div>
-            <h2 className="mb-3 text-sm font-semibold text-white">Order history</h2>
+            <h2 className="mb-3 text-sm font-semibold text-foreground">Order history</h2>
             <OrderHistoryTable orders={orders} />
           </div>
         </div>

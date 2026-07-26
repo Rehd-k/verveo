@@ -89,24 +89,24 @@ export default function HeroAnimations() {
     <div ref={containerRef} className="sticky top-24 h-[60vh] md:h-[72vh] flex items-center">
       <div className="mx-auto w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 items-center gap-6">
         <div className="text-left hidden md:block px-6">
-          <div className={`mb-6 ${active === 0 ? 'text-primary' : 'text-white/60'}`}>
+          <div className={`mb-6 ${active === 0 ? 'text-primary' : 'text-muted-foreground'}`}>
             <div className="uppercase font-black tracking-widest">01</div>
             <h3 className="text-2xl font-bold mt-2">Select a Zone</h3>
-            <p className="text-white/60 mt-2">Highlight a district on a 3D map and target your audience precisely.</p>
+            <p className="text-muted-foreground mt-2">Highlight a district on a 3D map and target your audience precisely.</p>
           </div>
-          <div className={`mb-6 ${active === 1 ? 'text-primary' : 'text-white/60'}`}>
+          <div className={`mb-6 ${active === 1 ? 'text-primary' : 'text-muted-foreground'}`}>
             <div className="uppercase font-black tracking-widest">02</div>
             <h3 className="text-2xl font-bold mt-2">Design the Box</h3>
-            <p className="text-white/60 mt-2">Watch your plain packaging morph into premium branded touchpoints.</p>
+            <p className="text-muted-foreground mt-2">Watch your plain packaging morph into premium branded touchpoints.</p>
           </div>
-          <div className={`${active === 2 ? 'text-primary' : 'text-white/60'}`}>
+          <div className={`${active === 2 ? 'text-primary' : 'text-muted-foreground'}`}>
             <div className="uppercase font-black tracking-widest">03</div>
             <h3 className="text-2xl font-bold mt-2">Track Results</h3>
-            <p className="text-white/60 mt-2">A smartphone scan updates your dashboard in real time — instant insights.</p>
+            <p className="text-muted-foreground mt-2">A smartphone scan updates your dashboard in real time — instant insights.</p>
           </div>
         </div>
 
-        <div className="col-span-1 md:col-span-2 p-4 rounded-2xl bg-[#0b0b0d] border border-white/5 shadow-xl">
+        <div className="col-span-1 md:col-span-2 p-4 rounded-2xl bg-[#0b0b0d] border border-border shadow-xl">
           <div className="w-full h-80 md:h-[52vh]">
             <Canvas camera={{ position: [0, 0.6, 4] }}>
               <ambientLight intensity={0.8} />

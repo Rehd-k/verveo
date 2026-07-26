@@ -6,6 +6,7 @@ import { UploadPanel } from '@/components/features/studio/UploadPanel';
 import { useCampaignStore } from '@/store/useCampaignStore';
 import { designConfigToCampaignDesign, type ProductSlug } from '@/lib/designStudio';
 import { ArrowLeft, BadgeCheck, ChevronDown, Info, Settings2, X } from 'lucide-react';
+import { cn } from '@/lib/cn';
 
 interface DesignStepProps {
   data: {
@@ -24,15 +25,15 @@ function DesignStatsPanel({ compact = false }: { compact?: boolean }) {
   const { designConfig, selectedProduct } = useCampaignStore();
 
   return (
-    <div className={`space-y-2 ${compact ? 'text-[11px]' : ''}`}>
-      <h3 className="text-sm font-bold text-white flex items-center gap-2">
-        <Info className="size-4" />
+    <div className={cn('space-y-2', compact && 'text-[11px]')}>
+      <h3 className="flex items-center gap-2 text-sm font-bold text-foreground">
+        <Info className="size-4 shrink-0" />
         Design Stats
       </h3>
-      <div className="text-xs text-text-dim space-y-1">
+      <div className="space-y-1.5 text-xs text-muted-foreground">
         <div className="flex justify-between gap-2">
           <span>Product:</span>
-          <span className="text-primary font-medium truncate">
+          <span className="truncate font-medium text-primary">
             {(selectedProduct?.name ?? designConfig.productType).toUpperCase()}
           </span>
         </div>
@@ -40,41 +41,50 @@ function DesignStatsPanel({ compact = false }: { compact?: boolean }) {
           <span>Color:</span>
           <div className="flex items-center gap-2">
             <div
-              className="w-4 h-4 rounded border border-border-dark shrink-0"
+              className="size-4 shrink-0 rounded border border-border"
               style={{ backgroundColor: designConfig.color }}
             />
-            <span className="text-primary font-medium truncate">{designConfig.color}</span>
+            <span className="truncate font-medium text-primary">{designConfig.color}</span>
           </div>
         </div>
-        <div className="flex justify-between items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
           <span>Texture:</span>
-          <span className="text-primary font-medium">
+          <span className="font-medium text-primary">
             {designConfig.textureUrl ? 'Applied' : 'None'}
           </span>
         </div>
         {designConfig.textureUrl && (
-          <div className="mt-2 rounded border border-border-dark overflow-hidden">
+          <div className="mt-2 overflow-hidden rounded border border-border">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={designConfig.textureUrl}
               alt="Texture preview"
-              className="w-full h-16 object-cover"
+              className="h-16 w-full object-cover"
             />
           </div>
         )}
         <div className="flex justify-between">
           <span>Metalness:</span>
-          <span className="text-primary font-medium">{(designConfig.metalness * 100).toFixed(0)}%</span>
+          <span className="font-medium text-primary">
+            {(designConfig.metalness * 100).toFixed(0)}%
+          </span>
         </div>
         <div className="flex justify-between">
           <span>Roughness:</span>
-          <span className="text-primary font-medium">{(designConfig.roughness * 100).toFixed(0)}%</span>
+          <span className="font-medium text-primary">
+            {(designConfig.roughness * 100).toFixed(0)}%
+          </span>
         </div>
       </div>
     </div>
   );
 }
 
-export default function DesignStudioPage({ prevStage, nextStage, updateData }: DesignStepProps) {
+export default function DesignStudioPage({
+  prevStage,
+  nextStage,
+  updateData,
+}: DesignStepProps) {
   const { designConfig } = useCampaignStore();
   const [controlsOpen, setControlsOpen] = useState(false);
   const [statsOpen, setStatsOpen] = useState(false);
@@ -88,105 +98,124 @@ export default function DesignStudioPage({ prevStage, nextStage, updateData }: D
   };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-[calc(100dvh-3.5rem)] lg:h-[91.5vh] w-full bg-[#0f0d0a]">
+    <div
+      className={cn(
+        // Break out of AppShell padding for a full-bleed studio
+        '-m-4 flex min-h-0 flex-col bg-background md:-m-6',
+        'h-[calc(100dvh-3.25rem)] lg:h-[calc(100dvh-3.25rem)] lg:flex-row'
+      )}
+    >
       {/* Desktop side panel */}
-      <div className="hidden lg:flex w-96 border-r overflow-hidden flex-col shrink-0">
+      <aside className="hidden h-full w-96 shrink-0 flex-col overflow-hidden border-r border-border lg:flex">
         <UploadPanel name={designConfig.productType} />
-      </div>
+      </aside>
 
-      <main className="flex-1 relative overflow-hidden min-h-[50vh]">
-        <PackagingCanvas />
+      <main className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+        {/* 3D viewport — fills remaining space above mobile action bar */}
+        <div className="relative min-h-0 flex-1 pb-19 lg:pb-0">
+          <PackagingCanvas mobileChrome />
 
-        {/* Mobile stats toggle */}
-        <button
-          type="button"
-          onClick={() => setStatsOpen((prev) => !prev)}
-          className="lg:hidden absolute top-3 right-3 z-20 flex items-center gap-1 rounded-lg bg-surface-dark/90 backdrop-blur border border-border-dark px-3 py-2 text-xs font-medium text-white"
-        >
-          <Info className="size-3.5" />
-          Stats
-        </button>
+          {/* Mobile stats toggle */}
+          <button
+            type="button"
+            onClick={() => setStatsOpen((prev) => !prev)}
+            className="absolute right-3 top-3 z-20 flex min-h-10 items-center gap-1.5 rounded-lg border border-border bg-popover px-3 py-2 text-xs font-medium text-foreground shadow-lg lg:hidden"
+            aria-expanded={statsOpen}
+          >
+            <Info className="size-3.5" />
+            Stats
+          </button>
 
-        {/* Stats overlay */}
-        <div
-          className={`absolute z-20 bg-surface-dark/90 backdrop-blur border border-border-dark rounded-xl p-4 ${
-            statsOpen
-              ? 'top-14 left-3 right-3 lg:top-6 lg:right-6 lg:left-auto lg:max-w-xs'
-              : 'hidden lg:block top-6 right-6 max-w-xs'
-          }`}
-        >
-          {statsOpen && (
-            <button
-              type="button"
-              onClick={() => setStatsOpen(false)}
-              className="absolute top-2 right-2 rounded p-1 text-text-dim hover:text-white lg:hidden"
-              aria-label="Close stats"
-            >
-              <X className="size-4" />
-            </button>
-          )}
-          <DesignStatsPanel compact={statsOpen} />
+          {/* Stats panel */}
+          <div
+            className={cn(
+              'absolute z-20 rounded-xl border border-border bg-popover p-4 text-popover-foreground shadow-xl',
+              statsOpen
+                ? 'inset-x-3 top-14 lg:inset-x-auto lg:right-6 lg:top-6 lg:max-w-xs'
+                : 'hidden lg:block lg:right-6 lg:top-6 lg:max-w-xs'
+            )}
+          >
+            {statsOpen && (
+              <button
+                type="button"
+                onClick={() => setStatsOpen(false)}
+                className="absolute right-2 top-2 rounded-lg p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground lg:hidden"
+                aria-label="Close stats"
+              >
+                <X className="size-4" />
+              </button>
+            )}
+            <DesignStatsPanel compact={statsOpen} />
+          </div>
         </div>
 
-        {/* Mobile controls toggle */}
-        <button
-          type="button"
-          onClick={() => setControlsOpen(true)}
-          className="lg:hidden absolute bottom-24 left-4 z-20 flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-xs font-bold text-black shadow-lg"
-        >
-          <Settings2 className="size-4" />
-          Controls
-        </button>
+        {/* Mobile bottom action bar — single row, no overlap with canvas tools */}
+        <div className="absolute inset-x-0 bottom-0 z-30 border-t border-border bg-popover p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgba(0,0,0,0.25)] lg:static lg:z-20 lg:border-0 lg:bg-transparent lg:p-0 lg:pb-0 lg:shadow-none">
+          <div className="flex items-center gap-2 lg:absolute lg:inset-x-0 lg:bottom-4 lg:justify-center lg:px-4 lg:gap-4">
+            <button
+              type="button"
+              onClick={() => setControlsOpen(true)}
+              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg bg-secondary px-3 text-xs font-semibold text-secondary-foreground lg:hidden"
+            >
+              <Settings2 className="size-4" />
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={prevStage}
+              className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent sm:flex-none sm:px-6 lg:shadow-lg"
+            >
+              <ArrowLeft className="size-4" />
+              Back
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirmDesign}
+              className="inline-flex min-h-11 flex-[1.4] items-center justify-center gap-2 rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-colors hover:brightness-110 sm:flex-none sm:px-6"
+            >
+              <BadgeCheck className="size-4" />
+              Confirm
+            </button>
+          </div>
+        </div>
 
-        {/* Mobile bottom sheet */}
+        {/* Mobile controls bottom sheet */}
         {controlsOpen && (
           <>
             <button
               type="button"
-              className="lg:hidden fixed inset-0 z-30 bg-black/60"
+              className="fixed inset-0 z-40 bg-overlay lg:hidden"
               onClick={() => setControlsOpen(false)}
               aria-label="Close controls overlay"
             />
-            <section className="lg:hidden fixed inset-x-0 bottom-0 z-40 flex max-h-[75vh] flex-col rounded-t-2xl border-t border-border-dark bg-[#0f0d0a]">
-              <div className="flex items-center justify-between border-b border-border-dark px-4 py-3">
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-text-dim">
+            <section
+              className="fixed inset-x-0 bottom-0 z-50 flex max-h-[min(85dvh,40rem)] flex-col rounded-t-2xl border-t border-border bg-popover text-popover-foreground shadow-2xl lg:hidden"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Design controls"
+            >
+              <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3">
+                <div className="min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                     Design Studio
                   </p>
-                  <p className="text-sm font-bold text-white">Upload &amp; Customize</p>
+                  <p className="truncate text-sm font-bold">Upload &amp; Customize</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setControlsOpen(false)}
-                  className="rounded-lg p-2 text-text-dim hover:bg-white/5 hover:text-white"
+                  className="rounded-lg p-2 text-muted-foreground hover:bg-accent hover:text-foreground"
                   aria-label="Close controls"
                 >
                   <ChevronDown className="size-5" />
                 </button>
               </div>
-              <div className="flex-1 overflow-y-auto">
-                <UploadPanel name={designConfig.productType} />
+              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)]">
+                <UploadPanel name={designConfig.productType} hideHeader />
               </div>
             </section>
           </>
         )}
-
-        <div className="absolute bottom-4 left-0 right-0 z-20 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 px-4 sm:gap-4">
-          <button
-            onClick={prevStage}
-            className="flex-1 sm:flex-none px-6 py-3 bg-surface-dark/90 backdrop-blur border border-border-dark hover:border-primary rounded-lg text-white font-semibold transition-all flex items-center justify-center gap-2"
-          >
-            <ArrowLeft className="size-4" />
-            Go Back
-          </button>
-          <button
-            className="flex-1 sm:flex-none px-6 py-3 bg-primary hover:bg-primary/90 text-black rounded-lg font-semibold transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-primary/50"
-            onClick={handleConfirmDesign}
-          >
-            <BadgeCheck className="size-4" />
-            Confirm Design
-          </button>
-        </div>
       </main>
     </div>
   );

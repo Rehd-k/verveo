@@ -3,7 +3,7 @@ import { Radar } from 'lucide-react';
 
 export default function PartnersFooter() {
   return (
-    <footer className="border-t border-white/5 bg-black/40 px-6 py-12">
+    <footer className="border-t border-border bg-overlay px-6 py-12">
       <div className="mx-auto flex max-w-7xl flex-col gap-8 md:flex-row md:items-start md:justify-between">
         <div>
           <div className="flex items-center gap-2.5">
@@ -12,15 +12,15 @@ export default function PartnersFooter() {
             </div>
             <span className="font-display text-lg font-bold">Verveo Partners</span>
           </div>
-          <p className="mt-4 max-w-sm text-sm text-white/50">
+          <p className="mt-4 max-w-sm text-sm text-muted-foreground">
             Retail partner operations for branded packaging campaigns across Nigeria.
           </p>
         </div>
         <nav className="flex flex-wrap gap-x-8 gap-y-3">
-          <Link href="/" className="text-sm text-white/50 hover:text-white">For Advertisers</Link>
-          <Link href="/auth/signup?role=retailer" className="text-sm text-white/50 hover:text-white">Apply</Link>
-          <Link href="/auth/login" className="text-sm text-white/50 hover:text-white">Sign in</Link>
-          <Link href="#partner-faq" className="text-sm text-white/50 hover:text-white">FAQ</Link>
+          <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">For Advertisers</Link>
+          <Link href="/auth/signup?role=retailer" className="text-sm text-muted-foreground hover:text-foreground">Apply</Link>
+          <Link href="/auth/login" className="text-sm text-muted-foreground hover:text-foreground">Sign in</Link>
+          <Link href="#partner-faq" className="text-sm text-muted-foreground hover:text-foreground">FAQ</Link>
         </nav>
       </div>
     </footer>

@@ -1,21 +1,21 @@
 const STATUS_STYLES: Record<string, string> = {
-  draft: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
-  processing: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
-  printing: 'bg-violet-500/15 text-violet-300 border-violet-500/30',
-  dispatched: 'bg-orange-500/15 text-orange-300 border-orange-500/30',
-  live: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-  completed: 'bg-white/10 text-white/60 border-white/20',
-  pending: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
-  active: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-  suspended: 'bg-red-500/15 text-red-300 border-red-500/30',
-  fulfilled: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-  cancelled: 'bg-red-500/15 text-red-300 border-red-500/30',
-  paid: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-  failed: 'bg-red-500/15 text-red-300 border-red-500/30',
-  approved: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-  rejected: 'bg-red-500/15 text-red-300 border-red-500/30',
-  advertiser: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
-  retailer: 'bg-violet-500/15 text-violet-300 border-violet-500/30',
+  draft: 'bg-warning/15 text-warning border-warning/30',
+  processing: 'bg-primary/15 text-primary border-primary/30',
+  printing: 'bg-chart-3/15 text-chart-3 border-chart-3/30',
+  dispatched: 'bg-warning/15 text-warning border-warning/30',
+  live: 'bg-success/15 text-success border-success/30',
+  completed: 'bg-muted text-muted-foreground border-border',
+  pending: 'bg-warning/15 text-warning border-warning/30',
+  active: 'bg-success/15 text-success border-success/30',
+  suspended: 'bg-destructive/15 text-destructive border-destructive/30',
+  fulfilled: 'bg-success/15 text-success border-success/30',
+  cancelled: 'bg-destructive/15 text-destructive border-destructive/30',
+  paid: 'bg-success/15 text-success border-success/30',
+  failed: 'bg-destructive/15 text-destructive border-destructive/30',
+  approved: 'bg-success/15 text-success border-success/30',
+  rejected: 'bg-destructive/15 text-destructive border-destructive/30',
+  advertiser: 'bg-primary/15 text-primary border-primary/30',
+  retailer: 'bg-chart-3/15 text-chart-3 border-chart-3/30',
   admin: 'bg-primary/15 text-primary border-primary/30',
 };
 
@@ -23,7 +23,7 @@ export function StatusBadge({ status }: { status: string }) {
   return (
     <span
       className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize ${
-        STATUS_STYLES[status] || 'bg-white/10 text-white/60 border-white/20'
+        STATUS_STYLES[status] || 'bg-muted text-muted-foreground border-border'
       }`}
     >
       {status}

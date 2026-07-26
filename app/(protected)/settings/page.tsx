@@ -37,24 +37,24 @@ export default function BillingPage() {
 
   return (
     <div className="p-8">
-      <h2 className="text-2xl font-bold text-white">Billing</h2>
-      <p className="mt-1 text-sm text-white/60">Your payment history and pending proofs.</p>
+      <h2 className="text-2xl font-bold text-foreground">Billing</h2>
+      <p className="mt-1 text-sm text-muted-foreground">Your payment history and pending proofs.</p>
 
       {loading ? (
         <div className="mt-8 flex justify-center">
           <Loader2 className="size-8 animate-spin text-primary" />
         </div>
       ) : orders.length === 0 ? (
-        <div className="mt-8 rounded-xl border border-white/10 bg-white/3 p-8 text-center">
-          <p className="text-white/70">No orders yet.</p>
+        <div className="mt-8 rounded-xl border border-border bg-card p-8 text-center">
+          <p className="text-muted-foreground">No orders yet.</p>
           <Link href="/dashboard" className="mt-4 inline-block text-sm text-primary hover:underline">
             Go to dashboard
           </Link>
         </div>
       ) : (
-        <div className="mt-6 overflow-x-auto rounded-xl border border-white/10">
+        <div className="mt-6 overflow-x-auto rounded-xl border border-border">
           <table className="w-full min-w-[640px] text-left text-sm">
-            <thead className="border-b border-white/10 bg-white/5 text-white/60">
+            <thead className="border-b border-border bg-card text-muted-foreground">
               <tr>
                 <th className="px-4 py-3 font-medium">Campaign</th>
                 <th className="px-4 py-3 font-medium">Amount</th>
@@ -66,7 +66,7 @@ export default function BillingPage() {
             </thead>
             <tbody>
               {orders.map((order) => (
-                <tr key={order.id} className="border-b border-white/5 text-white/80">
+                <tr key={order.id} className="border-b border-border text-muted-foreground">
                   <td className="px-4 py-3">{order.campaignTitle}</td>
                   <td className="px-4 py-3">₦{order.amount.toLocaleString()}</td>
                   <td className="px-4 py-3 capitalize">{methodLabel(order.paymentMethod)}</td>
@@ -76,7 +76,7 @@ export default function BillingPage() {
                         order.paymentMethod === 'bank_transfer' && order.status === 'pending'
                           ? 'text-amber-400'
                           : order.status === 'paid'
-                            ? 'text-green-400'
+                            ? 'text-success'
                             : ''
                       }
                     >

@@ -64,45 +64,45 @@ export default function RetailerDashboardPage() {
         <div className="grid gap-4 sm:grid-cols-3">
           <Link
             href="/retailer/stock"
-            className="flex items-center gap-3 rounded-2xl border border-white/10 bg-card-dark/80 p-4 transition hover:border-primary/30"
+            className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 transition hover:border-primary/30"
           >
             <Boxes className="size-5 text-primary" />
             <div>
               <p className="font-semibold">Manage stock</p>
-              <p className="text-xs text-text-secondary">Request branded packs</p>
+              <p className="text-xs text-muted-foreground">Request branded packs</p>
             </div>
           </Link>
           <Link
             href="/retailer/campaigns"
-            className="flex items-center gap-3 rounded-2xl border border-white/10 bg-card-dark/80 p-4 transition hover:border-primary/30"
+            className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 transition hover:border-primary/30"
           >
             <Megaphone className="size-5 text-primary" />
             <div>
               <p className="font-semibold">View campaigns</p>
-              <p className="text-xs text-text-secondary">{campaigns.length} matched to your venue</p>
+              <p className="text-xs text-muted-foreground">{campaigns.length} matched to your venue</p>
             </div>
           </Link>
           <Link
             href="/retailer/proofs"
-            className="flex items-center gap-3 rounded-2xl border border-white/10 bg-card-dark/80 p-4 transition hover:border-primary/30"
+            className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 transition hover:border-primary/30"
           >
             <Camera className="size-5 text-primary" />
             <div>
               <p className="font-semibold">Submit proofs</p>
-              <p className="text-xs text-text-secondary">{pendingProofs} pending review</p>
+              <p className="text-xs text-muted-foreground">{pendingProofs} pending review</p>
             </div>
           </Link>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
           <div>
-            <h2 className="mb-3 text-sm font-semibold text-white">Recent stock orders</h2>
+            <h2 className="mb-3 text-sm font-semibold text-foreground">Recent stock orders</h2>
             <OrderHistoryTable orders={orders} compact />
           </div>
           <div>
-            <h2 className="mb-3 text-sm font-semibold text-white">Recent proofs</h2>
+            <h2 className="mb-3 text-sm font-semibold text-foreground">Recent proofs</h2>
             {proofs.length === 0 ? (
-              <div className="rounded-2xl border border-white/10 bg-card-dark/80 p-6 text-center text-sm text-text-secondary">
+              <div className="rounded-2xl border border-border bg-card p-6 text-center text-sm text-muted-foreground">
                 No proofs submitted yet.
               </div>
             ) : (

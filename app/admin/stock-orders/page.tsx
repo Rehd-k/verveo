@@ -120,7 +120,7 @@ export default function AdminStockOrdersPage() {
                 e.stopPropagation();
                 updateOrder(id, 'cancelled');
               }}
-              className="rounded-lg bg-red-500/20 px-2 py-1 text-xs font-semibold text-red-300 hover:bg-red-500/30"
+              className="rounded-lg bg-red-500/20 px-2 py-1 text-xs font-semibold text-red-300 hover:brightness-110/30"
             >
               Cancel
             </button>
@@ -133,8 +133,8 @@ export default function AdminStockOrdersPage() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-lg font-bold text-white">Stock Orders</h2>
-        <p className="text-sm text-text-secondary">{total} total requests</p>
+        <h2 className="text-lg font-bold text-foreground">Stock Orders</h2>
+        <p className="text-sm text-muted-foreground">{total} total requests</p>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -145,8 +145,8 @@ export default function AdminStockOrdersPage() {
             onClick={() => setFilter(item.value)}
             className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
               filter === item.value
-                ? 'bg-primary text-white'
-                : 'border border-white/10 bg-card-dark text-text-secondary hover:text-white'
+                ? 'bg-primary text-primary-foreground'
+                : 'border border-border bg-card text-muted-foreground hover:text-foreground'
             }`}
           >
             {item.label}

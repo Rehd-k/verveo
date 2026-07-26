@@ -17,9 +17,9 @@ function Cell({ value, highlight }: { value: boolean; highlight?: boolean }) {
   return (
     <td className={`px-4 py-3 text-center ${highlight ? 'bg-primary/5' : ''}`}>
       {value ? (
-        <Check className={`mx-auto size-4 ${highlight ? 'text-primary' : 'text-green-400'}`} />
+        <Check className={`mx-auto size-4 ${highlight ? 'text-primary' : 'text-success'}`} />
       ) : (
-        <X className="mx-auto size-4 text-white/20" />
+        <X className="mx-auto size-4 text-muted-foreground" />
       )}
     </td>
   );
@@ -39,20 +39,20 @@ export default function ComparisonSection() {
         </ScrollReveal>
 
         <ScrollReveal delay={150}>
-          <div className="mt-12 overflow-x-auto rounded-2xl border border-white/10">
+          <div className="mt-12 overflow-x-auto rounded-2xl border border-border">
             <table className="w-full min-w-[540px] text-sm">
               <thead>
-                <tr className="border-b border-white/10 bg-white/3">
-                  <th className="px-4 py-4 text-left font-medium text-white/50">Capability</th>
-                  <th className="px-4 py-4 text-center font-medium text-white/50">Billboards</th>
-                  <th className="px-4 py-4 text-center font-medium text-white/50">Social Ads</th>
+                <tr className="border-b border-border bg-card">
+                  <th className="px-4 py-4 text-left font-medium text-muted-foreground">Capability</th>
+                  <th className="px-4 py-4 text-center font-medium text-muted-foreground">Billboards</th>
+                  <th className="px-4 py-4 text-center font-medium text-muted-foreground">Social Ads</th>
                   <th className="px-4 py-4 text-center font-semibold text-primary">Verveo</th>
                 </tr>
               </thead>
               <tbody>
                 {FEATURES.map((row) => (
-                  <tr key={row.label} className="border-b border-white/5">
-                    <td className="px-4 py-3 text-white/80">{row.label}</td>
+                  <tr key={row.label} className="border-b border-border">
+                    <td className="px-4 py-3 text-muted-foreground">{row.label}</td>
                     <Cell value={row.billboard} />
                     <Cell value={row.social} />
                     <Cell value={row.verveo} highlight />

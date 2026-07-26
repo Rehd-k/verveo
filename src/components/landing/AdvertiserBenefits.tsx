@@ -78,12 +78,12 @@ export default function AdvertiserBenefits() {
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {BENEFITS.map((benefit, i) => (
             <ScrollReveal key={benefit.title} delay={(i % 4) * 80}>
-              <div className="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/3 p-5 transition hover:border-primary/40 hover:shadow-[0_0_40px_rgba(25,93,230,0.12)]">
+              <div className="group flex h-full flex-col rounded-2xl border border-border bg-card p-5 transition hover:border-primary/40 hover:shadow-[0_0_40px_rgba(25,93,230,0.12)]">
                 <div className="mb-3 flex size-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
                   <benefit.icon className="size-5" />
                 </div>
                 <h3 className="text-sm font-semibold">{benefit.title}</h3>
-                <p className="mt-2 flex-1 text-xs leading-relaxed text-white/55">{benefit.description}</p>
+                <p className="mt-2 flex-1 text-xs leading-relaxed text-muted-foreground">{benefit.description}</p>
               </div>
             </ScrollReveal>
           ))}

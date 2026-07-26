@@ -1,33 +1,46 @@
 'use client';
-import { useEffect, useRef } from 'react';
+
+import { useTheme } from 'next-themes';
+import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { NIGERIA_CENTER } from '@/hooks/useMapUserLocation';
 
-// Ensure you have NEXT_PUBLIC_MAPBOX_TOKEN in .env.local
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
 
 export default function WarRoomMap() {
-    const mapContainer = useRef<HTMLDivElement>(null);
-    const map = useRef<mapboxgl.Map | null>(null);
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
-        if (map.current || !mapContainer.current) return;
+  useEffect(() => setMounted(true), []);
 
-        map.current = new mapboxgl.Map({
-            container: mapContainer.current,
-            style: 'mapbox://styles/mapbox/dark-v11', // Matches the dark theme
-            center: [NIGERIA_CENTER.longitude, NIGERIA_CENTER.latitude],
-            zoom: NIGERIA_CENTER.zoom,
-            pitch: 45, // Adds 3D perspective
-        });
+  useEffect(() => {
+    if (!mounted || map.current || !mapContainer.current) return;
 
-        map.current.on('load', () => {
-            // Add heatmaps or markers here
-        });
+    const isDark = resolvedTheme !== 'light';
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: isDark
+        ? 'mapbox://styles/mapbox/dark-v11'
+        : 'mapbox://styles/mapbox/light-v11',
+      center: [NIGERIA_CENTER.longitude, NIGERIA_CENTER.latitude],
+      zoom: NIGERIA_CENTER.zoom,
+      pitch: 45,
+    });
 
-        return () => map.current?.remove();
-    }, []);
+    return () => {
+      map.current?.remove();
+      map.current = null;
+    };
+  }, [mounted, resolvedTheme]);
 
-    return <div ref={mapContainer} className="absolute inset-0 w-full h-full" />;
+  return (
+    <div
+      ref={mapContainer}
+      className="absolute inset-0 h-full w-full min-h-60 overflow-hidden rounded-xl"
+      aria-label="Campaign map"
+    />
+  );
 }

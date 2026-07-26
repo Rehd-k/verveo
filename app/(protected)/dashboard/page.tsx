@@ -10,7 +10,7 @@ import { cities } from './cities';
 import Link from 'next/link';
 import { useMapUserLocation } from '@/hooks/useMapUserLocation';
 import { authHeaders } from '@/lib/fetchAuth';
-
+import { useTheme } from 'next-themes';
 
 export default function Dashboard() {
 
@@ -21,6 +21,11 @@ export default function Dashboard() {
   const mapRef = useRef<MapRef>(null);
   const { user, logout } = useAuth();
   const mapLocation = useMapUserLocation();
+  const { resolvedTheme } = useTheme();
+  const mapStyle =
+    resolvedTheme === 'light'
+      ? 'mapbox://styles/mapbox/light-v11'
+      : 'mapbox://styles/mapbox/dark-v11';
 
   useEffect(() => {
     if (!mapLocation.ready || !mapRef.current) return;
@@ -70,34 +75,35 @@ export default function Dashboard() {
   const screensLabel = (marker: (typeof markers)[number]) =>
     marker.screens ?? marker.possible_points ?? '—';
 
-  return <main className="flex-1 relative flex flex-col bg-background-dark md:h-[91.8vh] h-[95vh]">
+  return <main className="relative flex h-[min(95vh,calc(100svh-4rem))] min-w-0 flex-1 flex-col overflow-hidden bg-background md:h-[calc(100svh-4rem)]">
     {/* Header / Overlay Controls */}
-    <div className="absolute top-0 left-0 w-full z-10 p-6 pointer-events-none flex justify-between items-start">
+    <div className="pointer-events-none absolute left-0 top-0 z-10 flex w-full flex-col gap-3 p-3 sm:flex-row sm:items-start sm:justify-between sm:p-6">
       {/* Search Bar (Floating) */}
-      <div className="pointer-events-auto w-96 shadow-2xl shadow-black/50">
-        <div className="flex w-full items-center bg-card-dark/90 backdrop-blur-md rounded-lg border border-white/10 h-12 px-4 transition-all focus-within:ring-2 focus-within:ring-primary/50">
-          <span className="material-symbols-outlined text-text-secondary">
+      <div className="pointer-events-auto w-full max-w-md shadow-2xl shadow-black/20">
+        <div className="flex h-12 w-full items-center rounded-lg border border-border bg-popover px-4 shadow-lg transition-all focus-within:ring-2 focus-within:ring-ring/50">
+          <span className="material-symbols-outlined text-muted-foreground" aria-hidden>
             search
           </span>
           <input
-            className="bg-transparent border-none text-white text-sm w-full focus:ring-0 placeholder:text-text-secondary ml-2"
+            className="ml-2 w-full border-none bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:ring-0"
             placeholder="Search locations (e.g., Ikeja, Lekki)..."
-            type="text"
+            type="search"
+            aria-label="Search locations"
           />
         </div>
       </div>
       {/* HUD Stats Widgets (Floating) */}
-      <div className="pointer-events-auto flex gap-4">
+      <div className="pointer-events-auto flex max-w-full gap-2 overflow-x-auto no-scrollbar sm:gap-4">
         {/* Stat 1 */}
-        <div className="bg-card-dark/80 backdrop-blur-md border border-white/10 rounded-lg p-4 min-w-40 flex flex-col shadow-xl">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-text-secondary text-xs font-medium uppercase tracking-wider">
+        <div className="flex min-w-36 flex-col rounded-lg border border-border bg-popover p-4 shadow-xl">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Active Campaigns
             </span>
-            <Caravan className='size-4 ml-4' />
+            <Caravan className='ml-4 size-4' />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-white">{campaigns.length}</span>
+            <span className="text-2xl font-bold text-foreground">{campaigns.length}</span>
             {campaigns.length < 1 ? <span className="text-xs text-orange-400 font-medium">
               Needs Action
             </span> : <></>}
@@ -105,33 +111,33 @@ export default function Dashboard() {
           </div>
         </div>
         {/* Stat 2 */}
-        <div className="bg-card-dark/80 backdrop-blur-md border border-white/10 rounded-lg p-4 min-w-40 flex flex-col shadow-xl">
+        <div className="bg-popover border border-border rounded-lg p-4 min-w-40 flex flex-col shadow-xl">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-text-secondary text-xs font-medium uppercase tracking-wider">
+            <span className="text-muted-foreground text-xs font-medium uppercase tracking-wider">
               Wallet Balance
             </span>
             <Wallet className='size-4 ml-4' />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-white">₦ 450k</span>
+            <span className="text-2xl font-bold text-foreground">₦ 450k</span>
           </div>
         </div>
         {/* Stat 3 */}
-        <div className="bg-card-dark/80 backdrop-blur-md border border-white/10 rounded-lg p-4 min-w-40 flex flex-col shadow-xl">
+        <div className="bg-popover border border-border rounded-lg p-4 min-w-40 flex flex-col shadow-xl">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-text-secondary text-xs font-medium uppercase tracking-wider">
+            <span className="text-muted-foreground text-xs font-medium uppercase tracking-wider">
               Saved Drafts
             </span>
             <Save className='size-4 ml-4' />
           </div>
           <Link href={'/campaigns'} className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-white">{campaigns.filter((c) => c.status === 'draft').length}</span>
-            <span className="text-xs text-text-secondary font-medium">Pending</span>
+            <span className="text-2xl font-bold text-foreground">{campaigns.filter((c) => c.status === 'draft').length}</span>
+            <span className="text-xs text-muted-foreground font-medium">Pending</span>
           </Link>
         </div>
       </div>
     </div>
-    <div className="relative w-[80wv] h-screen bg-[#111318]">
+    <div className="relative h-screen w-full min-w-0 overflow-hidden bg-muted">
       <Map
         ref={mapRef}
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_TOKEN}
@@ -141,7 +147,7 @@ export default function Dashboard() {
           zoom: mapLocation.zoom,
         }}
         style={{ width: "100%", height: "100%" }}
-        mapStyle="mapbox://styles/mapbox/dark-v11"
+        mapStyle={mapStyle}
         onClick={handleMapClick} // close popup when tapping empty map area
       >
         {/* Map Controls: Zoom In/Out and Find Me */}
@@ -223,7 +229,7 @@ export default function Dashboard() {
           >
             {/* Custom Card Component */}
             <div
-              className="mt-4 bg-card-dark/95 backdrop-blur-xl border border-white/10 p-0 rounded-xl shadow-2xl w-64 overflow-hidden"
+              className="mt-4 bg-popover border border-border p-0 rounded-xl shadow-2xl w-64 overflow-hidden"
               onMouseEnter={() => {
                 if (timeoutRef.current) clearTimeout(timeoutRef.current);
                 setHovered(getActiveMarker); // reinforce hovered
@@ -241,10 +247,10 @@ export default function Dashboard() {
               >
                 <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent" />
                 <div className="absolute bottom-3 left-3">
-                  <h3 className="text-lg font-bold text-white leading-none">
+                  <h3 className="text-lg font-bold text-foreground leading-none">
                     {getActiveMarker.name}
                   </h3>
-                  <p className="text-xs text-gray-300 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     {getActiveMarker.subtitle || getActiveMarker.address}
                   </p>
                 </div>
@@ -252,24 +258,24 @@ export default function Dashboard() {
               <div className="p-3">
                 <div className="flex items-center gap-2 mb-3">
                   <ChartNoAxesCombined />
-                  <span className="text-sm font-semibold text-white">
+                  <span className="text-sm font-semibold text-foreground">
                     {populationLabel(getActiveMarker)}{' '}
                     <span className="text-xs">Estimated Population</span>
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="bg-white/5 p-2 rounded flex flex-col gap-1">
-                    <span className="text-text-secondary">Density</span>
-                    <span className="text-white font-medium">{densityLabel(getActiveMarker)}</span>
+                  <div className="bg-card p-2 rounded flex flex-col gap-1">
+                    <span className="text-muted-foreground">Density</span>
+                    <span className="text-foreground font-medium">{densityLabel(getActiveMarker)}</span>
                   </div>
-                  <div className="bg-white/5 p-2 rounded flex flex-col gap-1">
-                    <span className="text-text-secondary">Screens</span>
-                    <span className="text-white font-medium">{screensLabel(getActiveMarker)} Avail.</span>
+                  <div className="bg-card p-2 rounded flex flex-col gap-1">
+                    <span className="text-muted-foreground">Screens</span>
+                    <span className="text-foreground font-medium">{screensLabel(getActiveMarker)} Avail.</span>
                   </div>
                 </div>
                 <Link href={`/campaign?area=${getActiveMarker.name}&long=${getActiveMarker.longitude}&lat=${getActiveMarker.latitude}`}>
                   <button
-                    className="mt-3 w-full py-1.5 bg-primary/20 hover:bg-primary/30 text-primary hover:text-white border border-primary/20 rounded text-xs font-semibold transition-all"
+                    className="mt-3 w-full py-1.5 bg-primary/20 hover:bg-primary/30 text-primary hover:text-primary-foreground border border-primary/20 rounded text-xs font-semibold transition-all"
 
                   >
                     Target this Area
@@ -283,23 +289,23 @@ export default function Dashboard() {
 
       {/* Floating Bottom Controls */}
       <div className="absolute bottom-8 md:left-1/2 md:-translate-x-1/2 z-20 left-2">
-        <div className="md:flex flex-col md:flex-row bg-card-dark/90 backdrop-blur-lg border border-white/10 md:rounded-full p-1.5 shadow-2xl gap-2 rounded-xl">
-          <button className="flex items-center gap-2 px-4 md:py-2 py-4 rounded-full bg-primary text-white text-xs font-semibold shadow-lg shadow-primary/25">
+        <div className="md:flex flex-col md:flex-row bg-popover border border-border md:rounded-full p-1.5 shadow-2xl gap-2 rounded-xl">
+          <button className="flex items-center gap-2 px-4 md:py-2 py-4 rounded-full bg-primary text-primary-foreground text-xs font-semibold shadow-lg shadow-primary/25">
             <Layers className="size-4" />
             <p className="hidden md:block">Layers</p>
 
           </button>
-          <button className="flex items-center gap-2 px-4 md:py-2 py-4 rounded-full hover:bg-white/5 text-text-secondary hover:text-white text-xs font-medium transition-colors">
+          <button className="flex items-center gap-2 px-4 md:py-2 py-4 rounded-full hover:bg-accent text-muted-foreground hover:text-foreground text-xs font-medium transition-colors">
             <TrafficCone className="size-4" />
             <p className="hidden md:block">Traffic</p>
 
           </button>
-          <button className="flex items-center gap-2 px-4 md:py-2 py-4 rounded-full hover:bg-white/5 text-text-secondary hover:text-white text-xs font-medium transition-colors">
+          <button className="flex items-center gap-2 px-4 md:py-2 py-4 rounded-full hover:bg-accent text-muted-foreground hover:text-foreground text-xs font-medium transition-colors">
             <StoreIcon className="size-4" />
             <p className="hidden md:block">Inventory</p>
 
           </button>
-          <button className="flex items-center gap-2 px-4 md:py-2 py-4 rounded-full hover:bg-white/5 text-text-secondary hover:text-white text-xs font-medium transition-colors">
+          <button className="flex items-center gap-2 px-4 md:py-2 py-4 rounded-full hover:bg-accent text-muted-foreground hover:text-foreground text-xs font-medium transition-colors">
             <Group className="size-4" />
             <p className="hidden md:block">Demographics</p>
           </button>
@@ -313,30 +319,30 @@ export default function Dashboard() {
     {/* Campaigns */}
     <>
       {/* <div className="px-8 py-6"> */}
-      {/* <h2 className="text-2xl font-bold text-white mb-4">Recent Campaigns</h2> */}
+      {/* <h2 className="text-2xl font-bold text-foreground mb-4">Recent Campaigns</h2> */}
       {/* <div className="space-y-3">
           {campaigns.length === 0 ? (
-            <div className="rounded-xl border border-white/5 bg-white/3 p-8 text-center">
-              <p className="text-white/60">No campaigns yet. Create your first one!</p>
+            <div className="rounded-xl border border-border bg-card p-8 text-center">
+              <p className="text-muted-foreground">No campaigns yet. Create your first one!</p>
             </div>
           ) : (
             campaigns.slice(0, 5).map((campaign) => (
               <div
                 key={campaign._id}
-                className="rounded-xl border border-white/5 bg-white/3 p-6 hover:bg-white/5 transition-all"
+                className="rounded-xl border border-border bg-card p-6 hover:bg-accent transition-all"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-bold text-white">{campaign.title}</h3>
-                    <p className="text-sm text-white/60">
+                    <h3 className="font-bold text-foreground">{campaign.title}</h3>
+                    <p className="text-sm text-muted-foreground">
                       {campaign.quantity.toLocaleString()} units • {campaign.status}
                     </p>
                   </div>
                   <div className="text-right flex flex-col items-end gap-2">
-                    <p className="font-bold text-white">
+                    <p className="font-bold text-foreground">
                       ₦{campaign.budget?.toLocaleString()}
                     </p>
-                    <p className="text-sm text-white/60">{campaign.stats?.scans || 0} scans</p>
+                    <p className="text-sm text-muted-foreground">{campaign.stats?.scans || 0} scans</p>
                     <div className="flex gap-2 mt-2">
                       <button
                         onClick={async () => {
@@ -350,7 +356,7 @@ export default function Dashboard() {
                             alert('Failed to fetch analytics');
                           }
                         }}
-                        className="rounded-md bg-white/5 px-3 py-1 text-sm text-white/80 hover:bg-white/10"
+                        className="rounded-md bg-card px-3 py-1 text-sm text-muted-foreground hover:bg-accent"
                       >
                         View Analytics
                       </button>
@@ -358,11 +364,11 @@ export default function Dashboard() {
                         href={`/api/qr/${campaign._id}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="rounded-md bg-white/5 px-3 py-1 text-sm text-white/80 hover:bg-white/10"
+                        className="rounded-md bg-card px-3 py-1 text-sm text-muted-foreground hover:bg-accent"
                       >
                         Test QR
                       </Link>
-                      <Link href={`/dashboard/checkout?campaignId=${campaign._id}`} className="rounded-md bg-primary px-3 py-1 text-sm font-semibold text-black hover:brightness-105">Checkout</Link>
+                      <Link href={`/dashboard/checkout?campaignId=${campaign._id}`} className="rounded-md bg-primary px-3 py-1 text-sm font-semibold text-primary-foreground hover:brightness-105">Checkout</Link>
                     </div>
                   </div>
                 </div>

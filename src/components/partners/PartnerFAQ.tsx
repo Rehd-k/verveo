@@ -31,18 +31,18 @@ export default function PartnerFAQ() {
             const isOpen = open === index;
             return (
               <ScrollReveal key={question} delay={index * 40}>
-                <div className="overflow-hidden rounded-xl border border-white/10 bg-card-dark/70">
+                <div className="overflow-hidden rounded-xl border border-border bg-card">
                   <button
                     type="button"
                     className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-sm font-medium"
                     onClick={() => setOpen(isOpen ? -1 : index)}
                   >
                     {question}
-                    <ChevronDown className={`size-4 shrink-0 text-white/40 transition ${isOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`size-4 shrink-0 text-foreground/40 transition ${isOpen ? 'rotate-180' : ''}`} />
                   </button>
                   <div className={`grid transition-all ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden">
-                      <p className="px-5 pb-4 text-sm leading-relaxed text-text-secondary">{answer}</p>
+                      <p className="px-5 pb-4 text-sm leading-relaxed text-muted-foreground">{answer}</p>
                     </div>
                   </div>
                 </div>

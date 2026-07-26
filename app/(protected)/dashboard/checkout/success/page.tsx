@@ -60,18 +60,18 @@ export default function CheckoutSuccess() {
 
   return (
     <div className="p-8">
-      <h2 className="text-2xl font-bold text-white">Payment Result</h2>
+      <h2 className="text-2xl font-bold text-foreground">Payment Result</h2>
       <div className="mt-4 max-w-lg">
-        {status === 'pending' && <div className="text-white/70">Verifying payment...</div>}
+        {status === 'pending' && <div className="text-muted-foreground">Verifying payment...</div>}
         {status === 'success' && (
           <div className="rounded-lg border border-green-500/30 bg-green-900/20 p-6">
-            <h3 className="font-bold text-white">Payment verified</h3>
-            <p className="mt-2 text-sm text-white/70">
+            <h3 className="font-bold text-foreground">Payment verified</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
               Your campaign payment was successful and is now being processed.
             </p>
             <Link
               href="/dashboard"
-              className="mt-6 inline-block rounded-full bg-primary px-6 py-3 font-bold text-black"
+              className="mt-6 inline-block rounded-full bg-primary px-6 py-3 font-bold text-primary-foreground"
             >
               Go to dashboard
             </Link>
@@ -79,8 +79,8 @@ export default function CheckoutSuccess() {
         )}
         {status === 'failed' && (
           <div className="rounded-lg border border-red-500/30 bg-red-900/20 p-6">
-            <h3 className="font-bold text-white">Verification failed</h3>
-            <p className="mt-2 text-sm text-white/70">
+            <h3 className="font-bold text-foreground">Verification failed</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
               We could not verify your payment. If you were charged, contact support with your order ID.
             </p>
             <Link href="/settings" className="mt-4 inline-block text-sm text-primary hover:underline">
@@ -89,8 +89,8 @@ export default function CheckoutSuccess() {
           </div>
         )}
         {status === 'error' && (
-          <div className="rounded-lg border border-white/10 bg-white/3 p-6">
-            <p className="text-white/70">Missing or invalid callback parameters.</p>
+          <div className="rounded-lg border border-border bg-card p-6">
+            <p className="text-muted-foreground">Missing or invalid callback parameters.</p>
             <Link href="/dashboard" className="mt-4 inline-block text-sm text-primary hover:underline">
               Back to dashboard
             </Link>

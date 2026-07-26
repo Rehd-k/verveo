@@ -1,380 +1,422 @@
 'use client';
+
 import { useCampaignStore } from '@/store/useCampaignStore';
-import { CheckCircle, ChevronDown, ChevronUp, Gem, Image, Info, Palette, Plus, ShieldCheck, TextInitial, X } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import {
+  CheckCircle,
+  ChevronDown,
+  ChevronUp,
+  Gem,
+  Image,
+  Info,
+  Palette,
+  Plus,
+  ShieldCheck,
+  TextInitial,
+  X,
+} from 'lucide-react';
+import { useState, useRef, useEffect, type ReactNode } from 'react';
+import { cn } from '@/lib/cn';
 
 const LOGOS = [
-    { id: 'zenith', name: 'Zenith Bank', dark: true, color: '#1a1a2e' },
-    { id: 'generic', name: 'Generic Logo', dark: false, color: '#ffffff' },
-];
-
-const STICKERS = [
-    { id: 'organic', name: 'Organic', icon: 'eco', color: 'text-green-500', bg: 'bg-green-900/20' },
-    { id: 'special', name: 'Special Offer', icon: 'local_offer', color: 'text-primary', bg: 'bg-primary/10' },
-    { id: 'premium', name: 'Premium', icon: 'verified', color: 'text-purple-400', bg: 'bg-purple-900/20' },
-    { id: 'limited', name: 'Limited Time', icon: 'timer', color: 'text-orange-400', bg: 'bg-orange-900/20' },
+  { id: 'zenith', name: 'Zenith Bank', dark: true, color: '#1a1a2e' },
+  { id: 'generic', name: 'Generic Logo', dark: false, color: '#ffffff' },
 ];
 
 const COLORS = [
-    '#ffffff', '#000000', '#FF6B9D', '#00D4FF', '#FFA500', '#4CAF50', '#d4c5a6', '#8B4513', '#DC143C', '#FF1493'
-];
-
-const PRODUCTS = [
-    { id: 'cup', name: '☕ Cup', type: 'cup' },
-    { id: 'box', name: '📦 Box', type: 'box' },
-    { id: 'bag', name: '🛍️ Bag', type: 'bag' },
-    { id: 'pizza-box', name: '🍕 Pizza Box', type: 'pizza-box' },
+  '#ffffff',
+  '#000000',
+  '#FF6B9D',
+  '#00D4FF',
+  '#FFA500',
+  '#4CAF50',
+  '#d4c5a6',
+  '#8B4513',
+  '#DC143C',
+  '#FF1493',
 ];
 
 interface UploadPanelProps {
-
-    // id?: string,
-    name: string,
-    // specs: string,
-    // eco?: string,
-    // dimensions: string,
-    // image: string,
-    // link: string,
-    // pricePerUnit: number,
-
-
+  name: string;
+  /** Hide the sticky title when embedded in a mobile sheet that already has a header */
+  hideHeader?: boolean;
 }
 
-// { product }: UploadPanelProps
-export function UploadPanel({ name }: UploadPanelProps) {
-    const { updateDesign, designConfig, selectedProduct } = useCampaignStore();
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const [uploadError, setUploadError] = useState<string | null>(null);
-    const [expandedSections, setExpandedSections] = useState({
-        product: true,
-        colors: false,
-        texture: false,
-        branding: false,
-        materials: false,
-    });
+export function UploadPanel({ name, hideHeader = false }: UploadPanelProps) {
+  const { updateDesign, designConfig, selectedProduct } = useCampaignStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [expandedSections, setExpandedSections] = useState({
+    product: true,
+    colors: true,
+    texture: false,
+    branding: false,
+    materials: false,
+  });
 
-    useEffect(() => {
-        if (designConfig.textureUrl) {
-            setExpandedSections((prev) => ({ ...prev, texture: true }));
-        }
-    }, [designConfig.textureUrl]);
+  useEffect(() => {
+    if (designConfig.textureUrl) {
+      setExpandedSections((prev) => ({ ...prev, texture: true }));
+    }
+  }, [designConfig.textureUrl]);
 
-    const toggleSection = (section: keyof typeof expandedSections) => {
-        setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
+
+  const handleApplyLogo = (logoId: string) => {
+    updateDesign({ logo: logoId });
+  };
+
+  const handleColorChange = (color: string) => {
+    updateDesign({ color });
+  };
+
+  const handleTextureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setUploadError(null);
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Please upload an image file (PNG, JPG, etc.)');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError('Image must be under 10MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const dataUrl = event.target?.result as string;
+      updateDesign({ textureUrl: dataUrl });
+      setExpandedSections((prev) => ({ ...prev, texture: true }));
     };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
 
-    const handleApplyLogo = (logoId: string) => {
-        updateDesign({ logo: logoId });
-    };
+  const handleClearTexture = () => {
+    updateDesign({ textureUrl: null });
+    setUploadError(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
-    const handleColorChange = (color: string) => {
-        updateDesign({ color });
-    };
+  const handleBrandTextChange = (text: string) => {
+    updateDesign({ brandText: text });
+  };
 
-    const handleTextureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        setUploadError(null);
-        if (!file) return;
+  const handleTextColorChange = (color: string) => {
+    updateDesign({ textColor: color });
+  };
 
-        if (!file.type.startsWith('image/')) {
-            setUploadError('Please upload an image file (PNG, JPG, etc.)');
-            return;
-        }
+  const SectionHeader = ({
+    id,
+    icon,
+    label,
+  }: {
+    id: keyof typeof expandedSections;
+    icon: ReactNode;
+    label: string;
+  }) => (
+    <button
+      type="button"
+      onClick={() => toggleSection(id)}
+      className="flex min-h-11 w-full items-center justify-between bg-secondary px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary/80"
+    >
+      <span className="flex items-center gap-2">
+        {icon}
+        {label}
+      </span>
+      {expandedSections[id] ? (
+        <ChevronDown className="size-4 text-muted-foreground" />
+      ) : (
+        <ChevronUp className="size-4 text-muted-foreground" />
+      )}
+    </button>
+  );
 
-        if (file.size > 10 * 1024 * 1024) {
-            setUploadError('Image must be under 10MB');
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const dataUrl = event.target?.result as string;
-            updateDesign({ textureUrl: dataUrl });
-            setExpandedSections((prev) => ({ ...prev, texture: true }));
-        };
-        reader.readAsDataURL(file);
-        e.target.value = '';
-    };
-
-    const handleClearTexture = () => {
-        updateDesign({ textureUrl: null });
-        setUploadError(null);
-        if (fileInputRef.current) fileInputRef.current.value = '';
-    };
-
-    const handleBrandTextChange = (text: string) => {
-        updateDesign({ brandText: text });
-    };
-
-    const handleTextColorChange = (color: string) => {
-        updateDesign({ textColor: color });
-    };
-
-    return (
-        <div className="flex flex-col h-full bg-[#1c1a15]">
-            {/* Header */}
-            <div className="p-5 border-b border-border-dark sticky top-0 bg-[#1c1a15]/95 backdrop-blur">
-                <h3 className="text-base font-bold text-white">Design Studio</h3>
-                <p className="text-xs text-text-dim mt-1">
-                    {selectedProduct?.name ?? name} — customize your product
-                </p>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar space-y-4">
-
-
-                {/* Base Colors */}
-                <div className="border border-border-dark rounded-lg overflow-hidden">
-                    <button
-                        onClick={() => toggleSection('colors')}
-                        className="w-full px-4 py-3 bg-[#2d2a1e] hover:bg-[#3d3a2e] transition-colors flex items-center justify-between font-semibold text-white text-sm"
-                    >
-                        <span className="flex items-center gap-2">
-                            <Palette className="size-4" />
-                            Base Color
-                        </span>
-                        <span className="text-lg">{expandedSections.colors ? <ChevronDown className="size-4" /> : <ChevronUp className="size-4" />}</span>
-                    </button>
-                    {expandedSections.colors && (
-                        <div className="p-4 bg-[#1c1a15] space-y-3">
-                            <div className="grid grid-cols-5 gap-2">
-                                {COLORS.map((color) => (
-                                    <button
-                                        key={color}
-                                        onClick={() => handleColorChange(color)}
-                                        className={`w-full h-10 rounded-lg border-2 transition-all ${designConfig.color === color
-                                            ? 'border-white'
-                                            : 'border-gray-600 hover:border-gray-400'
-                                            }`}
-                                        style={{ backgroundColor: color }}
-                                        title={color}
-                                    />
-                                ))}
-                            </div>
-                            <div className="flex gap-2">
-                                <input
-                                    type="color"
-                                    value={designConfig.color}
-                                    onChange={(e) => handleColorChange(e.target.value)}
-                                    className="w-16 h-10 rounded cursor-pointer"
-                                />
-                                <input
-                                    type="text"
-                                    value={designConfig.color}
-                                    onChange={(e) => handleColorChange(e.target.value)}
-                                    className="flex-1 px-2 h-10 bg-[#2d2a1e] text-white text-xs rounded border border-border-dark"
-                                    placeholder="#ffffff"
-                                />
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Texture Upload */}
-                <div className="border border-border-dark rounded-lg overflow-hidden">
-                    <button
-                        onClick={() => toggleSection('texture')}
-                        className="w-full px-4 py-3 bg-[#2d2a1e] hover:bg-[#3d3a2e] transition-colors flex items-center justify-between font-semibold text-white text-sm"
-                    >
-                        <span className="flex items-center gap-2">
-                            <Image className="size-4" />
-                            Texture
-                        </span>
-
-
-                        <span className="text-lg">{expandedSections.texture ? <ChevronDown className='size-4' /> : <ChevronUp className='size-4' />}</span>
-                    </button>
-                    {expandedSections.texture && (
-                        <div className="p-4 bg-[#1c1a15] space-y-3">
-                            <button
-                                onClick={() => fileInputRef.current?.click()}
-                                className="w-full h-20 border-2 border-dashed border-[#54503b] rounded-lg flex flex-col items-center justify-center gap-2 hover:bg-[#2d2a1e] transition-colors group"
-                            >
-                                <span className="text-text-dim group-hover:text-primary text-2xl"><Plus className="size-6" /></span>
-                                <span className="text-xs font-medium text-text-dim group-hover:text-primary">Upload Texture</span>
-                            </button>
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                accept="image/png,image/jpeg,image/webp,image/*"
-                                onChange={handleTextureUpload}
-                                className="hidden"
-                            />
-                            {uploadError && (
-                                <p className="text-xs text-red-400">{uploadError}</p>
-                            )}
-                            {designConfig.textureUrl && (
-                                <>
-                                    <div className="relative rounded-lg overflow-hidden border border-border-dark">
-                                        <img
-                                            src={designConfig.textureUrl}
-                                            alt="Uploaded texture"
-                                            className="w-full h-24 object-cover"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={handleClearTexture}
-                                            className="absolute top-2 right-2 p-1 rounded-full bg-black/60 text-white hover:bg-red-500/80 transition-colors"
-                                            title="Remove texture"
-                                        >
-                                            <X className="size-3" />
-                                        </button>
-                                    </div>
-                                    <div className="text-xs text-green-400 flex items-center gap-2">
-                                        <CheckCircle className="size-4" />
-                                        Texture applied
-                                    </div>
-                                </>
-                            )}
-                            <div className="space-y-2">
-                                <label className="text-xs font-semibold text-text-dim block">Scale: {designConfig.textureScale.toFixed(1)}x</label>
-                                <input
-                                    type="range"
-                                    min="0.5"
-                                    max="3"
-                                    step="0.1"
-                                    value={designConfig.textureScale}
-                                    onChange={(e) => updateDesign({ textureScale: parseFloat(e.target.value) })}
-                                    className="w-full"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-xs font-semibold text-text-dim block">
-                                    Rotation: {((designConfig.textureRotation * 180) / Math.PI).toFixed(0)}°
-                                </label>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max={Math.PI * 2}
-                                    step="0.1"
-                                    value={designConfig.textureRotation}
-                                    onChange={(e) => updateDesign({ textureRotation: parseFloat(e.target.value) })}
-                                    className="w-full"
-                                />
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Branding/Text */}
-                <div className="border border-border-dark rounded-lg overflow-hidden">
-                    <button
-                        onClick={() => toggleSection('branding')}
-                        className="w-full px-4 py-3 bg-[#2d2a1e] hover:bg-[#3d3a2e] transition-colors flex items-center justify-between font-semibold text-white text-sm"
-                    >
-                        <span className="flex items-center gap-2">
-                            <TextInitial className="size-4" />
-                            Branding Text
-                        </span>
-                        <span className="text-lg">{expandedSections.branding ? <ChevronDown className="size-4" /> : <ChevronUp className="size-4" />}</span>
-                    </button>
-                    {expandedSections.branding && (
-                        <div className="p-4 bg-[#1c1a15] space-y-3">
-                            <input
-                                type="text"
-                                value={designConfig.brandText}
-                                onChange={(e) => handleBrandTextChange(e.target.value)}
-                                placeholder="Enter brand text"
-                                maxLength={30}
-                                className="w-full px-3 h-10 bg-[#2d2a1e] text-white text-sm rounded border border-border-dark placeholder:text-text-dim"
-                            />
-                            <div className="space-y-2">
-                                <label className="text-xs font-semibold text-text-dim block">Text Color</label>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="color"
-                                        value={designConfig.textColor}
-                                        onChange={(e) => handleTextColorChange(e.target.value)}
-                                        className="w-12 h-10 rounded cursor-pointer"
-                                    />
-                                    <input
-                                        type="text"
-                                        value={designConfig.textColor}
-                                        onChange={(e) => handleTextColorChange(e.target.value)}
-                                        className="flex-1 px-2 h-10 bg-[#2d2a1e] text-white text-xs rounded border border-border-dark"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Material Properties */}
-                <div className="border border-border-dark rounded-lg overflow-hidden">
-                    <button
-                        onClick={() => toggleSection('materials')}
-                        className="w-full px-4 py-3 bg-[#2d2a1e] hover:bg-[#3d3a2e] transition-colors flex items-center justify-between font-semibold text-white text-sm"
-                    >
-                        <span className="flex items-center gap-2">
-                            <Gem className="size-4" />
-                            Material
-                        </span>
-                        <span className="text-lg">{expandedSections.materials ? <ChevronDown className="size-4" /> : <ChevronUp className="size-4" />}</span>
-                    </button>
-                    {expandedSections.materials && (
-                        <div className="p-4 bg-[#1c1a15] space-y-3">
-                            <div>
-                                <label className="text-xs font-semibold text-text-dim block mb-2">Metalness: {designConfig.metalness.toFixed(2)}</label>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="1"
-                                    step="0.05"
-                                    value={designConfig.metalness}
-                                    onChange={(e) => updateDesign({ metalness: parseFloat(e.target.value) })}
-                                    className="w-full"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-xs font-semibold text-text-dim block mb-2">Roughness: {designConfig.roughness.toFixed(2)}</label>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="1"
-                                    step="0.05"
-                                    value={designConfig.roughness}
-                                    onChange={(e) => updateDesign({ roughness: parseFloat(e.target.value) })}
-                                    className="w-full"
-                                />
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Logos Section */}
-                <div className="border border-border-dark rounded-lg overflow-hidden">
-                    <div className="px-4 py-3 bg-[#2d2a1e]">
-                        <h4 className="text-sm font-semibold text-white flex items-center gap-2">
-                            <ShieldCheck className="size-4" />
-                            Logo Template
-                        </h4>
-                    </div>
-                    <div className="p-4 bg-[#1c1a15] grid grid-cols-2 gap-3">
-                        {LOGOS.map((logo) => (
-                            <button
-                                key={logo.id}
-                                onClick={() => handleApplyLogo(logo.id)}
-                                className={`aspect-square rounded-lg border-2 p-3 flex items-center justify-center cursor-pointer transition-all ${designConfig.logo === logo.id
-                                    ? 'border-primary bg-primary/10'
-                                    : 'border-border-dark hover:border-primary'
-                                    } ${logo.dark ? 'bg-[#2d2a1e]' : 'bg-white'}`}
-                            >
-                                <div className={`text-center leading-none tracking-tight font-bold text-xs ${logo.dark ? 'text-white' : 'text-slate-900'}`}>
-                                    <span className="text-red-500 block text-lg">Z</span>enith<br />Bank
-                                </div>
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Info */}
-                <div className="border border-border-dark/50 rounded-lg p-3 bg-primary/5">
-                    <p className="text-xs text-text-dim leading-relaxed">
-                        <Info className="size-4 align-middle mr-1 inline" />
-                        All changes are applied in real-time to your 3D preview.
-                    </p>
-                </div>
-            </div>
+  return (
+    <div className="flex h-full min-h-0 flex-col bg-card text-card-foreground">
+      {!hideHeader && (
+        <div className="sticky top-0 z-10 border-b border-border bg-card p-4 sm:p-5">
+          <h3 className="text-base font-bold text-foreground">Design Studio</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {selectedProduct?.name ?? name} — customize your product
+          </p>
         </div>
-    );
+      )}
+
+      <div className="flex-1 space-y-3 overflow-y-auto overscroll-contain p-3 sm:space-y-4 sm:p-4">
+        {/* Base Colors */}
+        <div className="overflow-hidden rounded-lg border border-border">
+          <SectionHeader
+            id="colors"
+            icon={<Palette className="size-4" />}
+            label="Base Color"
+          />
+          {expandedSections.colors && (
+            <div className="space-y-3 bg-card p-4">
+              <div className="grid grid-cols-5 gap-2">
+                {COLORS.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => handleColorChange(color)}
+                    className={cn(
+                      'h-10 w-full rounded-lg border-2 transition-all',
+                      designConfig.color === color
+                        ? 'border-primary ring-2 ring-primary/30'
+                        : 'border-border hover:border-muted-foreground'
+                    )}
+                    style={{ backgroundColor: color }}
+                    title={color}
+                    aria-label={`Color ${color}`}
+                  />
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="color"
+                  value={designConfig.color}
+                  onChange={(e) => handleColorChange(e.target.value)}
+                  className="h-11 w-14 cursor-pointer rounded border border-border bg-transparent"
+                  aria-label="Custom color"
+                />
+                <input
+                  type="text"
+                  value={designConfig.color}
+                  onChange={(e) => handleColorChange(e.target.value)}
+                  className="h-11 min-w-0 flex-1 rounded-lg border border-border bg-secondary px-3 text-xs text-foreground"
+                  placeholder="#ffffff"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Texture Upload */}
+        <div className="overflow-hidden rounded-lg border border-border">
+          <SectionHeader
+            id="texture"
+            icon={<Image className="size-4" />}
+            label="Texture"
+          />
+          {expandedSections.texture && (
+            <div className="space-y-3 bg-card p-4">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="group flex h-20 w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border transition-colors hover:border-primary hover:bg-accent"
+              >
+                <Plus className="size-6 text-muted-foreground group-hover:text-primary" />
+                <span className="text-xs font-medium text-muted-foreground group-hover:text-primary">
+                  Upload Texture
+                </span>
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/*"
+                onChange={handleTextureUpload}
+                className="hidden"
+              />
+              {uploadError && (
+                <p className="text-xs text-destructive">{uploadError}</p>
+              )}
+              {designConfig.textureUrl && (
+                <>
+                  <div className="relative overflow-hidden rounded-lg border border-border">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={designConfig.textureUrl}
+                      alt="Uploaded texture"
+                      className="h-24 w-full object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleClearTexture}
+                      className="absolute right-2 top-2 rounded-full bg-overlay p-1.5 text-foreground"
+                      title="Remove texture"
+                      aria-label="Remove texture"
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-success">
+                    <CheckCircle className="size-4" />
+                    Texture applied
+                  </div>
+                </>
+              )}
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold text-muted-foreground">
+                  Scale: {designConfig.textureScale.toFixed(1)}x
+                </label>
+                <input
+                  type="range"
+                  min="0.5"
+                  max="3"
+                  step="0.1"
+                  value={designConfig.textureScale}
+                  onChange={(e) =>
+                    updateDesign({ textureScale: parseFloat(e.target.value) })
+                  }
+                  className="w-full"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold text-muted-foreground">
+                  Rotation: {((designConfig.textureRotation * 180) / Math.PI).toFixed(0)}°
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max={Math.PI * 2}
+                  step="0.1"
+                  value={designConfig.textureRotation}
+                  onChange={(e) =>
+                    updateDesign({ textureRotation: parseFloat(e.target.value) })
+                  }
+                  className="w-full"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Branding */}
+        <div className="overflow-hidden rounded-lg border border-border">
+          <SectionHeader
+            id="branding"
+            icon={<TextInitial className="size-4" />}
+            label="Branding Text"
+          />
+          {expandedSections.branding && (
+            <div className="space-y-3 bg-card p-4">
+              <input
+                type="text"
+                value={designConfig.brandText}
+                onChange={(e) => handleBrandTextChange(e.target.value)}
+                placeholder="Enter brand text"
+                maxLength={30}
+                className="h-11 w-full rounded-lg border border-border bg-secondary px-3 text-sm text-foreground placeholder:text-muted-foreground"
+              />
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold text-muted-foreground">
+                  Text Color
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="color"
+                    value={designConfig.textColor}
+                    onChange={(e) => handleTextColorChange(e.target.value)}
+                    className="h-11 w-12 cursor-pointer rounded border border-border"
+                    aria-label="Text color"
+                  />
+                  <input
+                    type="text"
+                    value={designConfig.textColor}
+                    onChange={(e) => handleTextColorChange(e.target.value)}
+                    className="h-11 min-w-0 flex-1 rounded-lg border border-border bg-secondary px-3 text-xs text-foreground"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Material */}
+        <div className="overflow-hidden rounded-lg border border-border">
+          <SectionHeader
+            id="materials"
+            icon={<Gem className="size-4" />}
+            label="Material"
+          />
+          {expandedSections.materials && (
+            <div className="space-y-4 bg-card p-4">
+              <div>
+                <label className="mb-2 block text-xs font-semibold text-muted-foreground">
+                  Metalness: {designConfig.metalness.toFixed(2)}
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={designConfig.metalness}
+                  onChange={(e) =>
+                    updateDesign({ metalness: parseFloat(e.target.value) })
+                  }
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-xs font-semibold text-muted-foreground">
+                  Roughness: {designConfig.roughness.toFixed(2)}
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  value={designConfig.roughness}
+                  onChange={(e) =>
+                    updateDesign({ roughness: parseFloat(e.target.value) })
+                  }
+                  className="w-full"
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Logos */}
+        <div className="overflow-hidden rounded-lg border border-border">
+          <div className="bg-secondary px-4 py-3">
+            <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <ShieldCheck className="size-4" />
+              Logo Template
+            </h4>
+          </div>
+          <div className="grid grid-cols-2 gap-3 bg-card p-4">
+            {LOGOS.map((logo) => (
+              <button
+                key={logo.id}
+                type="button"
+                onClick={() => handleApplyLogo(logo.id)}
+                className={cn(
+                  'flex aspect-square cursor-pointer items-center justify-center rounded-lg border-2 p-3 transition-all',
+                  designConfig.logo === logo.id
+                    ? 'border-primary bg-primary/10'
+                    : 'border-border hover:border-primary',
+                  logo.dark ? 'bg-secondary' : 'bg-card'
+                )}
+              >
+                <div
+                  className={cn(
+                    'text-center text-xs font-bold leading-none tracking-tight',
+                    logo.dark ? 'text-foreground' : 'text-foreground'
+                  )}
+                >
+                  <span className="block text-lg text-destructive">Z</span>
+                  enith
+                  <br />
+                  Bank
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-border bg-primary/5 p-3">
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            <Info className="mr-1 inline size-4 align-middle" />
+            Changes apply in real time to the 3D preview. Pinch or drag to orbit on
+            mobile.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }

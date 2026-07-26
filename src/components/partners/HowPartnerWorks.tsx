@@ -24,10 +24,10 @@ export default function HowPartnerWorks() {
         <div className="mt-12 grid gap-5 md:grid-cols-4">
           {STEPS.map(([number, title, body], index) => (
             <ScrollReveal key={title} delay={index * 80}>
-              <div className="h-full rounded-2xl border border-white/10 bg-white/5 p-6">
+              <div className="h-full rounded-2xl border border-border bg-card p-6">
                 <p className="text-sm font-bold text-primary">{number}</p>
                 <h3 className="mt-4 font-semibold">{title}</h3>
-                <p className="mt-2 text-sm text-text-secondary">{body}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{body}</p>
               </div>
             </ScrollReveal>
           ))}

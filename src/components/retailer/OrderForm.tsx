@@ -36,13 +36,13 @@ export default function OrderForm({ onCreated }: OrderFormProps) {
   };
 
   return (
-    <form onSubmit={submit} className="rounded-2xl border border-white/10 bg-card-dark/80 p-6">
+    <form onSubmit={submit} className="rounded-2xl border border-border bg-card p-6">
       <h2 className="text-lg font-semibold">Request more stock</h2>
-      <p className="mt-1 text-sm text-text-secondary">
+      <p className="mt-1 text-sm text-muted-foreground">
         Tell operations how many branded packs your venue needs next.
       </p>
 
-      <label className="mt-5 block text-sm font-medium text-white/70">
+      <label className="mt-5 block text-sm font-medium text-muted-foreground">
         Quantity
         <input
           type="number"
@@ -50,17 +50,17 @@ export default function OrderForm({ onCreated }: OrderFormProps) {
           max={10000}
           value={quantity}
           onChange={(e) => setQuantity(Number(e.target.value))}
-          className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+          className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
         />
       </label>
 
-      <label className="mt-4 block text-sm font-medium text-white/70">
+      <label className="mt-4 block text-sm font-medium text-muted-foreground">
         Notes
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={4}
-          className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+          className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
           placeholder="Preferred delivery window, campaign details, or packaging needs."
         />
       </label>
@@ -68,7 +68,7 @@ export default function OrderForm({ onCreated }: OrderFormProps) {
       <button
         type="submit"
         disabled={submitting}
-        className="mt-5 w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-600 disabled:opacity-60"
+        className="mt-5 w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-blue-600 disabled:opacity-60"
       >
         {submitting ? 'Submitting...' : 'Submit request'}
       </button>

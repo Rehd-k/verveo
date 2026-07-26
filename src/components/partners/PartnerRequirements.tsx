@@ -25,9 +25,9 @@ export default function PartnerRequirements() {
         <div className="space-y-3">
           {REQUIREMENTS.map((item, index) => (
             <ScrollReveal key={item} delay={index * 70}>
-              <div className="flex gap-3 rounded-2xl border border-white/10 bg-card-dark/70 p-5">
+              <div className="flex gap-3 rounded-2xl border border-border bg-card p-5">
                 <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" />
-                <p className="text-sm leading-relaxed text-white/75">{item}</p>
+                <p className="text-sm leading-relaxed text-foreground/75">{item}</p>
               </div>
             </ScrollReveal>
           ))}

@@ -100,8 +100,8 @@ export default function CTAStep({
   const ctaContent = (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xl font-bold text-white mb-2">Call-to-Action</h3>
-        <p className="text-white/60">
+        <h3 className="text-xl font-bold text-foreground mb-2">Call-to-Action</h3>
+        <p className="text-muted-foreground">
           Where should people go when they scan your QR code?
         </p>
       </div>
@@ -115,35 +115,35 @@ export default function CTAStep({
             className={`p-3 rounded-lg border transition-all text-left ${
               ctaType === link.key
                 ? 'border-primary bg-primary/10 text-primary'
-                : 'border-white/10 bg-white/5 text-white hover:border-white/20'
+                : 'border-border bg-card text-foreground hover:border-border'
             }`}
           >
             <span className="font-semibold">{link.name}</span>
-            <p className="text-xs text-white/60 mt-1 truncate">{link.prefix}</p>
+            <p className="text-xs text-muted-foreground mt-1 truncate">{link.prefix}</p>
           </button>
         ))}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-white mb-2">Complete URL</label>
+        <label className="block text-sm font-medium text-foreground mb-2">Complete URL</label>
         <input
           type="url"
           value={data.ctaUrl || ''}
           onChange={(e) => updateData({ ctaUrl: e.target.value })}
           placeholder="https://example.com"
-          className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-white placeholder-white/30"
+          className="w-full rounded-lg bg-card border border-border px-4 py-3 text-foreground placeholder-white/30"
         />
       </div>
 
       {previewQr && (
-        <div className="p-6 rounded-lg bg-white/5 border border-white/10 text-center">
-          <p className="text-sm text-white/80 mb-4">Tracking QR Preview</p>
+        <div className="p-6 rounded-lg bg-card border border-border text-center">
+          <p className="text-sm text-muted-foreground mb-4">Tracking QR Preview</p>
           <img
             src={previewQr}
             alt="QR Code preview"
-            className="w-48 h-48 mx-auto rounded-lg border-2 border-white/10 bg-white p-2"
+            className="w-48 h-48 mx-auto rounded-lg border-2 border-border bg-card p-2"
           />
-          <p className="text-xs text-white/60 mt-4 break-all">
+          <p className="text-xs text-muted-foreground mt-4 break-all">
             Destination: {data.ctaUrl}
           </p>
           <p className="text-xs text-primary/80 mt-2">
@@ -153,7 +153,7 @@ export default function CTAStep({
       )}
 
       <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-        <p className="text-sm text-white/80">
+        <p className="text-sm text-muted-foreground">
           <span className="font-bold text-primary">Pro Tip:</span> Each campaign gets a unique
           tracking QR code. We record scan time, device, and location, then redirect visitors to
           your destination with UTM tags.
@@ -179,11 +179,11 @@ export default function CTAStep({
     return (
       <div className="flex flex-col min-h-[91.5vh] bg-[#0f0d0a]">
         <div className="flex-1 overflow-y-auto px-4 md:px-12 py-8">{layout}</div>
-        <div className="border-t border-white/10 px-4 md:px-12 py-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 shrink-0">
+        <div className="border-t border-border px-4 md:px-12 py-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 shrink-0">
           <button
             type="button"
             onClick={prevStage}
-            className="w-full sm:w-auto px-6 py-3 bg-surface-dark/90 border border-border-dark hover:border-primary rounded-lg text-white font-semibold transition-all flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-3 bg-card border border-border hover:border-primary rounded-lg text-foreground font-semibold transition-all flex items-center justify-center gap-2"
           >
             <ArrowLeft className="size-4" />
             Go Back
@@ -192,7 +192,7 @@ export default function CTAStep({
             type="button"
             onClick={() => onSubmit?.()}
             disabled={loading || !canSubmit}
-            className="w-full sm:w-auto px-8 py-3 bg-primary hover:bg-primary/90 text-black rounded-lg font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto px-8 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <BadgeCheck className="size-4" />
             {loading ? 'Creating...' : 'Create Campaign'}

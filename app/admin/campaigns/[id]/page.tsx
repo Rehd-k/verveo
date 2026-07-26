@@ -57,28 +57,28 @@ export default function AdminCampaignDetailPage() {
     }
   };
 
-  if (!campaign) return <div className="text-text-secondary">Loading...</div>;
+  if (!campaign) return <div className="text-muted-foreground">Loading...</div>;
 
   return (
     <div className="space-y-6">
       <Link href="/admin/campaigns" className="text-sm text-primary hover:underline">← Back to campaigns</Link>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white">{campaign.title}</h2>
-          <p className="text-text-secondary">{campaign.owner?.email} · {campaign.owner?.name}</p>
+          <h2 className="text-xl font-bold text-foreground">{campaign.title}</h2>
+          <p className="text-muted-foreground">{campaign.owner?.email} · {campaign.owner?.name}</p>
           <div className="mt-2"><StatusBadge status={campaign.status} /></div>
         </div>
         <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
           <CampaignStatusSelect value={campaign.status} onChange={updateStatus} />
           <button
             onClick={regenerateQr}
-            className="flex min-h-11 w-full items-center justify-center gap-1 rounded-lg bg-white/10 px-3 py-2 text-sm hover:bg-white/15 sm:w-auto"
+            className="flex min-h-11 w-full items-center justify-center gap-1 rounded-lg bg-card/10 px-3 py-2 text-sm hover:bg-card/15 sm:w-auto"
           >
             <QrCode className="size-4" /> Regenerate QR
           </button>
           <button
             onClick={() => setShowDelete(true)}
-            className="flex min-h-11 w-full items-center justify-center gap-1 rounded-lg bg-red-600/20 px-3 py-2 text-sm text-red-400 hover:bg-red-600/30 sm:w-auto"
+            className="flex min-h-11 w-full items-center justify-center gap-1 rounded-lg bg-destructive/20 px-3 py-2 text-sm text-destructive hover:bg-destructive/30 sm:w-auto"
           >
             <Trash2 className="size-4" /> Delete
           </button>
@@ -86,25 +86,25 @@ export default function AdminCampaignDetailPage() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="rounded-xl border border-white/10 bg-card-dark p-5 space-y-3 text-sm">
-          <div className="flex justify-between"><span className="text-text-secondary">Product</span><span>{campaign.productType}</span></div>
-          <div className="flex justify-between"><span className="text-text-secondary">Quantity</span><span>{campaign.quantity}</span></div>
-          <div className="flex justify-between"><span className="text-text-secondary">Budget</span><span>₦{campaign.budget?.toLocaleString()}</span></div>
-          <div className="flex justify-between"><span className="text-text-secondary">Scans</span><span>{campaign.stats?.scans ?? 0}</span></div>
-          <div className="flex justify-between"><span className="text-text-secondary">Impressions</span><span>{campaign.stats?.impressions ?? 0}</span></div>
-          <div className="flex justify-between gap-2"><span className="shrink-0 text-text-secondary">CTA URL</span><a href={campaign.ctaUrl} target="_blank" rel="noreferrer" className="text-primary truncate max-w-full sm:max-w-[200px]">{campaign.ctaUrl || '—'}</a></div>
-          <div><span className="text-text-secondary">Locations:</span> <span>{campaign.locations?.join(', ') || '—'}</span></div>
+        <div className="rounded-xl border border-border bg-card p-5 space-y-3 text-sm">
+          <div className="flex justify-between"><span className="text-muted-foreground">Product</span><span>{campaign.productType}</span></div>
+          <div className="flex justify-between"><span className="text-muted-foreground">Quantity</span><span>{campaign.quantity}</span></div>
+          <div className="flex justify-between"><span className="text-muted-foreground">Budget</span><span>₦{campaign.budget?.toLocaleString()}</span></div>
+          <div className="flex justify-between"><span className="text-muted-foreground">Scans</span><span>{campaign.stats?.scans ?? 0}</span></div>
+          <div className="flex justify-between"><span className="text-muted-foreground">Impressions</span><span>{campaign.stats?.impressions ?? 0}</span></div>
+          <div className="flex justify-between gap-2"><span className="shrink-0 text-muted-foreground">CTA URL</span><a href={campaign.ctaUrl} target="_blank" rel="noreferrer" className="text-primary truncate max-w-full sm:max-w-[200px]">{campaign.ctaUrl || '—'}</a></div>
+          <div><span className="text-muted-foreground">Locations:</span> <span>{campaign.locations?.join(', ') || '—'}</span></div>
         </div>
         {campaign.qrCode && (
-          <div className="rounded-xl border border-white/10 bg-card-dark p-5 flex flex-col items-center">
-            <p className="mb-3 text-sm text-text-secondary">QR Code</p>
+          <div className="rounded-xl border border-border bg-card p-5 flex flex-col items-center">
+            <p className="mb-3 text-sm text-muted-foreground">QR Code</p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={campaign.qrCode} alt="QR Code" className="w-48 h-48 rounded-lg bg-white p-2" />
+            <img src={campaign.qrCode} alt="QR Code" className="w-48 h-48 rounded-lg bg-card p-2" />
           </div>
         )}
         {campaign.design?.imageUrl && (
-          <div className="rounded-xl border border-white/10 bg-card-dark p-5 lg:col-span-2">
-            <p className="mb-3 text-sm text-text-secondary">Design Preview</p>
+          <div className="rounded-xl border border-border bg-card p-5 lg:col-span-2">
+            <p className="mb-3 text-sm text-muted-foreground">Design Preview</p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={campaign.design.imageUrl || campaign.design.previewUrl} alt="Design" className="max-h-64 rounded-lg" />
           </div>

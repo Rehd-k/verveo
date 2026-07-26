@@ -47,8 +47,8 @@ export default function PackagingSection() {
         <div className="mt-14 grid gap-6 sm:grid-cols-2">
           {PRODUCTS.map((product, i) => (
             <ScrollReveal key={product.name} delay={i * 80}>
-              <div className="group flex gap-5 rounded-2xl border border-white/10 bg-card-dark/50 p-6 transition hover:border-primary/40 hover:shadow-[0_0_40px_rgba(25,93,230,0.1)]">
-                <div className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-white/5 text-2xl transition group-hover:bg-primary/15">
+              <div className="group flex gap-5 rounded-2xl border border-border bg-card p-6 transition hover:border-primary/40 hover:shadow-[0_0_40px_rgba(25,93,230,0.1)]">
+                <div className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-accent text-2xl transition group-hover:bg-primary/15">
                   {product.emoji}
                 </div>
                 <div>
@@ -56,10 +56,10 @@ export default function PackagingSection() {
                     <h3 className="text-lg font-semibold">{product.name}</h3>
                     <span className="text-sm font-bold text-primary">
                       {product.price}
-                      <span className="font-normal text-white/40"> {product.unit}</span>
+                      <span className="font-normal text-muted-foreground"> {product.unit}</span>
                     </span>
                   </div>
-                  <p className="mt-2 text-sm leading-relaxed text-white/55">{product.description}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{product.description}</p>
                 </div>
               </div>
             </ScrollReveal>

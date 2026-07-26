@@ -182,18 +182,18 @@ export default function DesignStudio3D({ imageSrc, productType = 'cup', onCaptur
       {/* Control Panel */}
       <div className="absolute left-4 top-4 z-40 flex flex-col gap-3 max-w-xs">
         <div className="backdrop-blur-md bg-linear-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30 p-4 rounded-lg">
-          <label className="text-sm font-semibold text-white mb-2 block">Texture Scale</label>
+          <label className="text-sm font-semibold text-foreground mb-2 block">Texture Scale</label>
           <div className="flex items-center gap-2">
             <button 
               onClick={() => setScale((s) => Math.max(0.2, +(s - 0.2).toFixed(2)))} 
-              className="px-3 py-2 bg-purple-600 hover:bg-purple-500 rounded-md text-white font-semibold transition"
+              className="px-3 py-2 bg-purple-600 hover:bg-purple-500 rounded-md text-foreground font-semibold transition"
             >
               −
             </button>
-            <div className="px-4 py-2 bg-white/10 rounded-md text-white text-center flex-1 font-mono">{scale.toFixed(1)}x</div>
+            <div className="px-4 py-2 bg-card/10 rounded-md text-foreground text-center flex-1 font-mono">{scale.toFixed(1)}x</div>
             <button 
               onClick={() => setScale((s) => +(s + 0.2).toFixed(2))} 
-              className="px-3 py-2 bg-purple-600 hover:bg-purple-500 rounded-md text-white font-semibold transition"
+              className="px-3 py-2 bg-purple-600 hover:bg-purple-500 rounded-md text-foreground font-semibold transition"
             >
               +
             </button>
@@ -201,17 +201,17 @@ export default function DesignStudio3D({ imageSrc, productType = 'cup', onCaptur
         </div>
 
         <div className="backdrop-blur-md bg-linear-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 p-4 rounded-lg">
-          <label className="text-sm font-semibold text-white mb-2 block">Rotation</label>
+          <label className="text-sm font-semibold text-foreground mb-2 block">Rotation</label>
           <div className="flex gap-2">
             <button 
               onClick={() => setRotation((r) => r - Math.PI / 8)} 
-              className="flex-1 px-3 py-2 bg-cyan-600 hover:bg-cyan-500 rounded-md text-white font-semibold transition"
+              className="flex-1 px-3 py-2 bg-cyan-600 hover:bg-cyan-500 rounded-md text-foreground font-semibold transition"
             >
               ⟲
             </button>
             <button 
               onClick={() => setRotation((r) => r + Math.PI / 8)} 
-              className="flex-1 px-3 py-2 bg-cyan-600 hover:bg-cyan-500 rounded-md text-white font-semibold transition"
+              className="flex-1 px-3 py-2 bg-cyan-600 hover:bg-cyan-500 rounded-md text-foreground font-semibold transition"
             >
               ⟳
             </button>
@@ -220,13 +220,13 @@ export default function DesignStudio3D({ imageSrc, productType = 'cup', onCaptur
 
         {productType === 'pizza-box' && (
           <div className="backdrop-blur-md bg-linear-to-r from-orange-500/20 to-red-500/20 border border-orange-400/30 p-4 rounded-lg">
-            <label className="text-sm font-semibold text-white mb-2 block">Pizza Box Lid</label>
+            <label className="text-sm font-semibold text-foreground mb-2 block">Pizza Box Lid</label>
             <button 
               onClick={() => setLidOpen((v) => !v)} 
               className={`w-full px-4 py-2 rounded-md font-semibold transition ${
                 lidOpen 
-                  ? 'bg-red-600 hover:bg-red-500 text-white' 
-                  : 'bg-orange-600 hover:bg-orange-500 text-white'
+                  ? 'bg-destructive hover:brightness-110 text-foreground' 
+                  : 'bg-orange-600 hover:bg-orange-500 text-foreground'
               }`}
             >
               {lidOpen ? '🔓 Close Lid' : '🔒 Open Lid'}
@@ -239,7 +239,7 @@ export default function DesignStudio3D({ imageSrc, productType = 'cup', onCaptur
       <div className="absolute right-4 bottom-4 z-40">
         <button
           onClick={handleCapture}
-          className="group relative px-6 py-3 bg-linear-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 rounded-lg text-white font-bold shadow-lg hover:shadow-pink-500/50 transition-all"
+          className="group relative px-6 py-3 bg-linear-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 rounded-lg text-foreground font-bold shadow-lg hover:shadow-pink-500/50 transition-all"
         >
           ✨ Capture Preview
         </button>

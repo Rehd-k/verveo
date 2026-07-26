@@ -68,7 +68,7 @@ function AnimatedStat({
         {suffix}
       </p>
       <p className="mt-2 text-sm font-semibold">{label}</p>
-      <p className="mt-1 text-xs text-white/50">{description}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{description}</p>
     </div>
   );
 }
@@ -117,16 +117,16 @@ export default function ROISection() {
           <div className="text-center">
             <p className="text-4xl font-bold text-primary md:text-5xl">₦42</p>
             <p className="mt-2 text-sm font-semibold">Avg. cost per scan</p>
-            <p className="mt-1 text-xs text-white/50">across active campaigns</p>
+            <p className="mt-1 text-xs text-muted-foreground">across active campaigns</p>
           </div>
         </div>
 
         <div className="mt-16 grid gap-6 md:grid-cols-3">
           {ROI_POINTS.map((point, i) => (
             <ScrollReveal key={point.title} delay={i * 100}>
-              <div className="rounded-2xl border border-white/10 bg-card-dark/50 p-6">
+              <div className="rounded-2xl border border-border bg-card p-6">
                 <h3 className="font-semibold">{point.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-white/55">{point.body}</p>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{point.body}</p>
               </div>
             </ScrollReveal>
           ))}

@@ -61,42 +61,42 @@ export default function RetailerSettingsPage() {
       />
 
       <div className="p-4 md:p-8">
-        <form onSubmit={handleSave} className="mx-auto max-w-xl space-y-4 rounded-2xl border border-white/10 bg-card-dark/80 p-6">
+        <form onSubmit={handleSave} className="mx-auto max-w-xl space-y-4 rounded-2xl border border-border bg-card p-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <p className="text-xs text-text-secondary">Email</p>
-              <p className="mt-1 text-sm font-medium text-white">{user?.email || '—'}</p>
+              <p className="text-xs text-muted-foreground">Email</p>
+              <p className="mt-1 text-sm font-medium text-foreground">{user?.email || '—'}</p>
             </div>
             <div>
-              <p className="text-xs text-text-secondary">Account status</p>
+              <p className="text-xs text-muted-foreground">Account status</p>
               <div className="mt-1">
                 <StatusBadge status={profile?.status || 'pending'} />
               </div>
             </div>
             <div>
-              <p className="text-xs text-text-secondary">Stock allowance</p>
-              <p className="mt-1 text-sm font-medium text-white">
+              <p className="text-xs text-muted-foreground">Stock allowance</p>
+              <p className="mt-1 text-sm font-medium text-foreground">
                 {(profile?.allowance ?? 0).toLocaleString()} packs
               </p>
             </div>
           </div>
 
-          <label className="block text-sm font-medium text-white/70">
+          <label className="block text-sm font-medium text-muted-foreground">
             Business name
             <input
               required
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
-              className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+              className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
             />
           </label>
 
-          <label className="block text-sm font-medium text-white/70">
+          <label className="block text-sm font-medium text-muted-foreground">
             Venue type
             <select
               value={venueType}
               onChange={(e) => setVenueType(e.target.value)}
-              className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+              className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
             >
               {VENUE_CATEGORIES.map((category) => (
                 <option key={category} value={category}>
@@ -106,12 +106,12 @@ export default function RetailerSettingsPage() {
             </select>
           </label>
 
-          <label className="block text-sm font-medium text-white/70">
+          <label className="block text-sm font-medium text-muted-foreground">
             City
             <select
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+              className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
             >
               {RETAILER_CITIES.map((cityName) => (
                 <option key={cityName} value={cityName}>
@@ -121,19 +121,19 @@ export default function RetailerSettingsPage() {
             </select>
           </label>
 
-          <label className="block text-sm font-medium text-white/70">
+          <label className="block text-sm font-medium text-muted-foreground">
             Address
             <input
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+              className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
             />
           </label>
 
           <button
             type="submit"
             disabled={saving}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-600 disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-blue-600 disabled:opacity-60"
           >
             {saving && <Loader2 className="size-4 animate-spin" />}
             {saving ? 'Saving...' : 'Save changes'}

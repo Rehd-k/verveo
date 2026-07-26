@@ -25,9 +25,9 @@ export default function AnalyticsShowcase() {
         </ScrollReveal>
 
         <ScrollReveal delay={120}>
-          <div className="mt-12 overflow-hidden rounded-2xl border border-white/10 bg-card-dark/80 backdrop-blur-sm">
-            <div className="border-b border-white/10 px-6 py-4">
-              <p className="text-xs font-medium uppercase tracking-widest text-white/40">
+          <div className="mt-12 overflow-hidden rounded-2xl border border-border bg-card backdrop-blur-sm">
+            <div className="border-b border-border px-6 py-4">
+              <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
                 Campaign Dashboard — Preview
               </p>
             </div>
@@ -36,9 +36,9 @@ export default function AnalyticsShowcase() {
               {METRICS.map((m) => (
                 <div
                   key={m.label}
-                  className="rounded-xl border border-white/5 bg-white/3 p-4 transition hover:border-primary/30"
+                  className="rounded-xl border border-border bg-card p-4 transition hover:border-primary/30"
                 >
-                  <div className="flex items-center gap-2 text-white/50">
+                  <div className="flex items-center gap-2 text-muted-foreground">
                     <m.icon className="size-3.5" />
                     <span className="text-xs">{m.label}</span>
                   </div>
@@ -48,8 +48,8 @@ export default function AnalyticsShowcase() {
               ))}
             </div>
 
-            <div className="border-t border-white/10 p-6">
-              <p className="mb-4 text-xs font-medium text-white/50">Scans over time</p>
+            <div className="border-t border-border p-6">
+              <p className="mb-4 text-xs font-medium text-muted-foreground">Scans over time</p>
               <div className="flex h-32 items-end gap-1.5">
                 {SCAN_DATA.map((h, i) => (
                   <div
@@ -61,14 +61,14 @@ export default function AnalyticsShowcase() {
               </div>
             </div>
 
-            <div className="relative border-t border-white/10 p-6">
-              <p className="mb-3 text-xs font-medium text-white/50">Zone heatmap</p>
-              <div className="relative h-40 overflow-hidden rounded-xl bg-[#111318]">
+            <div className="relative border-t border-border p-6">
+              <p className="mb-3 text-xs font-medium text-muted-foreground">Zone heatmap</p>
+              <div className="relative h-40 overflow-hidden rounded-xl bg-muted">
                 <div className="heatmap-glow absolute left-[20%] top-[30%] h-24 w-24 rounded-full" />
                 <div className="heatmap-glow absolute right-[25%] top-[20%] h-20 w-20 rounded-full opacity-70" />
                 <div className="heatmap-glow absolute bottom-[20%] left-[45%] h-28 w-28 rounded-full opacity-50" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <p className="text-xs text-white/30">Live scan density across active cities</p>
+                  <p className="text-xs text-muted-foreground">Live scan density across active cities</p>
                 </div>
               </div>
             </div>

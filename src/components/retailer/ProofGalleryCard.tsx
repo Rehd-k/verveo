@@ -25,19 +25,19 @@ function getCampaignTitle(proof: ProofGalleryCardProps['proof']) {
 
 export default function ProofGalleryCard({ proof }: ProofGalleryCardProps) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-card-dark/80">
+    <div className="overflow-hidden rounded-2xl border border-border bg-card">
       <div
-        className="aspect-4/3 bg-cover bg-center bg-background-dark"
+        className="aspect-4/3 bg-cover bg-center bg-background"
         style={{ backgroundImage: `url(${proof.imageUrl})` }}
       />
       <div className="space-y-2 p-4">
         <div className="flex items-center justify-between gap-2">
-          <p className="truncate text-sm font-semibold text-white">
+          <p className="truncate text-sm font-semibold text-foreground">
             {getCampaignTitle(proof)}
           </p>
           <StatusBadge status={proof.status || 'pending'} />
         </div>
-        <p className="text-xs text-text-secondary">{formatDate(proof.createdAt)}</p>
+        <p className="text-xs text-muted-foreground">{formatDate(proof.createdAt)}</p>
         {proof.status === 'rejected' && proof.notes && (
           <p className="text-xs text-red-300">{proof.notes}</p>
         )}

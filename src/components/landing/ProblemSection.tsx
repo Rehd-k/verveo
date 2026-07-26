@@ -39,12 +39,12 @@ export default function ProblemSection() {
         <div className="mt-14 grid gap-6 md:grid-cols-3">
           {PAINS.map((pain, i) => (
             <ScrollReveal key={pain.title} delay={i * 100}>
-              <div className="group h-full rounded-2xl border border-white/10 bg-card-dark/60 p-6 backdrop-blur-sm transition hover:border-primary/40 hover:shadow-[0_0_40px_rgba(25,93,230,0.12)]">
-                <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-white/5 text-primary transition group-hover:bg-primary/20">
+              <div className="group h-full rounded-2xl border border-border bg-card p-6 backdrop-blur-sm transition hover:border-primary/40 hover:shadow-[0_0_40px_rgba(25,93,230,0.12)]">
+                <div className="mb-4 flex size-11 items-center justify-center rounded-xl bg-accent text-primary transition group-hover:bg-primary/20">
                   <pain.icon className="size-5" />
                 </div>
                 <h3 className="text-lg font-semibold">{pain.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-white/60">{pain.description}</p>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{pain.description}</p>
               </div>
             </ScrollReveal>
           ))}

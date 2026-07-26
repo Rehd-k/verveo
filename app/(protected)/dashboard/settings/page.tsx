@@ -65,73 +65,73 @@ export default function UserSettingsPage() {
 
   return (
     <div className="p-8">
-      <h2 className="text-2xl font-bold text-white">Settings</h2>
-      <p className="mt-1 text-sm text-white/60">Manage your account profile and password.</p>
+      <h2 className="text-2xl font-bold text-foreground">Settings</h2>
+      <p className="mt-1 text-sm text-muted-foreground">Manage your account profile and password.</p>
 
       <form
         onSubmit={handleSave}
-        className="mx-auto mt-6 max-w-xl space-y-4 rounded-2xl border border-white/10 bg-card-dark/80 p-6"
+        className="mx-auto mt-6 max-w-xl space-y-4 rounded-2xl border border-border bg-card p-6"
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <p className="text-xs text-text-secondary">Email</p>
-            <p className="mt-1 text-sm font-medium text-white">{user?.email || '—'}</p>
+            <p className="text-xs text-muted-foreground">Email</p>
+            <p className="mt-1 text-sm font-medium text-foreground">{user?.email || '—'}</p>
           </div>
           <div>
-            <p className="text-xs text-text-secondary">Role</p>
-            <p className="mt-1 text-sm font-medium capitalize text-white">{user?.role || '—'}</p>
+            <p className="text-xs text-muted-foreground">Role</p>
+            <p className="mt-1 text-sm font-medium capitalize text-foreground">{user?.role || '—'}</p>
           </div>
           <div>
-            <p className="text-xs text-text-secondary">Wallet balance</p>
-            <p className="mt-1 text-sm font-medium text-white">
+            <p className="text-xs text-muted-foreground">Wallet balance</p>
+            <p className="mt-1 text-sm font-medium text-foreground">
               ₦{(user?.walletBalance ?? 0).toLocaleString()}
             </p>
           </div>
         </div>
 
-        <label className="block text-sm font-medium text-white/70">
+        <label className="block text-sm font-medium text-muted-foreground">
           Display name
           <input
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+            className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
           />
         </label>
 
-        <div className="border-t border-white/10 pt-4">
-          <p className="text-sm font-medium text-white">Change password</p>
-          <p className="mt-1 text-xs text-white/50">Leave blank to keep your current password.</p>
+        <div className="border-t border-border pt-4">
+          <p className="text-sm font-medium text-foreground">Change password</p>
+          <p className="mt-1 text-xs text-muted-foreground">Leave blank to keep your current password.</p>
 
-          <label className="mt-4 block text-sm font-medium text-white/70">
+          <label className="mt-4 block text-sm font-medium text-muted-foreground">
             Current password
             <input
               type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+              className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
             />
           </label>
 
-          <label className="mt-4 block text-sm font-medium text-white/70">
+          <label className="mt-4 block text-sm font-medium text-muted-foreground">
             New password
             <input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               minLength={8}
-              className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+              className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
             />
           </label>
 
-          <label className="mt-4 block text-sm font-medium text-white/70">
+          <label className="mt-4 block text-sm font-medium text-muted-foreground">
             Confirm new password
             <input
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               minLength={8}
-              className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+              className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
             />
           </label>
         </div>
@@ -139,7 +139,7 @@ export default function UserSettingsPage() {
         <button
           type="submit"
           disabled={saving}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-black transition hover:bg-blue-400 disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-blue-400 disabled:opacity-60"
         >
           {saving && <Loader2 className="size-4 animate-spin" />}
           {saving ? 'Saving...' : 'Save changes'}

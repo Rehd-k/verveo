@@ -85,7 +85,7 @@ export default function AdminOrdersPage() {
           value={row.status as string}
           onClick={(e) => e.stopPropagation()}
           onChange={(e) => updateStatus(row.id as string, e.target.value)}
-          className="rounded border border-white/10 bg-white/5 px-2 py-1 text-xs text-white"
+          className="rounded border border-border bg-card px-2 py-1 text-xs text-foreground"
         >
           <option value="pending">pending</option>
           <option value="paid">paid</option>
@@ -106,13 +106,13 @@ export default function AdminOrdersPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-bold text-white">Orders</h2>
-          <p className="text-sm text-text-secondary">{ordersTotal} total</p>
+          <h2 className="text-lg font-bold text-foreground">Orders</h2>
+          <p className="text-sm text-muted-foreground">{ordersTotal} total</p>
         </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white"
+          className="rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground"
         >
           <option value="">All statuses</option>
           <option value="pending">Pending</option>

@@ -37,7 +37,7 @@ const STATUS_STYLES: Record<Campaign['status'], string> = {
   printing: 'bg-violet-500/15 text-violet-300 border-violet-500/30',
   dispatched: 'bg-orange-500/15 text-orange-300 border-orange-500/30',
   live: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-  completed: 'bg-white/10 text-white/60 border-white/20',
+  completed: 'bg-card/10 text-muted-foreground border-border',
 };
 
 function getCampaignId(campaign: Campaign) {
@@ -148,19 +148,19 @@ export default function CampaignsPage() {
   };
 
   return (
-    <main className="flex-1 overflow-y-auto bg-background-dark min-h-[calc(100vh-3.5rem)]">
+    <main className="flex-1 overflow-y-auto bg-background min-h-[calc(100vh-3.5rem)]">
       <div className="mx-auto max-w-7xl px-4 py-6 md:px-6 md:py-8 space-y-8">
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">Campaigns</h1>
-            <p className="text-sm text-text-secondary mt-1">
+            <h1 className="text-2xl font-bold text-foreground">Campaigns</h1>
+            <p className="text-sm text-muted-foreground mt-1">
               Track status, spend, and performance across all your campaigns.
             </p>
           </div>
           <Link
             href="/campaign"
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/20 hover:bg-blue-600 transition-colors"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-blue-600 transition-colors"
           >
             <CirclePlus className="size-4" />
             New Campaign
@@ -169,25 +169,25 @@ export default function CampaignsPage() {
 
         {/* Stats */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="rounded-xl border border-white/10 bg-card-dark p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-text-secondary">Total</p>
-            <p className="mt-2 text-3xl font-bold text-white">{campaigns.length}</p>
+          <div className="rounded-xl border border-border bg-card p-5">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Total</p>
+            <p className="mt-2 text-3xl font-bold text-foreground">{campaigns.length}</p>
           </div>
-          <div className="rounded-xl border border-white/10 bg-card-dark p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-text-secondary">Active</p>
+          <div className="rounded-xl border border-border bg-card p-5">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Active</p>
             <p className="mt-2 text-3xl font-bold text-emerald-400">{stats.active}</p>
           </div>
-          <div className="rounded-xl border border-white/10 bg-card-dark p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-text-secondary">Drafts</p>
+          <div className="rounded-xl border border-border bg-card p-5">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Drafts</p>
             <p className="mt-2 text-3xl font-bold text-amber-400">{stats.drafts}</p>
           </div>
-          <div className="rounded-xl border border-white/10 bg-card-dark p-5">
-            <p className="text-xs font-medium uppercase tracking-wider text-text-secondary">Total Spend</p>
-            <p className="mt-2 text-2xl font-bold text-white flex items-center gap-2">
+          <div className="rounded-xl border border-border bg-card p-5">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Total Spend</p>
+            <p className="mt-2 text-2xl font-bold text-foreground flex items-center gap-2">
               <Wallet className="size-5 text-primary" />
               ₦{stats.totalSpend.toLocaleString()}
             </p>
-            <p className="text-xs text-text-secondary mt-1">{stats.totalScans.toLocaleString()} total scans</p>
+            <p className="text-xs text-muted-foreground mt-1">{stats.totalScans.toLocaleString()} total scans</p>
           </div>
         </section>
 
@@ -206,25 +206,25 @@ export default function CampaignsPage() {
                   onClick={() => setStatusFilter(option.value)}
                   className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-medium border transition-colors ${
                     statusFilter === option.value
-                      ? 'bg-primary/20 border-primary/40 text-white'
-                      : 'bg-white/5 border-white/10 text-text-secondary hover:text-white hover:bg-white/10'
+                      ? 'bg-primary/20 border-primary/40 text-primary-foreground'
+                      : 'bg-card border-border text-muted-foreground hover:text-foreground hover:bg-accent'
                   }`}
                 >
                   {option.label}
-                  <span className="ml-1.5 text-white/40">{count}</span>
+                  <span className="ml-1.5 text-foreground/40">{count}</span>
                 </button>
               );
             })}
           </div>
 
           <div className="relative w-full lg:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-text-secondary" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search campaigns..."
-              className="w-full rounded-lg border border-white/10 bg-card-dark py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="w-full rounded-lg border border-border bg-card py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
             />
           </div>
         </section>
@@ -232,12 +232,12 @@ export default function CampaignsPage() {
         {/* Campaign list */}
         <section className="space-y-3">
           {loading ? (
-            <div className="rounded-xl border border-white/10 bg-card-dark p-12 text-center">
-              <p className="text-text-secondary">Loading campaigns...</p>
+            <div className="rounded-xl border border-border bg-card p-12 text-center">
+              <p className="text-muted-foreground">Loading campaigns...</p>
             </div>
           ) : filteredCampaigns.length === 0 ? (
-            <div className="rounded-xl border border-white/10 bg-card-dark p-12 text-center space-y-4">
-              <p className="text-white/60">
+            <div className="rounded-xl border border-border bg-card p-12 text-center space-y-4">
+              <p className="text-muted-foreground">
                 {campaigns.length === 0
                   ? 'No campaigns yet. Create your first one to get started.'
                   : 'No campaigns match your filters.'}
@@ -245,7 +245,7 @@ export default function CampaignsPage() {
               {campaigns.length === 0 && (
                 <Link
                   href="/campaign"
-                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white"
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
                 >
                   <CirclePlus className="size-4" />
                   Create Campaign
@@ -261,12 +261,12 @@ export default function CampaignsPage() {
               return (
                 <article
                   key={id}
-                  className="rounded-xl border border-white/10 bg-card-dark p-5 hover:border-white/20 transition-colors"
+                  className="rounded-xl border border-border bg-card p-5 hover:border-border transition-colors"
                 >
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                     <div className="flex gap-4 min-w-0 flex-1">
                       {campaign.design?.imageUrl ? (
-                        <div className="shrink-0 w-14 h-14 sm:w-20 sm:h-20 rounded-lg overflow-hidden border border-white/10">
+                        <div className="shrink-0 w-14 h-14 sm:w-20 sm:h-20 rounded-lg overflow-hidden border border-border">
                           <img
                             src={campaign.design.imageUrl}
                             alt=""
@@ -274,18 +274,18 @@ export default function CampaignsPage() {
                           />
                         </div>
                       ) : (
-                        <div className="flex shrink-0 w-14 h-14 sm:w-20 sm:h-20 rounded-lg border border-white/10 bg-white/5 items-center justify-center">
-                          <Package className="size-5 sm:size-6 text-text-secondary" />
+                        <div className="flex shrink-0 w-14 h-14 sm:w-20 sm:h-20 rounded-lg border border-border bg-card items-center justify-center">
+                          <Package className="size-5 sm:size-6 text-muted-foreground" />
                         </div>
                       )}
 
                       <div className="min-w-0 flex-1 space-y-2">
                         <div className="flex flex-wrap items-center gap-2">
-                          <h2 className="text-lg font-bold text-white truncate">{campaign.title}</h2>
+                          <h2 className="text-lg font-bold text-foreground truncate">{campaign.title}</h2>
                           <StatusBadge status={campaign.status} />
                         </div>
 
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-text-secondary">
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
                           <span className="inline-flex items-center gap-1.5">
                             <Package className="size-3.5" />
                             {productLabel} · {campaign.quantity.toLocaleString()} units
@@ -301,14 +301,14 @@ export default function CampaignsPage() {
                         </div>
 
                         <div className="flex flex-wrap gap-4 text-sm">
-                          <span className="text-white font-semibold">
+                          <span className="text-foreground font-semibold">
                             ₦{campaign.budget?.toLocaleString()}
                           </span>
-                          <span className="inline-flex items-center gap-1 text-text-secondary">
+                          <span className="inline-flex items-center gap-1 text-muted-foreground">
                             <ScanLine className="size-3.5" />
                             {(campaign.stats?.scans || 0).toLocaleString()} scans
                           </span>
-                          <span className="text-text-secondary">
+                          <span className="text-muted-foreground">
                             {(campaign.stats?.impressions || 0).toLocaleString()} impressions
                           </span>
                         </div>

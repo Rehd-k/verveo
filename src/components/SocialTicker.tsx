@@ -14,11 +14,11 @@ export default function SocialTicker() {
   const items = (
     <>
       <div className="flex items-center gap-4">
-        <span className="font-bold text-white/80">1.2M Packs Distributed</span>
+        <span className="font-bold text-muted-foreground">1.2M Packs Distributed</span>
       </div>
       {PARTNERS.map((p) => (
         <div key={p.name} className="flex items-center gap-3 opacity-90">
-          <span className="rounded-md border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold tracking-wider text-white/70">
+          <span className="rounded-md border border-border bg-accent px-3 py-1 text-xs font-semibold tracking-wider text-muted-foreground">
             {p.name}
           </span>
         </div>
@@ -27,10 +27,10 @@ export default function SocialTicker() {
   );
 
   return (
-    <div className="w-full overflow-hidden border-t border-b border-white/5 bg-white/2">
+    <div className="w-full overflow-hidden border-y border-border bg-muted/40">
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex items-center gap-6 py-3">
-          <div className="shrink-0 text-sm font-semibold uppercase tracking-widest text-white/70">
+          <div className="shrink-0 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
             Trusted by
           </div>
           <div className="ticker flex-1 overflow-hidden">

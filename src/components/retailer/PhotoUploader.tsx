@@ -62,18 +62,18 @@ export default function PhotoUploader({ campaigns, onUploaded }: PhotoUploaderPr
   };
 
   return (
-    <form onSubmit={submit} className="rounded-2xl border border-white/10 bg-card-dark/80 p-6">
+    <form onSubmit={submit} className="rounded-2xl border border-border bg-card p-6">
       <div className="flex items-center gap-3">
         <div className="flex size-10 items-center justify-center rounded-xl bg-primary/15 text-primary">
           <Camera className="size-5" />
         </div>
         <div>
           <h2 className="font-semibold">Upload proof of execution</h2>
-          <p className="text-sm text-text-secondary">Show branded packs in use at your venue.</p>
+          <p className="text-sm text-muted-foreground">Show branded packs in use at your venue.</p>
         </div>
       </div>
 
-      <label className="mt-5 block rounded-xl border border-dashed border-white/15 bg-background-dark/70 p-5 text-center text-sm text-text-secondary transition hover:border-primary/50">
+      <label className="mt-5 block rounded-xl border border-dashed border-white/15 bg-background p-5 text-center text-sm text-muted-foreground transition hover:border-primary/50">
         <input
           type="file"
           accept="image/png,image/jpeg,image/webp"
@@ -83,12 +83,12 @@ export default function PhotoUploader({ campaigns, onUploaded }: PhotoUploaderPr
         {file ? file.name : 'Choose JPG, PNG, or WEBP proof photo'}
       </label>
 
-      <label className="mt-4 block text-sm font-medium text-white/70">
+      <label className="mt-4 block text-sm font-medium text-muted-foreground">
         Campaign
         <select
           value={campaignId}
           onChange={(e) => setCampaignId(e.target.value)}
-          className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+          className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
         >
           <option value="">General proof / no campaign selected</option>
           {campaigns.map((campaign) => (
@@ -99,13 +99,13 @@ export default function PhotoUploader({ campaigns, onUploaded }: PhotoUploaderPr
         </select>
       </label>
 
-      <label className="mt-4 block text-sm font-medium text-white/70">
+      <label className="mt-4 block text-sm font-medium text-muted-foreground">
         Notes
         <textarea
           rows={3}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          className="mt-2 w-full rounded-xl border border-white/10 bg-background-dark px-4 py-3 text-white outline-none focus:border-primary/70"
+          className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground outline-none focus:border-primary/70"
           placeholder="Describe where and when the photo was taken."
         />
       </label>
@@ -113,7 +113,7 @@ export default function PhotoUploader({ campaigns, onUploaded }: PhotoUploaderPr
       <button
         type="submit"
         disabled={submitting}
-        className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-600 disabled:opacity-60"
+        className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-blue-600 disabled:opacity-60"
       >
         {submitting && <Loader2 className="size-4 animate-spin" />}
         {submitting ? 'Submitting...' : 'Submit proof'}

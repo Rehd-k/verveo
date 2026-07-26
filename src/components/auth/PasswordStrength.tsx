@@ -14,9 +14,9 @@ function getStrength(password: string) {
   if (/\d/.test(password)) score++;
   if (/[^a-zA-Z0-9]/.test(password)) score++;
 
-  if (score <= 1) return { score: 1, label: 'Weak', color: 'bg-red-500' };
-  if (score <= 3) return { score: 2, label: 'Fair', color: 'bg-amber-500' };
-  return { score: 3, label: 'Strong', color: 'bg-emerald-500' };
+  if (score <= 1) return { score: 1, label: 'Weak', color: 'bg-destructive' };
+  if (score <= 3) return { score: 2, label: 'Fair', color: 'bg-warning' };
+  return { score: 3, label: 'Strong', color: 'bg-success' };
 }
 
 export function PasswordStrength({ password }: PasswordStrengthProps) {
@@ -26,18 +26,18 @@ export function PasswordStrength({ password }: PasswordStrengthProps) {
 
   return (
     <div className="space-y-2">
-      <div className="flex gap-1.5">
+      <div className="flex gap-1.5" role="meter" aria-valuenow={score} aria-valuemin={0} aria-valuemax={3} aria-label={`Password strength: ${label}`}>
         {[1, 2, 3].map((level) => (
           <div
             key={level}
             className={`h-1 flex-1 rounded-full transition-colors ${
-              level <= score ? color : 'bg-white/10'
+              level <= score ? color : 'bg-muted'
             }`}
           />
         ))}
       </div>
-      <p className="text-xs text-text-secondary">
-        Password strength: <span className="text-white/80">{label}</span>
+      <p className="text-xs text-muted-foreground">
+        Password strength: <span className="font-medium text-foreground">{label}</span>
       </p>
     </div>
   );

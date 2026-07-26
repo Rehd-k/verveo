@@ -47,8 +47,8 @@ export default function ProductStep({ data, updateData }: ProductStepProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xl font-bold text-white mb-4">Select Product</h3>
-        <p className="text-white/60 mb-4">
+        <h3 className="text-xl font-bold text-foreground mb-4">Select Product</h3>
+        <p className="text-muted-foreground mb-4">
           Choose the physical item where your ad will be printed
         </p>
         <div className="grid grid-cols-2 gap-4">
@@ -59,12 +59,12 @@ export default function ProductStep({ data, updateData }: ProductStepProps) {
               className={`p-4 rounded-lg border transition-all text-left ${
                 data.productType === product.id
                   ? 'border-primary bg-primary/10'
-                  : 'border-white/10 bg-white/5 hover:border-white/20'
+                  : 'border-border bg-card hover:border-border'
               }`}
             >
               <div className="text-3xl mb-2">{product.image}</div>
-              <h4 className="font-bold text-white">{product.name}</h4>
-              <p className="text-xs text-white/60 mt-1">{product.material}</p>
+              <h4 className="font-bold text-foreground">{product.name}</h4>
+              <p className="text-xs text-muted-foreground mt-1">{product.material}</p>
               <p className="text-sm text-primary font-semibold mt-2">
                 ₦{product.pricePerUnit}/unit
               </p>
@@ -73,9 +73,9 @@ export default function ProductStep({ data, updateData }: ProductStepProps) {
         </div>
       </div>
 
-      <div className="pt-4 border-t border-white/5">
-        <h3 className="text-xl font-bold text-white mb-4">Quantity</h3>
-        <p className="text-white/60 mb-4">
+      <div className="pt-4 border-t border-border">
+        <h3 className="text-xl font-bold text-foreground mb-4">Quantity</h3>
+        <p className="text-muted-foreground mb-4">
           How many units would you like to produce?
         </p>
         <div className="flex gap-4">
@@ -94,22 +94,22 @@ export default function ProductStep({ data, updateData }: ProductStepProps) {
             max="100000"
             value={data.quantity}
             onChange={(e) => updateData({ quantity: parseInt(e.target.value) })}
-            className="w-32 rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-white"
+            className="w-32 rounded-lg bg-card border border-border px-3 py-2 text-foreground"
           />
         </div>
-        <p className="text-sm text-white/80 mt-4">
+        <p className="text-sm text-muted-foreground mt-4">
           {data.quantity.toLocaleString()} units
         </p>
       </div>
 
       <div className="mt-6 p-4 rounded-lg bg-primary/10 border border-primary/20">
-        <p className="text-sm text-white/80 mb-2">
+        <p className="text-sm text-muted-foreground mb-2">
           <span className="font-bold text-primary">Production Cost:</span>
         </p>
-        <p className="text-2xl font-bold text-white">
+        <p className="text-2xl font-bold text-foreground">
           ₦{totalCost.toLocaleString()}
         </p>
-        <p className="text-xs text-white/60 mt-2">
+        <p className="text-xs text-muted-foreground mt-2">
           {data.quantity.toLocaleString()} × ₦{selectedProduct?.pricePerUnit}
         </p>
       </div>

@@ -67,7 +67,7 @@ export default function FAQSection() {
             const isOpen = openIndex === i;
             return (
               <ScrollReveal key={faq.q} delay={i * 40}>
-                <div className="overflow-hidden rounded-xl border border-white/10 bg-card-dark/40 transition hover:border-white/20">
+                <div className="overflow-hidden rounded-xl border border-border bg-card transition hover:border-border">
                   <button
                     type="button"
                     className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
@@ -76,7 +76,7 @@ export default function FAQSection() {
                   >
                     <span className="text-sm font-medium">{faq.q}</span>
                     <ChevronDown
-                      className={`size-4 shrink-0 text-white/40 transition-transform duration-300 ${
+                      className={`size-4 shrink-0 text-muted-foreground transition-transform duration-300 ${
                         isOpen ? 'rotate-180' : ''
                       }`}
                     />
@@ -87,7 +87,7 @@ export default function FAQSection() {
                     }`}
                   >
                     <div className="overflow-hidden">
-                      <p className="px-5 pb-4 text-sm leading-relaxed text-white/55">{faq.a}</p>
+                      <p className="px-5 pb-4 text-sm leading-relaxed text-muted-foreground">{faq.a}</p>
                     </div>
                   </div>
                 </div>

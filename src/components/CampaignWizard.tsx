@@ -68,13 +68,13 @@ export default function CampaignWizard({ onClose }: { onClose: () => void }) {
 
   return (
 
-    <div className="w-full rounded-2xl bg-background-dark border border-white/10">
+    <div className="w-full rounded-2xl bg-background border border-border">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-white/5 px-8 py-6">
-        <h2 className="text-2xl font-bold text-white">Create Campaign</h2>
+      <div className="flex items-center justify-between border-b border-border px-8 py-6">
+        <h2 className="text-2xl font-bold text-foreground">Create Campaign</h2>
         <button
           onClick={onClose}
-          className="text-white/60 hover:text-white transition-colors"
+          className="text-muted-foreground hover:text-foreground transition-colors"
         >
           <CircleX className="size-4" />
         </button>
@@ -86,12 +86,12 @@ export default function CampaignWizard({ onClose }: { onClose: () => void }) {
           {[1, 2, 3, 4].map((s) => (
             <div
               key={s}
-              className={`flex-1 h-2 rounded-full transition-all ${s <= step ? 'bg-primary' : 'bg-white/10'
+              className={`flex-1 h-2 rounded-full transition-all ${s <= step ? 'bg-primary' : 'bg-card/10'
                 }`}
             />
           ))}
         </div>
-        <p className="mt-4 text-sm text-white/60">
+        <p className="mt-4 text-sm text-muted-foreground">
           Step {step} of 4
         </p>
       </div>
@@ -120,18 +120,18 @@ export default function CampaignWizard({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Footer */}
-      <div className="border-t border-white/5 px-8 py-6 flex gap-4 justify-end">
+      <div className="border-t border-border px-8 py-6 flex gap-4 justify-end">
         <button
           onClick={handlePrev}
           disabled={step === 1}
-          className="px-6 py-3 rounded-lg border border-white/10 text-white hover:bg-white/5 disabled:opacity-50 transition-all"
+          className="px-6 py-3 rounded-lg border border-border text-foreground hover:bg-accent disabled:opacity-50 transition-all"
         >
           Previous
         </button>
         {step < 4 ? (
           <button
             onClick={handleNext}
-            className="px-6 py-3 rounded-lg bg-primary text-background-dark font-bold hover:brightness-110 transition-all"
+            className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-bold hover:brightness-110 transition-all"
           >
             Next
           </button>
@@ -139,7 +139,7 @@ export default function CampaignWizard({ onClose }: { onClose: () => void }) {
           <button
             onClick={handleSubmit}
             disabled={loading || !campaignData.ctaUrl?.trim()}
-            className="px-6 py-3 rounded-lg bg-primary text-background-dark font-bold hover:brightness-110 disabled:opacity-50 transition-all"
+            className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-bold hover:brightness-110 disabled:opacity-50 transition-all"
           >
             {loading ? 'Creating...' : 'Create Campaign'}
           </button>

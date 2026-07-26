@@ -69,11 +69,11 @@ export default function TestimonialsCarousel() {
                   key={t.name}
                   className="min-w-0 shrink-0 grow-0 basis-full md:basis-[calc(50%-12px)] lg:basis-[calc(33.333%-16px)]"
                 >
-                  <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-card-dark/60 p-6 backdrop-blur-sm transition hover:border-primary/30">
-                    <p className="flex-1 text-sm leading-relaxed text-white/75">&ldquo;{t.quote}&rdquo;</p>
-                    <div className="mt-6 border-t border-white/10 pt-4">
+                  <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 backdrop-blur-sm transition hover:border-primary/30">
+                    <p className="flex-1 text-sm leading-relaxed text-muted-foreground">&ldquo;{t.quote}&rdquo;</p>
+                    <div className="mt-6 border-t border-border pt-4">
                       <p className="text-sm font-semibold">{t.name}</p>
-                      <p className="text-xs text-white/50">
+                      <p className="text-xs text-muted-foreground">
                         {t.role} · {t.city}
                       </p>
                     </div>
