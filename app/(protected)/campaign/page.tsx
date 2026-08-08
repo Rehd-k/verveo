@@ -119,7 +119,11 @@ export default function CampaignWizardPage() {
         }
         if (cancelled) return;
 
-        const productType = isProductSlug(data.productType) ? data.productType : 'box';
+        const rawProductType =
+          typeof data.productType === 'string' ? data.productType : '';
+        const productType: ProductSlug = isProductSlug(rawProductType)
+          ? rawProductType
+          : 'box';
         const design = {
           imageUrl: data.design?.imageUrl || '',
           text: data.design?.text || '',
