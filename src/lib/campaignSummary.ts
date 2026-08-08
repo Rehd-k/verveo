@@ -18,6 +18,7 @@ export interface CampaignDataShape {
     imageUrl?: string;
     text?: string;
     colors?: string[];
+    handoff?: 'self' | 'verveo_team';
   };
   ctaUrl?: string;
   qrCode?: string;

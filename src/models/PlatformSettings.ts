@@ -12,6 +12,22 @@ const platformSettingsSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    defaultDesignCredit: {
+      type: Number,
+      default: 150000,
+    },
+    bankAccountName: {
+      type: String,
+      default: '',
+    },
+    bankAccountNumber: {
+      type: String,
+      default: '',
+    },
+    bankName: {
+      type: String,
+      default: '',
+    },
     maintenanceMode: {
       type: Boolean,
       default: false,

@@ -38,6 +38,7 @@ export async function GET(request: NextRequest) {
         name: user.name,
         role: user.role,
         walletBalance: user.walletBalance,
+        designCredit: user.designCredit,
       },
       token,
     });

@@ -12,6 +12,7 @@ const createUserSchema = z.object({
   name: z.string().min(1),
   role: z.enum(['advertiser', 'retailer', 'admin']).default('advertiser'),
   walletBalance: z.number().optional(),
+  designCredit: z.number().optional(),
 });
 
 export async function GET(request: NextRequest) {
@@ -54,6 +55,7 @@ export async function GET(request: NextRequest) {
           name: user.name,
           role: user.role,
           walletBalance: user.walletBalance,
+          designCredit: user.designCredit,
           campaignCount,
           createdAt: user.createdAt,
         };
@@ -79,7 +81,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
     }
 
-    const { email, password, name, role, walletBalance } = parsed.data;
+    const { email, password, name, role, walletBalance, designCredit } = parsed.data;
 
     const existing = await User.findOne({ email });
     if (existing) {
@@ -92,6 +94,7 @@ export async function POST(request: NextRequest) {
       name,
       role,
       walletBalance: walletBalance ?? 0,
+      designCredit: designCredit ?? 150000,
     });
 
     return NextResponse.json(
@@ -101,6 +104,7 @@ export async function POST(request: NextRequest) {
         name: user.name,
         role: user.role,
         walletBalance: user.walletBalance,
+        designCredit: user.designCredit,
       },
       { status: 201 }
     );

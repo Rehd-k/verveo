@@ -82,9 +82,19 @@ export default function UserSettingsPage() {
             <p className="mt-1 text-sm font-medium capitalize text-foreground">{user?.role || '—'}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Wallet balance</p>
+            <p className="text-xs text-muted-foreground">Business wallet</p>
             <p className="mt-1 text-sm font-medium text-foreground">
               ₦{(user?.walletBalance ?? 0).toLocaleString()}
+            </p>
+            <p className="mt-0.5 text-[10px] text-muted-foreground">For campaign payments</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">Design credit</p>
+            <p className="mt-1 text-sm font-medium text-foreground">
+              ₦{(user?.designCredit ?? 0).toLocaleString()}
+            </p>
+            <p className="mt-0.5 text-[10px] text-muted-foreground">
+              Only for Verveo professional design
             </p>
           </div>
         </div>

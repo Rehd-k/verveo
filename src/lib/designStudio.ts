@@ -9,6 +9,33 @@ export const PRODUCT_NAME_TO_SLUG: Record<string, ProductSlug> = {
   'Takeaway Box': 'pizza-box',
 };
 
+export const PRODUCT_SLUG_TO_NAME: Record<ProductSlug, string> = {
+  cup: 'Disposable Cup',
+  box: 'Food Box',
+  bag: 'Paper Bag',
+  'pizza-box': 'Takeaway Box',
+};
+
+export interface CampaignDesignShape {
+  imageUrl?: string;
+  text?: string;
+  colors?: string[];
+}
+
+export function campaignDesignToDesignConfig(
+  design: CampaignDesignShape | undefined,
+  productType: string
+): Partial<DesignConfigShape> {
+  const colors = design?.colors ?? [];
+  return {
+    textureUrl: design?.imageUrl || null,
+    brandText: design?.text || '',
+    color: colors[0] || '#ffffff',
+    textColor: colors[1] || '#000000',
+    productType: productType || 'box',
+  };
+}
+
 export interface DesignConfigShape {
   textureUrl: string | null;
   textureScale: number;

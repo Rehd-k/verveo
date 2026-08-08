@@ -10,6 +10,7 @@ const patchUserSchema = z.object({
   name: z.string().min(1).optional(),
   role: z.enum(['advertiser', 'retailer', 'admin']).optional(),
   walletBalance: z.number().optional(),
+  designCredit: z.number().optional(),
 });
 
 export async function GET(
@@ -40,6 +41,7 @@ export async function GET(
         name: user.name,
         role: user.role,
         walletBalance: user.walletBalance,
+        designCredit: user.designCredit,
         createdAt: user.createdAt,
       },
       campaigns,
@@ -79,6 +81,7 @@ export async function PATCH(
       name: user.name,
       role: user.role,
       walletBalance: user.walletBalance,
+      designCredit: user.designCredit,
     });
   } catch (error) {
     console.error('Admin patch user error:', error);

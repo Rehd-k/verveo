@@ -11,28 +11,45 @@ export default function AdminUserDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { adminFetch } = useAdmin();
   const [data, setData] = useState<{
-    user: { id: string; name: string; email: string; role: string; walletBalance: number };
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      role: string;
+      walletBalance: number;
+      designCredit: number;
+    };
     campaigns: { _id: string; title: string; status: string; budget: number }[];
     orders: { _id: string; amount: number; status: string }[];
   } | null>(null);
   const [wallet, setWallet] = useState('');
+  const [designCredit, setDesignCredit] = useState('');
 
   useEffect(() => {
     adminFetch<typeof data>(`/api/admin/users/${id}`).then(setData).catch(() => toast.error('Failed to load user'));
   }, [id, adminFetch]);
 
-  const updateWallet = async () => {
+  const updateBalances = async () => {
     try {
+      const body: Record<string, number> = {};
+      if (wallet !== '') body.walletBalance = parseFloat(wallet);
+      if (designCredit !== '') body.designCredit = parseFloat(designCredit);
+      if (Object.keys(body).length === 0) {
+        toast.error('Enter a value to update');
+        return;
+      }
       await adminFetch(`/api/admin/users/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ walletBalance: parseFloat(wallet) }),
+        body: JSON.stringify(body),
       });
-      toast.success('Wallet updated');
+      toast.success('Balances updated');
       const refreshed = await adminFetch<typeof data>(`/api/admin/users/${id}`);
       setData(refreshed);
+      setWallet('');
+      setDesignCredit('');
     } catch {
-      toast.error('Failed to update wallet');
+      toast.error('Failed to update balances');
     }
   };
 
@@ -45,9 +62,10 @@ export default function AdminUserDetailPage() {
         <h2 className="text-xl font-bold text-foreground">{data.user.name}</h2>
         <p className="text-muted-foreground">{data.user.email}</p>
         <div className="mt-3"><StatusBadge status={data.user.role} /></div>
-        <div className="mt-4 flex items-end gap-2">
+        <div className="mt-4 flex flex-wrap items-end gap-4">
           <div>
-            <label className="text-xs text-muted-foreground">Wallet Balance (₦)</label>
+            <label className="text-xs text-muted-foreground">Business Wallet (₦)</label>
+            <p className="text-[10px] text-muted-foreground">Campaign payments — admin controlled</p>
             <input
               type="number"
               value={wallet || data.user.walletBalance}
@@ -55,8 +73,18 @@ export default function AdminUserDetailPage() {
               className="mt-1 block rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground"
             />
           </div>
-          <button onClick={updateWallet} className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
-            Update
+          <div>
+            <label className="text-xs text-muted-foreground">Design Credit (₦)</label>
+            <p className="text-[10px] text-muted-foreground">Only for Verveo professional design</p>
+            <input
+              type="number"
+              value={designCredit || data.user.designCredit}
+              onChange={(e) => setDesignCredit(e.target.value)}
+              className="mt-1 block rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground"
+            />
+          </div>
+          <button onClick={updateBalances} className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
+            Update balances
           </button>
         </div>
       </div>

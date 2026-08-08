@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import { User } from '@/models/User';
 import { hashPassword, generateToken } from '@/lib/auth';
+import { getPlatformSettings } from '@/lib/platformSettings';
 
 export async function POST(request: NextRequest) {
   try {
     await dbConnect();
-    
+
     const body = await request.json();
     const { email, password, name, role } = body;
 
@@ -34,6 +35,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const settings = await getPlatformSettings();
+    const designCredit =
+      typeof settings.defaultDesignCredit === 'number'
+        ? settings.defaultDesignCredit
+        : 150000;
+    const walletBalance =
+      typeof settings.defaultWalletCredit === 'number'
+        ? settings.defaultWalletCredit
+        : 0;
+
     const hashedPassword = await hashPassword(password);
 
     const newUser = await User.create({
@@ -41,6 +52,8 @@ export async function POST(request: NextRequest) {
       password: hashedPassword,
       name,
       role: signupRole,
+      designCredit,
+      walletBalance,
     });
 
     const token = generateToken(newUser._id.toString(), newUser.role);
@@ -52,6 +65,8 @@ export async function POST(request: NextRequest) {
           email: newUser.email,
           name: newUser.name,
           role: newUser.role,
+          walletBalance: newUser.walletBalance,
+          designCredit: newUser.designCredit,
         },
         token,
       },

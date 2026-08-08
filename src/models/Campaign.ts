@@ -27,6 +27,11 @@ const campaignSchema = new mongoose.Schema(
       imageUrl: String,
       text: String,
       colors: [String],
+      handoff: {
+        type: String,
+        enum: ['self', 'verveo_team'],
+        default: 'self',
+      },
     },
     qrCode: String,
     ctaUrl: String,

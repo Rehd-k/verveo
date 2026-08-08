@@ -18,6 +18,7 @@ import {
   LogOut,
   Shield,
   ArrowLeft,
+  Palette,
 } from 'lucide-react';
 import { AppShell, ShellNavItem } from '@/components/layout/AppShell';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
@@ -27,6 +28,7 @@ const NAV = [
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/campaigns', label: 'Campaigns', icon: Megaphone },
   { href: '/admin/orders', label: 'Orders', icon: CreditCard },
+  { href: '/admin/design-requests', label: 'Design Requests', icon: Palette },
   { href: '/admin/retailers', label: 'Retailers', icon: Store },
   { href: '/admin/stock-orders', label: 'Stock Orders', icon: Boxes },
   { href: '/admin/scans', label: 'Scans', icon: ScanLine },

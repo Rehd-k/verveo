@@ -85,8 +85,13 @@ export default function AdminUsersPage() {
     },
     {
       key: 'walletBalance',
-      label: 'Wallet',
+      label: 'Business Wallet',
       render: (row: Record<string, unknown>) => `₦${((row.walletBalance as number) || 0).toLocaleString()}`,
+    },
+    {
+      key: 'designCredit',
+      label: 'Design Credit',
+      render: (row: Record<string, unknown>) => `₦${((row.designCredit as number) || 0).toLocaleString()}`,
     },
     { key: 'campaignCount', label: 'Campaigns' },
     {
@@ -119,7 +124,7 @@ export default function AdminUsersPage() {
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <div className="relative flex-1 min-w-[200px]">
+        <div className="relative flex-1 min-w-50">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
             value={search}

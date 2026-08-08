@@ -33,10 +33,10 @@ export default function Home() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.14),transparent_55%),radial-gradient(circle_at_bottom,rgba(0,0,0,0.9),transparent_60%)]" />
 
         <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-4 pt-20 text-center sm:px-6">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-4 py-1 text-xs font-medium uppercase tracking-[0.24em] text-white/60 backdrop-blur">
+          {/* <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-4 py-1 text-xs font-medium uppercase tracking-[0.24em] text-white/60 backdrop-blur">
             <span className="h-1.5 w-1.5 rounded-full bg-primary landing-glow" />
             Physical media, digital intelligence
-          </div>
+          </div> */}
 
           <h1 className="font-display text-4xl leading-tight sm:text-5xl md:text-6xl md:leading-[1.05]">
             Physical Advertising.

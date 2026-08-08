@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { authHeaders } from '@/lib/fetchAuth';
 import { useAuth } from '@/store/authStore';
 
-type PaymentMethod = 'paystack' | 'flutterwave' | 'bank_transfer';
+type PaymentMethod = 'paystack' | 'flutterwave' | 'bank_transfer' | 'wallet';
 
 interface BankDetails {
   configured: boolean;
@@ -16,6 +17,7 @@ interface BankDetails {
 
 export default function CheckoutPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [campaignId, setCampaignId] = useState<string | null>(null);
   const [campaign, setCampaign] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -24,7 +26,12 @@ export default function CheckoutPage() {
   const [proofNote, setProofNote] = useState('');
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [walletPaid, setWalletPaid] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const walletBalance = user?.walletBalance ?? 0;
+  const budget = Number(campaign?.budget) || 0;
+  const canPayWithWallet = walletBalance >= budget && budget > 0;
 
   useEffect(() => {
     const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
@@ -80,6 +87,34 @@ export default function CheckoutPage() {
     }
   };
 
+  const handleWalletPay = async () => {
+    if (!campaign || !canPayWithWallet) return;
+    setLoading(true);
+    try {
+      const res = await fetch('/api/payments/wallet', {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({
+          campaignId: campaign._id || campaign.id,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || 'Wallet payment failed');
+        return;
+      }
+      if (user && typeof data.walletBalance === 'number') {
+        useAuth.setState({ user: { ...user, walletBalance: data.walletBalance } });
+      }
+      setWalletPaid(true);
+    } catch (e) {
+      console.error(e);
+      alert('Wallet payment error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleProofSubmit = async () => {
     if (!campaign || !proofFile) {
       alert('Please upload a payment proof file');
@@ -114,6 +149,37 @@ export default function CheckoutPage() {
 
   if (!campaignId) return <div className="p-8 text-foreground">Missing campaignId</div>;
 
+  if (walletPaid) {
+    return (
+      <div className="p-8">
+        <h2 className="text-2xl font-bold text-foreground">Payment Successful</h2>
+        <div className="mt-4 rounded-lg border border-border bg-card p-6">
+          <p className="text-muted-foreground">
+            Your campaign has been paid with wallet balance and is now processing.
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Remaining wallet balance: ₦{(user?.walletBalance ?? 0).toLocaleString()}
+          </p>
+          <div className="mt-6 flex gap-3">
+            <Link
+              href="/campaigns"
+              className="inline-block rounded-full bg-primary px-6 py-3 font-bold text-primary-foreground"
+            >
+              View campaigns
+            </Link>
+            <button
+              type="button"
+              onClick={() => router.push('/dashboard')}
+              className="inline-block rounded-full border border-border px-6 py-3 font-bold text-foreground"
+            >
+              Dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (submitted) {
     return (
       <div className="p-8">
@@ -147,12 +213,12 @@ export default function CheckoutPage() {
 
           <div className="mt-6 space-y-3">
             <p className="text-sm font-medium text-muted-foreground">Payment method</p>
-            {(['paystack', 'flutterwave', 'bank_transfer'] as PaymentMethod[]).map((method) => (
+            {(['paystack', 'flutterwave', 'bank_transfer', 'wallet'] as PaymentMethod[]).map((method) => (
               <label
                 key={method}
                 className={`flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 ${
                   paymentMethod === method ? 'border-primary bg-primary/10' : 'border-border'
-                }`}
+                } ${method === 'wallet' && !canPayWithWallet ? 'opacity-60' : ''}`}
               >
                 <input
                   type="radio"
@@ -166,6 +232,16 @@ export default function CheckoutPage() {
                   {method === 'paystack' && 'Paystack (Card, Bank, USSD)'}
                   {method === 'flutterwave' && 'Flutterwave (Card, Bank, Mobile Money)'}
                   {method === 'bank_transfer' && 'Bank transfer (upload proof)'}
+                  {method === 'wallet' && (
+                    <>
+                      Wallet balance (₦{walletBalance.toLocaleString()})
+                      {!canPayWithWallet && budget > 0 && (
+                        <span className="ml-1 text-amber-400">
+                          — shortfall ₦{(budget - walletBalance).toLocaleString()}
+                        </span>
+                      )}
+                    </>
+                  )}
                 </span>
               </label>
             ))}
@@ -217,6 +293,20 @@ export default function CheckoutPage() {
                 className="rounded-full bg-primary px-6 py-3 font-bold text-primary-foreground disabled:opacity-50"
               >
                 {loading ? 'Submitting...' : 'Submit proof of payment'}
+              </button>
+            </div>
+          ) : paymentMethod === 'wallet' ? (
+            <div className="mt-6 space-y-3">
+              <p className="text-sm text-muted-foreground">
+                Pay ₦{budget.toLocaleString()} from your wallet. Balance after payment:{' '}
+                ₦{Math.max(0, walletBalance - budget).toLocaleString()}
+              </p>
+              <button
+                onClick={handleWalletPay}
+                disabled={loading || !canPayWithWallet}
+                className="rounded-full bg-primary px-6 py-3 font-bold text-primary-foreground disabled:opacity-50"
+              >
+                {loading ? 'Processing...' : 'Pay with wallet'}
               </button>
             </div>
           ) : (

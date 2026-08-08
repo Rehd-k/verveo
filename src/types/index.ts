@@ -6,6 +6,7 @@ export interface User {
   password?: string;
   role: 'advertiser' | 'retailer' | 'admin';
   walletBalance?: number;
+  designCredit?: number;
   campaignCount?: number;
   createdAt?: Date;
   updatedAt?: Date;
@@ -28,6 +29,7 @@ export interface Campaign {
     text?: string;
     colors?: string[];
     dpiChecked?: boolean;
+    handoff?: 'self' | 'verveo_team';
   };
   qrCode?: string;
   ctaUrl?: string;
@@ -79,7 +81,7 @@ export interface Order {
   userId: string;
   amount: number;
   status: 'pending' | 'paid' | 'failed';
-  paymentMethod: 'paystack' | 'flutterwave' | 'bank_transfer';
+  paymentMethod: 'paystack' | 'flutterwave' | 'bank_transfer' | 'wallet';
   transactionId?: string;
   proofImageUrl?: string;
   proofNote?: string;
@@ -142,9 +144,32 @@ export interface PlatformSettings {
     'pizza-box': number;
   };
   defaultWalletCredit: number;
+  defaultDesignCredit: number;
+  bankAccountName: string;
+  bankAccountNumber: string;
+  bankName: string;
   maintenanceMode: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+export type DesignContactMethod = 'video_call' | 'whatsapp' | 'email' | 'phone';
+
+export interface DesignRequest {
+  _id?: string;
+  id?: string;
+  userId: string;
+  campaignId?: string;
+  containerDescription: string;
+  preferredContact: DesignContactMethod;
+  contactValue: string;
+  scheduledAt: Date | string;
+  status: 'pending' | 'contacted' | 'completed' | 'cancelled';
+  amountCharged: number;
+  user?: Pick<User, 'id' | 'email' | 'name'>;
+  campaign?: Pick<Campaign, '_id' | 'title'>;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
 }
 
 export interface CampaignWithOwner extends Campaign {

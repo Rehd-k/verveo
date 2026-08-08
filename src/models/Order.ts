@@ -23,7 +23,7 @@ const orderSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ['paystack', 'flutterwave', 'bank_transfer'],
+      enum: ['paystack', 'flutterwave', 'bank_transfer', 'wallet'],
     },
     transactionId: String,
     proofImageUrl: String,

@@ -61,6 +61,7 @@ export async function PATCH(request: NextRequest) {
         name: updated!.name,
         role: updated!.role,
         walletBalance: updated!.walletBalance,
+        designCredit: updated!.designCredit,
       },
     });
   } catch (error) {

@@ -114,12 +114,28 @@ export default function Dashboard() {
         <div className="bg-popover border border-border rounded-lg p-4 min-w-40 flex flex-col shadow-xl">
           <div className="flex items-center justify-between mb-2">
             <span className="text-muted-foreground text-xs font-medium uppercase tracking-wider">
-              Wallet Balance
+              Business Wallet
             </span>
             <Wallet className='size-4 ml-4' />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-foreground">₦ 450k</span>
+            <span className="text-2xl font-bold text-foreground">
+              ₦{(user?.walletBalance ?? 0).toLocaleString()}
+            </span>
+          </div>
+        </div>
+        <div className="bg-popover border border-border rounded-lg p-4 min-w-40 flex flex-col shadow-xl">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-muted-foreground text-xs font-medium uppercase tracking-wider">
+              Design Credit
+            </span>
+            <Wallet className='size-4 ml-4' />
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-2xl font-bold text-foreground">
+              ₦{(user?.designCredit ?? 0).toLocaleString()}
+            </span>
+            <span className="text-[10px] text-muted-foreground">Pro design only</span>
           </div>
         </div>
         {/* Stat 3 */}

@@ -3,6 +3,10 @@
 import { useState } from 'react';
 import PackagingCanvas from '@/components/features/studio/PackagingCanvas';
 import { UploadPanel } from '@/components/features/studio/UploadPanel';
+import {
+  DesignModeChoice,
+  ProDesignBookingForm,
+} from '@/components/features/studio/ProDesignBooking';
 import { useCampaignStore } from '@/store/useCampaignStore';
 import { designConfigToCampaignDesign, type ProductSlug } from '@/lib/designStudio';
 import { ArrowLeft, BadgeCheck, ChevronDown, Info, Settings2, X } from 'lucide-react';
@@ -11,14 +15,25 @@ import { cn } from '@/lib/cn';
 interface DesignStepProps {
   data: {
     productType: ProductSlug;
-    design: { imageUrl: string; text: string; colors: string[] };
+    design: {
+      imageUrl: string;
+      text: string;
+      colors: string[];
+      handoff?: 'self' | 'verveo_team';
+    };
   };
   updateData: (data: Partial<{
     productType: ProductSlug;
-    design: { imageUrl: string; text: string; colors: string[] };
+    design: {
+      imageUrl: string;
+      text: string;
+      colors: string[];
+      handoff?: 'self' | 'verveo_team';
+    };
   }>) => void;
   nextStage: () => void;
   prevStage: () => void;
+  campaignId?: string | null;
 }
 
 function DesignStatsPanel({ compact = false }: { compact?: boolean }) {
@@ -80,42 +95,127 @@ function DesignStatsPanel({ compact = false }: { compact?: boolean }) {
   );
 }
 
+type DesignMode = 'choice' | 'diy' | 'pro' | 'pro_done';
+
 export default function DesignStudioPage({
   prevStage,
   nextStage,
   updateData,
+  data,
+  campaignId,
 }: DesignStepProps) {
   const { designConfig } = useCampaignStore();
   const [controlsOpen, setControlsOpen] = useState(false);
   const [statsOpen, setStatsOpen] = useState(false);
+  const [mode, setMode] = useState<DesignMode>(
+    data.design?.handoff === 'verveo_team' ? 'pro_done' : 'choice'
+  );
 
   const handleConfirmDesign = () => {
     updateData({
       productType: designConfig.productType as ProductSlug,
-      design: designConfigToCampaignDesign(designConfig),
+      design: {
+        ...designConfigToCampaignDesign(designConfig),
+        handoff: 'self',
+      },
     });
     nextStage();
   };
 
+  const handleProBooked = () => {
+    updateData({
+      design: {
+        ...(data.design || { imageUrl: '', text: '', colors: [] }),
+        handoff: 'verveo_team',
+      },
+    });
+    setMode('pro_done');
+  };
+
+  if (mode === 'choice') {
+    return (
+      <div className="-m-4 flex min-h-[calc(100dvh-3.25rem)] flex-col bg-background md:-m-6">
+        <div className="flex items-center gap-2 border-b border-border px-4 py-3">
+          <button
+            type="button"
+            onClick={prevStage}
+            className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-foreground hover:bg-accent"
+          >
+            <ArrowLeft className="size-4" />
+            Back
+          </button>
+        </div>
+        <DesignModeChoice
+          onChooseDiy={() => setMode('diy')}
+          onChoosePro={() => setMode('pro')}
+        />
+      </div>
+    );
+  }
+
+  if (mode === 'pro' || mode === 'pro_done') {
+    return (
+      <div className="-m-4 flex min-h-[calc(100dvh-3.25rem)] flex-col bg-background md:-m-6">
+        {mode === 'pro' ? (
+          <ProDesignBookingForm
+            campaignId={campaignId}
+            onBooked={handleProBooked}
+            onBackToChoice={() => setMode('choice')}
+          />
+        ) : (
+          <div className="mx-auto flex h-full w-full max-w-lg flex-col justify-center gap-4 p-8 text-center">
+            <BadgeCheck className="mx-auto size-12 text-primary" />
+            <h2 className="text-2xl font-bold text-foreground">Pro design booked</h2>
+            <p className="text-sm text-muted-foreground">
+              The Verveo design team will contact you at your chosen time. You can continue setting up
+              your campaign CTA while they prepare the container design.
+            </p>
+            <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-center">
+              <button
+                type="button"
+                onClick={() => setMode('choice')}
+                className="rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-foreground hover:bg-accent"
+              >
+                Change design option
+              </button>
+              <button
+                type="button"
+                onClick={nextStage}
+                className="rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
+              >
+                Continue to CTA
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn(
-        // Break out of AppShell padding for a full-bleed studio
         '-m-4 flex min-h-0 flex-col bg-background md:-m-6',
         'h-[calc(100dvh-3.25rem)] lg:h-[calc(100dvh-3.25rem)] lg:flex-row'
       )}
     >
-      {/* Desktop side panel */}
       <aside className="hidden h-full w-96 shrink-0 flex-col overflow-hidden border-r border-border lg:flex">
+        <div className="shrink-0 border-b border-border p-3">
+          <button
+            type="button"
+            onClick={() => setMode('choice')}
+            className="w-full rounded-lg border border-primary/40 bg-primary/10 px-3 py-2 text-left text-xs font-semibold text-primary hover:bg-primary/15"
+          >
+            Prefer Verveo Pro designers? Switch →
+          </button>
+        </div>
         <UploadPanel name={designConfig.productType} />
       </aside>
 
       <main className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-        {/* 3D viewport — fills remaining space above mobile action bar */}
         <div className="relative min-h-0 flex-1 pb-19 lg:pb-0">
           <PackagingCanvas mobileChrome />
 
-          {/* Mobile stats toggle */}
           <button
             type="button"
             onClick={() => setStatsOpen((prev) => !prev)}
@@ -126,7 +226,6 @@ export default function DesignStudioPage({
             Stats
           </button>
 
-          {/* Stats panel */}
           <div
             className={cn(
               'absolute z-20 rounded-xl border border-border bg-popover p-4 text-popover-foreground shadow-xl',
@@ -149,7 +248,6 @@ export default function DesignStudioPage({
           </div>
         </div>
 
-        {/* Mobile bottom action bar — single row, no overlap with canvas tools */}
         <div className="absolute inset-x-0 bottom-0 z-30 border-t border-border bg-popover p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgba(0,0,0,0.25)] lg:static lg:z-20 lg:border-0 lg:bg-transparent lg:p-0 lg:pb-0 lg:shadow-none">
           <div className="flex items-center gap-2 lg:absolute lg:inset-x-0 lg:bottom-4 lg:justify-center lg:px-4 lg:gap-4">
             <button
@@ -179,7 +277,6 @@ export default function DesignStudioPage({
           </div>
         </div>
 
-        {/* Mobile controls bottom sheet */}
         {controlsOpen && (
           <>
             <button
@@ -208,6 +305,18 @@ export default function DesignStudioPage({
                   aria-label="Close controls"
                 >
                   <ChevronDown className="size-5" />
+                </button>
+              </div>
+              <div className="shrink-0 border-b border-border px-4 py-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setControlsOpen(false);
+                    setMode('pro');
+                  }}
+                  className="w-full rounded-lg border border-primary/40 bg-primary/10 px-3 py-2 text-left text-xs font-semibold text-primary"
+                >
+                  Book Verveo Pro designers →
                 </button>
               </div>
               <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)]">

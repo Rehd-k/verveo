@@ -1,28 +1,84 @@
 'use client';
 
-import { useCallback, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCampaign } from '@/store/campaignStore';
 import { useAuth } from '@/store/authStore';
-import { useSearchParams } from 'next/navigation';
 import { useCampaignStore } from '@/store/useCampaignStore';
-import { designConfigToCampaignDesign } from '@/lib/designStudio';
+import {
+  campaignDesignToDesignConfig,
+  designConfigToCampaignDesign,
+  PRODUCT_SLUG_TO_NAME,
+  type ProductSlug,
+} from '@/lib/designStudio';
 import type { CampaignDataShape } from '@/lib/campaignSummary';
+import { authHeaders } from '@/lib/fetchAuth';
 import CTAStep from '@/components/wizard/CTAStep';
 import ProductSelectionPage from './products/page';
 import DesignStudioPage from './design/page';
 import LocationPage from './location/page';
+
+const PRODUCT_CATALOG = [
+  {
+    id: '1',
+    name: 'Disposable Cup',
+    specs: '12oz • Double Wall',
+    eco: 'biodegradable',
+    dimensions: '10" x 5" x 14"',
+    image: '/assets/cup.png',
+    link: '120gsm Kraft',
+    pricePerUnit: 400,
+  },
+  {
+    id: '2',
+    name: 'Food Box',
+    specs: 'Recyclable Cardboard',
+    eco: 'biodegradable',
+    dimensions: '10" x 5" x 14"',
+    image: '/assets/box.png',
+    link: '120gsm Kraft',
+    pricePerUnit: 450,
+  },
+  {
+    id: '3',
+    name: 'Paper Bag',
+    specs: 'Kraft • Reinforced',
+    eco: 'biodegradable',
+    dimensions: '10" x 5" x 14"',
+    image: '/assets/bag.png',
+    link: '120gsm Kraft',
+    pricePerUnit: 200,
+  },
+  {
+    id: '4',
+    name: 'Takeaway Box',
+    eco: 'Not Eco Friendly',
+    dimensions: '10" x 5" x 14"',
+    specs: 'Kraft • Plastic',
+    image: '/assets/takeaway.jpg',
+    link: '120gsm Kraft',
+    pricePerUnit: 490,
+  },
+];
+
+function isProductSlug(value: string): value is ProductSlug {
+  return value === 'cup' || value === 'box' || value === 'bag' || value === 'pizza-box';
+}
 
 export default function CampaignWizardPage() {
   const searchParams = useSearchParams();
   const area = searchParams.get('area');
   const longitude = searchParams.get('long');
   const latitude = searchParams.get('lat');
-  const { selectedBusinesses, designConfig } = useCampaignStore();
+  const editingCampaignId = searchParams.get('campaignId');
+  const { selectedBusinesses, designConfig, setProduct, setQuantity, updateDesign } =
+    useCampaignStore();
   const { user } = useAuth();
   const router = useRouter();
-  const { createCampaign } = useCampaign();
+  const { createCampaign, updateCampaign } = useCampaign();
   const [step, setStep] = useState(1);
+  const [hydrating, setHydrating] = useState(!!editingCampaignId);
+  const [hydrateError, setHydrateError] = useState<string | null>(null);
 
   const [campaignData, setCampaignData] = useState({
     title: '',
@@ -34,12 +90,78 @@ export default function CampaignWizardPage() {
       imageUrl: '',
       text: '',
       colors: [] as string[],
+      handoff: 'self' as 'self' | 'verveo_team',
     },
     ctaUrl: '',
     qrCode: '',
     budget: 0,
   });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!editingCampaignId) {
+      setHydrating(false);
+      return;
+    }
+
+    let cancelled = false;
+    setHydrating(true);
+    setHydrateError(null);
+
+    (async () => {
+      try {
+        const res = await fetch(`/api/campaigns/${editingCampaignId}`, {
+          headers: authHeaders(),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to load campaign');
+        }
+        if (cancelled) return;
+
+        const productType = isProductSlug(data.productType) ? data.productType : 'box';
+        const design = {
+          imageUrl: data.design?.imageUrl || '',
+          text: data.design?.text || '',
+          colors: Array.isArray(data.design?.colors) ? data.design.colors : [],
+          handoff: (data.design?.handoff === 'verveo_team' ? 'verveo_team' : 'self') as
+            | 'self'
+            | 'verveo_team',
+        };
+
+        setCampaignData({
+          title: data.title || '',
+          locations: Array.isArray(data.locations) ? data.locations : [],
+          venueTypes: Array.isArray(data.venueTypes) ? data.venueTypes : [],
+          productType,
+          quantity: Number(data.quantity) || 1000,
+          design,
+          ctaUrl: data.ctaUrl || '',
+          qrCode: data.qrCode || '',
+          budget: Number(data.budget) || 0,
+        });
+
+        const productName = PRODUCT_SLUG_TO_NAME[productType];
+        const catalogProduct = PRODUCT_CATALOG.find((p) => p.name === productName);
+        if (catalogProduct) {
+          setProduct(catalogProduct);
+        }
+        setQuantity(Number(data.quantity) || 1000);
+        updateDesign(campaignDesignToDesignConfig(design, productType));
+      } catch (error) {
+        if (!cancelled) {
+          console.error(error);
+          setHydrateError(error instanceof Error ? error.message : 'Failed to load campaign');
+        }
+      } finally {
+        if (!cancelled) setHydrating(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [editingCampaignId, setProduct, setQuantity, updateDesign]);
 
   const handleNext = () => {
     if (step < 4) setStep(step + 1);
@@ -50,7 +172,7 @@ export default function CampaignWizardPage() {
   };
 
   const handleSubmit = async () => {
-    if (!user) return;
+    if (!user || hydrating) return;
     setLoading(true);
     try {
       const locationNames =
@@ -58,13 +180,10 @@ export default function CampaignWizardPage() {
           ? campaignData.locations
           : [...new Set(selectedBusinesses.map((b: { area: string }) => b.area))];
 
-      await createCampaign({
+      const payload = {
         ...campaignData,
         locations: locationNames,
-        venueTypes:
-          campaignData.venueTypes.length > 0
-            ? campaignData.venueTypes
-            : [],
+        venueTypes: campaignData.venueTypes.length > 0 ? campaignData.venueTypes : [],
         design: campaignData.design.imageUrl
           ? campaignData.design
           : designConfigToCampaignDesign(designConfig),
@@ -72,12 +191,20 @@ export default function CampaignWizardPage() {
           designConfig.productType) as 'cup' | 'box' | 'bag' | 'pizza-box',
         qrCode: campaignData.qrCode || undefined,
         title: campaignData.title || 'Untitled Campaign',
-        userId: user.id,
-        status: 'draft',
-      });
+        status: 'draft' as const,
+      };
+
+      if (editingCampaignId) {
+        await updateCampaign(editingCampaignId, payload);
+      } else {
+        await createCampaign({
+          ...payload,
+          userId: user.id,
+        });
+      }
       router.push('/campaigns');
     } catch (error) {
-      console.error('Failed to create campaign:', error);
+      console.error('Failed to save campaign:', error);
     } finally {
       setLoading(false);
     }
@@ -94,6 +221,29 @@ export default function CampaignWizardPage() {
 
   const initialCenter =
     latitude && longitude ? ([Number(longitude), Number(latitude)] as [number, number]) : undefined;
+
+  if (hydrating) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center text-muted-foreground">
+        Loading campaign draft...
+      </div>
+    );
+  }
+
+  if (hydrateError) {
+    return (
+      <div className="flex min-h-[40vh] flex-col items-center justify-center gap-3 p-8 text-center">
+        <p className="text-destructive">{hydrateError}</p>
+        <button
+          type="button"
+          onClick={() => router.push('/campaigns')}
+          className="rounded-lg border border-border px-4 py-2 text-sm text-foreground"
+        >
+          Back to campaigns
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className={step === 3 ? 'w-full min-w-0' : 'w-full min-w-0 border border-border bg-background'}>
@@ -120,6 +270,7 @@ export default function CampaignWizardPage() {
           nextStage={handleNext}
           data={campaignData}
           updateData={updateData}
+          campaignId={editingCampaignId}
         />
       )}
       {step === 4 && (

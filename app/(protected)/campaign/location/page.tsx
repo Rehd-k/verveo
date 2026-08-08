@@ -55,6 +55,7 @@ interface LocationStepProps {
 }
 
 export default function LocationPage({
+  data,
   updateData,
   nextStage,
   initialDistrict,
@@ -70,18 +71,26 @@ export default function LocationPage({
       const city = cities.find((c) => c.name === initialDistrict);
       if (city) return [city.longitude, city.latitude];
     }
+    if (data.locations?.[0]) {
+      const city = cities.find((c) => c.name === data.locations[0]);
+      if (city) return [city.longitude, city.latitude];
+    }
     return [mapLocation.longitude, mapLocation.latitude];
-  }, [initialCenter, initialDistrict, mapLocation.longitude, mapLocation.latitude]);
+  }, [initialCenter, initialDistrict, data.locations, mapLocation.longitude, mapLocation.latitude]);
 
   const [radiusMeters, setRadiusMeters] = useState(1000);
   const [center, setCenter] = useState<[number, number]>(defaultCenter);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [citySearch, setCitySearch] = useState('');
   const { setSelectedBusinesses, setTargetLocation, setEstimatedReach } = useCampaignStore();
-  const [categories, setCategories] = useState<string[]>([...VENUE_CATEGORIES]);
+  const [categories, setCategories] = useState<string[]>(() =>
+    data.venueTypes?.length ? [...data.venueTypes] : [...VENUE_CATEGORIES]
+  );
   const [isDraggingCenter, setIsDraggingCenter] = useState(false);
   const [mapZoom, setMapZoom] = useState(
-    initialCenter || initialDistrict ? DEFAULT_USER_ZOOM : mapLocation.zoom
+    initialCenter || initialDistrict || data.locations?.length
+      ? DEFAULT_USER_ZOOM
+      : mapLocation.zoom
   );
 
   const filteredCities = useMemo(() => {
@@ -111,22 +120,31 @@ export default function LocationPage({
     [selectedPlaces]
   );
 
+  const hasSavedLocations = (data.locations?.length ?? 0) > 0;
   const setupProgress = selectedPlaces.length > 0 && categories.length > 0 ? 25 : 0;
-  const canProceed = categories.length > 0 && selectedPlaces.length > 0;
+  const canProceed =
+    categories.length > 0 && (selectedPlaces.length > 0 || hasSavedLocations);
 
   useEffect(() => {
     setSelectedBusinesses(selectedPlaces);
-    setTargetLocation(districtNames.join(', ') || 'Custom area');
+    setTargetLocation(districtNames.join(', ') || data.locations?.join(', ') || 'Custom area');
     setEstimatedReach(dailyReach);
     updateData({
-      locations: districtNames.length > 0 ? districtNames : [],
-      venueTypes: categories,
+      locations:
+        districtNames.length > 0
+          ? districtNames
+          : data.locations?.length
+            ? data.locations
+            : [],
+      venueTypes: categories.length > 0 ? categories : data.venueTypes || [],
     });
   }, [
     selectedPlaces,
     districtNames,
     categories,
     dailyReach,
+    data.locations,
+    data.venueTypes,
     setSelectedBusinesses,
     setTargetLocation,
     setEstimatedReach,
@@ -147,7 +165,7 @@ export default function LocationPage({
   }, [initialCenter, initialDistrict]);
 
   useEffect(() => {
-    if (initialCenter || initialDistrict || !mapLocation.ready) return;
+    if (initialCenter || initialDistrict || data.locations?.length || !mapLocation.ready) return;
     setCenter([mapLocation.longitude, mapLocation.latitude]);
     setMapZoom(mapLocation.zoom);
     mapRef.current?.flyTo({
@@ -155,7 +173,7 @@ export default function LocationPage({
       zoom: mapLocation.zoom,
       duration: 1200,
     });
-  }, [mapLocation.ready, mapLocation.longitude, mapLocation.latitude, mapLocation.zoom, initialCenter, initialDistrict]);
+  }, [mapLocation.ready, mapLocation.longitude, mapLocation.latitude, mapLocation.zoom, initialCenter, initialDistrict, data.locations?.length]);
 
   const jumpToCity = (name: string, longitude: number, latitude: number) => {
     setCenter([longitude, latitude]);

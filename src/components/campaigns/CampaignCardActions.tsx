@@ -60,7 +60,7 @@ export default function CampaignCardActions({
       )}
       {campaign.status === 'draft' && (
         <Link
-          href="/campaign"
+          href={`/campaign?campaignId=${campaignId}`}
           className="rounded-lg border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors"
         >
           Resume
@@ -116,7 +116,7 @@ export default function CampaignCardActions({
       {campaign.status === 'draft' && (
         <>
           <Link
-            href="/campaign"
+            href={`/campaign?campaignId=${campaignId}`}
             className="rounded-lg border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20 transition-colors"
           >
             Resume
@@ -139,7 +139,7 @@ export default function CampaignCardActions({
           <MoreHorizontal className="size-4" />
         </button>
         {menuOpen && (
-          <div className="absolute right-0 top-full z-20 mt-1 min-w-[160px] rounded-lg border border-border bg-popover py-1 text-popover-foreground shadow-2xl">
+          <div className="absolute right-0 top-full z-20 mt-1 min-w-40 rounded-lg border border-border bg-popover py-1 text-popover-foreground shadow-2xl">
             <button
               type="button"
               onClick={() => {

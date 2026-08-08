@@ -9,6 +9,10 @@ const DEFAULT_SETTINGS = {
     'pizza-box': 450,
   },
   defaultWalletCredit: 0,
+  defaultDesignCredit: 150000,
+  bankAccountName: '',
+  bankAccountNumber: '',
+  bankName: '',
   maintenanceMode: false,
 };
 

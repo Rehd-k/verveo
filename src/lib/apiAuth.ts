@@ -10,6 +10,7 @@ export interface AuthUser {
   name: string;
   role: 'advertiser' | 'retailer' | 'admin';
   walletBalance?: number;
+  designCredit?: number;
 }
 
 function getTokenFromRequest(request: NextRequest): string | null {
@@ -45,6 +46,7 @@ export async function getAuthUser(request: NextRequest): Promise<AuthUser | null
     name: user.name,
     role: user.role,
     walletBalance: user.walletBalance,
+    designCredit: user.designCredit,
   };
 }
 
