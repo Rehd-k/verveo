@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
 import { authHeaders } from '@/lib/fetchAuth';
@@ -82,20 +83,16 @@ export default function UserSettingsPage() {
             <p className="mt-1 text-sm font-medium capitalize text-foreground">{user?.role || '—'}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Business wallet</p>
+            <p className="text-xs text-muted-foreground">Wallet</p>
             <p className="mt-1 text-sm font-medium text-foreground">
               ₦{(user?.walletBalance ?? 0).toLocaleString()}
             </p>
-            <p className="mt-0.5 text-[10px] text-muted-foreground">For campaign payments</p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Design credit</p>
-            <p className="mt-1 text-sm font-medium text-foreground">
-              ₦{(user?.designCredit ?? 0).toLocaleString()}
-            </p>
             <p className="mt-0.5 text-[10px] text-muted-foreground">
-              Only for Verveo professional design
+              Campaigns and pro design
             </p>
+            <Link href="/dashboard/wallet" className="mt-1 inline-block text-xs text-primary hover:underline">
+              Deposit / activity
+            </Link>
           </div>
         </div>
 

@@ -64,7 +64,6 @@ export default function CheckoutPage() {
         headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           campaignId: campaign._id || campaign.id,
-          amount: campaign.budget,
           email: user?.email || 'buyer@example.com',
           paymentMethod,
         }),

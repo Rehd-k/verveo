@@ -7,6 +7,16 @@ import toast from 'react-hot-toast';
 import { useAdmin } from '@/store/adminStore';
 import { StatusBadge } from '@/components/admin/StatusBadge';
 
+type LedgerRow = {
+  id: string;
+  account: string;
+  amount: number;
+  balanceAfter: number;
+  type: string;
+  reference: string;
+  createdAt?: string;
+};
+
 export default function AdminUserDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { adminFetch } = useAdmin();
@@ -21,9 +31,9 @@ export default function AdminUserDetailPage() {
     };
     campaigns: { _id: string; title: string; status: string; budget: number }[];
     orders: { _id: string; amount: number; status: string }[];
+    ledger: LedgerRow[];
   } | null>(null);
   const [wallet, setWallet] = useState('');
-  const [designCredit, setDesignCredit] = useState('');
 
   useEffect(() => {
     adminFetch<typeof data>(`/api/admin/users/${id}`).then(setData).catch(() => toast.error('Failed to load user'));
@@ -33,9 +43,8 @@ export default function AdminUserDetailPage() {
     try {
       const body: Record<string, number> = {};
       if (wallet !== '') body.walletBalance = parseFloat(wallet);
-      if (designCredit !== '') body.designCredit = parseFloat(designCredit);
       if (Object.keys(body).length === 0) {
-        toast.error('Enter a value to update');
+        toast.error('Enter a wallet balance to update');
         return;
       }
       await adminFetch(`/api/admin/users/${id}`, {
@@ -43,13 +52,12 @@ export default function AdminUserDetailPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
-      toast.success('Balances updated');
+      toast.success('Wallet updated');
       const refreshed = await adminFetch<typeof data>(`/api/admin/users/${id}`);
       setData(refreshed);
       setWallet('');
-      setDesignCredit('');
     } catch {
-      toast.error('Failed to update balances');
+      toast.error('Failed to update wallet');
     }
   };
 
@@ -64,8 +72,10 @@ export default function AdminUserDetailPage() {
         <div className="mt-3"><StatusBadge status={data.user.role} /></div>
         <div className="mt-4 flex flex-wrap items-end gap-4">
           <div>
-            <label className="text-xs text-muted-foreground">Business Wallet (₦)</label>
-            <p className="text-[10px] text-muted-foreground">Campaign payments — admin controlled</p>
+            <label className="text-xs text-muted-foreground">Wallet (₦)</label>
+            <p className="text-[10px] text-muted-foreground">
+              Campaigns + pro design — ledger-backed
+            </p>
             <input
               type="number"
               value={wallet || data.user.walletBalance}
@@ -73,18 +83,8 @@ export default function AdminUserDetailPage() {
               className="mt-1 block rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground"
             />
           </div>
-          <div>
-            <label className="text-xs text-muted-foreground">Design Credit (₦)</label>
-            <p className="text-[10px] text-muted-foreground">Only for Verveo professional design</p>
-            <input
-              type="number"
-              value={designCredit || data.user.designCredit}
-              onChange={(e) => setDesignCredit(e.target.value)}
-              className="mt-1 block rounded-lg border border-border bg-card px-3 py-2 text-sm text-foreground"
-            />
-          </div>
           <button onClick={updateBalances} className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
-            Update balances
+            Update wallet
           </button>
         </div>
       </div>
@@ -111,6 +111,41 @@ export default function AdminUserDetailPage() {
             ))}
           </div>
         </div>
+      </div>
+      <div className="rounded-xl border border-border bg-card p-5">
+        <h3 className="mb-3 font-semibold text-foreground">
+          Ledger ({data.ledger?.length ?? 0})
+        </h3>
+        {!data.ledger?.length ? (
+          <p className="text-sm text-muted-foreground">No ledger entries yet.</p>
+        ) : (
+          <div className="max-h-96 space-y-2 overflow-y-auto">
+            {data.ledger.map((e) => (
+              <div
+                key={e.id}
+                className="flex items-center justify-between gap-3 rounded-lg bg-background/50 px-3 py-2 text-sm"
+              >
+                <div className="min-w-0">
+                  <p className="font-medium text-foreground">
+                    {e.account} · {e.type.replace(/_/g, ' ')}
+                  </p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {e.reference}
+                    {e.createdAt ? ` · ${new Date(e.createdAt).toLocaleString()}` : ''}
+                  </p>
+                </div>
+                <div className="shrink-0 text-right">
+                  <p className={e.amount >= 0 ? 'text-green-500' : 'text-foreground'}>
+                    {e.amount >= 0 ? '+' : ''}₦{e.amount.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Bal ₦{e.balanceAfter.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

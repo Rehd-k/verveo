@@ -312,6 +312,23 @@ export default function CampaignsPage() {
                             {(campaign.stats?.impressions || 0).toLocaleString()} impressions
                           </span>
                         </div>
+
+                        {campaign.status !== 'draft' &&
+                          (campaign.statusNote || campaign.expectedAt || campaign.trackingRef) && (
+                            <div className="rounded-lg border border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
+                              {campaign.statusNote && (
+                                <p className="text-foreground/90">{campaign.statusNote}</p>
+                              )}
+                              <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                                {campaign.expectedAt && (
+                                  <span>Expected {formatDate(campaign.expectedAt)}</span>
+                                )}
+                                {campaign.trackingRef && (
+                                  <span>Tracking {campaign.trackingRef}</span>
+                                )}
+                              </div>
+                            </div>
+                          )}
                       </div>
                     </div>
 

@@ -9,13 +9,17 @@ function getSecret() {
 
 export async function initializePaystack(params: InitializeParams): Promise<InitializeResult> {
   const secret = getSecret();
+  const metadata: Record<string, string> = {};
+  if (params.orderId) metadata.orderId = params.orderId;
+  if (params.depositId) metadata.depositId = params.depositId;
+
   const res = await axios.post(
     'https://api.paystack.co/transaction/initialize',
     {
       amount: Math.round(params.amount) * 100,
       email: params.email,
       callback_url: params.callbackUrl,
-      metadata: { orderId: params.orderId },
+      metadata,
     },
     { headers: { Authorization: `Bearer ${secret}` } }
   );
@@ -43,9 +47,13 @@ export async function verifyPaystack(params: VerifyParams): Promise<VerifyResult
 
   const { data } = res.data;
   const success = res.data.status && data?.status === 'success';
+  // Paystack amounts are in kobo
+  const amountPaid =
+    typeof data?.amount === 'number' ? data.amount / 100 : undefined;
 
   return {
     success,
+    amountPaid,
     transactionId: params.reference,
     raw: res.data,
   };

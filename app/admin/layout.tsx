@@ -19,15 +19,19 @@ import {
   Shield,
   ArrowLeft,
   Palette,
+  Wallet,
+  Factory,
 } from 'lucide-react';
 import { AppShell, ShellNavItem } from '@/components/layout/AppShell';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 
 const NAV = [
   { href: '/admin', label: 'Overview', icon: LayoutDashboard, exact: true },
+  { href: '/admin/fulfillment', label: 'Fulfillment', icon: Factory },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/campaigns', label: 'Campaigns', icon: Megaphone },
   { href: '/admin/orders', label: 'Orders', icon: CreditCard },
+  { href: '/admin/wallet-deposits', label: 'Wallet Deposits', icon: Wallet },
   { href: '/admin/design-requests', label: 'Design Requests', icon: Palette },
   { href: '/admin/retailers', label: 'Retailers', icon: Store },
   { href: '/admin/stock-orders', label: 'Stock Orders', icon: Boxes },

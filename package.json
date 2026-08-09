@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "promote-admin": "npx tsx scripts/promote-admin.ts"
+    "promote-admin": "pnpm exec tsx scripts/promote-admin.ts",
+    "migrate-design-credit": "pnpm exec tsx scripts/migrate-design-credit.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
@@ -22,7 +23,6 @@
     "mapbox-gl": "^3.18.1",
     "mongoose": "^9.1.5",
     "next": "16.1.6",
-    "next-auth": "^4.24.13",
     "next-themes": "^0.4.6",
     "qrcode": "^1.5.4",
     "react": "19.2.3",

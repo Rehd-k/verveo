@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 import dbConnect from '@/lib/mongodb';
 import { Order } from '@/models/Order';
 import { Campaign } from '@/models/Campaign';
-import { User } from '@/models/User';
 import { requireAuth, isAuthUser } from '@/lib/apiAuth';
+import { debitWallet, InsufficientBalanceError } from '@/lib/wallet/ledger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -52,36 +52,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Campaign already paid' }, { status: 400 });
     }
 
-    const user = await User.findOneAndUpdate(
-      {
-        _id: auth.id,
-        walletBalance: { $gte: amount },
-      },
-      { $inc: { walletBalance: -amount } },
-      { new: true }
-    );
-
-    if (!user) {
-      const current = await User.findById(auth.id).select('walletBalance');
-      return NextResponse.json(
-        {
-          error: 'Insufficient wallet balance',
-          walletBalance: current?.walletBalance ?? 0,
-          required: amount,
-        },
-        { status: 400 }
-      );
-    }
+    const order = await Order.create({
+      userId: auth.id,
+      campaignId,
+      amount,
+      status: 'pending',
+      paymentMethod: 'wallet',
+    });
 
     try {
-      const order = await Order.create({
+      const ledger = await debitWallet({
         userId: auth.id,
-        campaignId,
         amount,
-        status: 'paid',
-        paymentMethod: 'wallet',
-        transactionId: `wallet_${Date.now()}`,
+        type: 'campaign_payment',
+        reference: `wallet_order_${order._id}`,
+        account: 'wallet',
+        relatedId: order._id.toString(),
+        relatedModel: 'Order',
+        metadata: { campaignId },
       });
+
+      order.status = 'paid';
+      order.transactionId = `wallet_order_${order._id}`;
+      await order.save();
 
       await Campaign.findByIdAndUpdate(campaignId, { status: 'processing' });
 
@@ -89,11 +82,22 @@ export async function POST(request: NextRequest) {
         orderId: order._id,
         paymentMethod: 'wallet',
         status: 'paid',
-        walletBalance: user.walletBalance,
+        walletBalance: ledger.balanceAfter,
       });
-    } catch (createError) {
-      await User.findByIdAndUpdate(auth.id, { $inc: { walletBalance: amount } });
-      throw createError;
+    } catch (err) {
+      await Order.findByIdAndUpdate(order._id, { status: 'failed' });
+
+      if (err instanceof InsufficientBalanceError) {
+        return NextResponse.json(
+          {
+            error: 'Insufficient wallet balance',
+            walletBalance: err.balance,
+            required: err.required,
+          },
+          { status: 400 }
+        );
+      }
+      throw err;
     }
   } catch (error) {
     console.error('Wallet payment error:', error);

@@ -12,6 +12,14 @@ export interface User {
   updatedAt?: Date;
 }
 
+export type CampaignStatus =
+  | 'draft'
+  | 'processing'
+  | 'printing'
+  | 'dispatched'
+  | 'live'
+  | 'completed';
+
 export interface Campaign {
   _id?: string;
   id?: string;
@@ -34,7 +42,18 @@ export interface Campaign {
   qrCode?: string;
   ctaUrl?: string;
   budget: number;
-  status: 'draft' | 'processing' | 'printing' | 'dispatched' | 'live' | 'completed';
+  status: CampaignStatus;
+  statusNote?: string;
+  expectedAt?: Date | string;
+  trackingRef?: string;
+  statusHistory?: {
+    status: CampaignStatus;
+    note?: string;
+    expectedAt?: Date | string;
+    trackingRef?: string;
+    changedBy?: string;
+    createdAt?: Date | string;
+  }[];
   stats?: {
     scans: number;
     impressions: number;
@@ -170,6 +189,40 @@ export interface DesignRequest {
   campaign?: Pick<Campaign, '_id' | 'title'>;
   createdAt?: Date | string;
   updatedAt?: Date | string;
+}
+
+export interface WalletDeposit {
+  id?: string;
+  _id?: string;
+  userId: string;
+  amount: number;
+  status: 'pending' | 'paid' | 'failed';
+  paymentMethod: 'paystack' | 'flutterwave' | 'bank_transfer';
+  transactionId?: string;
+  proofImageUrl?: string;
+  proofNote?: string;
+  proofSubmittedAt?: Date | string;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  user?: Pick<User, 'id' | 'email' | 'name'>;
+}
+
+export interface WalletLedgerEntry {
+  id: string;
+  account: 'wallet' | 'design';
+  amount: number;
+  balanceAfter: number;
+  type:
+    | 'deposit'
+    | 'campaign_payment'
+    | 'design_fee'
+    | 'admin_adjustment'
+    | 'signup_credit'
+    | 'refund';
+  reference: string;
+  relatedId?: string;
+  relatedModel?: string;
+  createdAt?: Date | string;
 }
 
 export interface CampaignWithOwner extends Campaign {

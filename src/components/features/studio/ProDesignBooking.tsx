@@ -35,8 +35,8 @@ export function ProDesignBookingForm({
   const [scheduledTime, setScheduledTime] = useState('10:00');
   const [submitting, setSubmitting] = useState(false);
 
-  const designCredit = user?.designCredit ?? 0;
-  const canAfford = designCredit >= DESIGN_SERVICE_FEE;
+  const walletBalance = user?.walletBalance ?? 0;
+  const canAfford = walletBalance >= DESIGN_SERVICE_FEE;
   const contactMeta = useMemo(
     () => CONTACT_OPTIONS.find((o) => o.value === preferredContact)!,
     [preferredContact]
@@ -45,7 +45,7 @@ export function ProDesignBookingForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canAfford) {
-      toast.error('Insufficient design credit for Verveo professional design');
+      toast.error('Insufficient wallet balance for Verveo professional design');
       return;
     }
     if (!scheduledDate || !scheduledTime) {
@@ -78,9 +78,9 @@ export function ProDesignBookingForm({
         return;
       }
 
-      if (typeof data.designCredit === 'number') {
+      if (typeof data.walletBalance === 'number') {
         useAuth.setState({
-          user: user ? { ...user, designCredit: data.designCredit } : user,
+          user: user ? { ...user, walletBalance: data.walletBalance, designCredit: 0 } : user,
         });
       }
 
@@ -117,14 +117,14 @@ export function ProDesignBookingForm({
               Fee: <strong>₦{DESIGN_SERVICE_FEE.toLocaleString()}</strong>
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Paid only from your <strong className="text-foreground">Design Credit</strong> signup bonus
-              (not your Business Wallet). Design Credit can only be used for Verveo designers.
+              Charged from your <strong className="text-foreground">wallet</strong>. Fund via Wallet if
+              needed.
             </p>
             <p className="mt-2 text-sm font-medium text-foreground">
-              Your Design Credit: ₦{designCredit.toLocaleString()}
+              Wallet balance: ₦{walletBalance.toLocaleString()}
               {!canAfford && (
                 <span className="ml-2 text-amber-500">
-                  — shortfall ₦{(DESIGN_SERVICE_FEE - designCredit).toLocaleString()}
+                  — shortfall ₦{(DESIGN_SERVICE_FEE - walletBalance).toLocaleString()}
                 </span>
               )}
             </p>
@@ -219,7 +219,7 @@ export function ProDesignBookingForm({
               Booking…
             </>
           ) : (
-            <>Book consult — ₦{DESIGN_SERVICE_FEE.toLocaleString()} from Design Credit</>
+            <>Book consult — ₦{DESIGN_SERVICE_FEE.toLocaleString()} from wallet</>
           )}
         </button>
       </form>
@@ -235,7 +235,7 @@ export function DesignModeChoice({
   onChoosePro: () => void;
 }) {
   const { user } = useAuth();
-  const designCredit = user?.designCredit ?? 0;
+  const walletBalance = user?.walletBalance ?? 0;
 
   return (
     <div className="mx-auto flex h-full w-full max-w-3xl flex-col justify-center gap-6 p-4 md:p-8">
@@ -274,8 +274,8 @@ export function DesignModeChoice({
             Book a consult (video, WhatsApp, email, or phone). We design the <strong className="text-foreground">container itself</strong>, not just the advert.
           </p>
           <p className="mt-3 text-xs text-muted-foreground">
-            Uses your ₦{(DESIGN_SERVICE_FEE).toLocaleString()} Design Credit signup bonus only.
-            Balance: ₦{designCredit.toLocaleString()}
+            ₦{DESIGN_SERVICE_FEE.toLocaleString()} from wallet. Balance: ₦
+            {walletBalance.toLocaleString()}
           </p>
           <span className="mt-4 text-sm font-semibold text-primary group-hover:underline">
             Book designers →

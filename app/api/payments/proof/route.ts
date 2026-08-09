@@ -25,7 +25,6 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const file = formData.get('file');
     const campaignId = formData.get('campaignId');
-    const amount = formData.get('amount');
     const note = formData.get('note');
 
     if (!(file instanceof File)) {
@@ -36,11 +35,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'campaignId is required' }, { status: 400 });
     }
 
-    const parsedAmount = Number(amount);
-    if (!parsedAmount || parsedAmount <= 0) {
-      return NextResponse.json({ error: 'Valid amount is required' }, { status: 400 });
-    }
-
     const campaign = await Campaign.findById(campaignId);
     if (!campaign) {
       return NextResponse.json({ error: 'Campaign not found' }, { status: 404 });
@@ -48,6 +42,23 @@ export async function POST(request: NextRequest) {
 
     if (campaign.userId.toString() !== auth.id && auth.role !== 'admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (campaign.status !== 'draft') {
+      return NextResponse.json(
+        { error: 'Campaign is not payable (must be a draft)' },
+        { status: 400 }
+      );
+    }
+
+    const amount = Number(campaign.budget);
+    if (!amount || amount <= 0) {
+      return NextResponse.json({ error: 'Invalid campaign budget' }, { status: 400 });
+    }
+
+    const existingPaid = await Order.findOne({ campaignId, status: 'paid' });
+    if (existingPaid) {
+      return NextResponse.json({ error: 'Campaign already paid' }, { status: 400 });
     }
 
     const extension = ALLOWED_TYPES.get(file.type);
@@ -73,7 +84,7 @@ export async function POST(request: NextRequest) {
     const order = await Order.create({
       userId: auth.id,
       campaignId,
-      amount: parsedAmount,
+      amount,
       status: 'pending',
       paymentMethod: 'bank_transfer',
       proofImageUrl: `/uploads/payment-proofs/${filename}`,
@@ -83,6 +94,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       orderId: order._id,
+      amount,
       status: 'pending',
       proofImageUrl: order.proofImageUrl,
     });

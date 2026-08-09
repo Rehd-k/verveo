@@ -1,32 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import { User } from '@/models/User';
-import { verifyToken } from '@/lib/auth';
+import { getAuthUser } from '@/lib/apiAuth';
+import { migrateDesignCreditToWallet } from '@/lib/wallet/migrateDesignCredit';
+import { withClearedAuthCookie } from '@/lib/authCookies';
 
 export async function GET(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    const token = authHeader?.startsWith('Bearer ')
-      ? authHeader.slice(7)
-      : null;
-
-    if (!token) {
+    const auth = await getAuthUser(request);
+    if (!auth) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const payload = verifyToken(token);
-    if (
-      !payload ||
-      typeof payload === 'string' ||
-      !('userId' in payload) ||
-      typeof payload.userId !== 'string'
-    ) {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-    }
-
     await dbConnect();
+    const migrated = await migrateDesignCreditToWallet(auth.id);
 
-    const user = await User.findById(payload.userId).select('-password');
+    const user = await User.findById(auth.id).select('-password');
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 401 });
     }
@@ -37,13 +26,18 @@ export async function GET(request: NextRequest) {
         email: user.email,
         name: user.name,
         role: user.role,
-        walletBalance: user.walletBalance,
-        designCredit: user.designCredit,
+        walletBalance: migrated.walletBalance,
+        designCredit: migrated.designCredit,
       },
-      token,
     });
   } catch (error) {
     console.error('Session validation error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Internal server error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
+}
+
+export async function DELETE() {
+  const response = NextResponse.json({ success: true });
+  return withClearedAuthCookie(response);
 }

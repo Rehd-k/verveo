@@ -85,13 +85,8 @@ export default function AdminUsersPage() {
     },
     {
       key: 'walletBalance',
-      label: 'Business Wallet',
+      label: 'Wallet',
       render: (row: Record<string, unknown>) => `₦${((row.walletBalance as number) || 0).toLocaleString()}`,
-    },
-    {
-      key: 'designCredit',
-      label: 'Design Credit',
-      render: (row: Record<string, unknown>) => `₦${((row.designCredit as number) || 0).toLocaleString()}`,
     },
     { key: 'campaignCount', label: 'Campaigns' },
     {

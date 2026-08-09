@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import dbConnect from '@/lib/mongodb';
+import { Order } from '@/models/Order';
+import { WalletDeposit } from '@/models/WalletDeposit';
 import { markOrderPaid } from '@/lib/payments/markOrderPaid';
+import { markDepositPaid } from '@/lib/wallet/markDepositPaid';
+import { amountsMatch } from '@/lib/payments/amount';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,11 +27,38 @@ export async function POST(request: NextRequest) {
     if (event === 'charge.success' && body.data) {
       const data = body.data;
       const orderId = data.metadata?.orderId;
+      const depositId = data.metadata?.depositId;
       const reference = data.reference;
+      const paidNgn = typeof data.amount === 'number' ? data.amount / 100 : NaN;
 
-      if (orderId) {
-        await dbConnect();
-        await markOrderPaid(orderId, reference);
+      await dbConnect();
+
+      if (depositId) {
+        const deposit = await WalletDeposit.findById(depositId);
+        if (!deposit) {
+          console.warn('Paystack webhook: deposit not found', depositId);
+        } else if (!amountsMatch(Number(deposit.amount), paidNgn)) {
+          console.warn('Paystack webhook: deposit amount mismatch', {
+            depositId,
+            expected: deposit.amount,
+            paid: paidNgn,
+          });
+        } else {
+          await markDepositPaid(depositId, reference);
+        }
+      } else if (orderId) {
+        const order = await Order.findById(orderId);
+        if (!order) {
+          console.warn('Paystack webhook: order not found', orderId);
+        } else if (!amountsMatch(Number(order.amount), paidNgn)) {
+          console.warn('Paystack webhook: order amount mismatch', {
+            orderId,
+            expected: order.amount,
+            paid: paidNgn,
+          });
+        } else {
+          await markOrderPaid(orderId, reference);
+        }
       }
     }
 

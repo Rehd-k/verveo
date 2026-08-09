@@ -4,6 +4,7 @@ import dbConnect from '@/lib/mongodb';
 import { Order } from '@/models/Order';
 import { Campaign } from '@/models/Campaign';
 import { requireAdmin, isAuthUser } from '@/lib/apiAuth';
+import { writeAuditLog } from '@/lib/audit';
 
 const patchOrderSchema = z.object({
   status: z.enum(['pending', 'paid', 'failed']).optional(),
@@ -28,6 +29,17 @@ export async function PATCH(
       return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
     }
 
+    const existing = await Order.findById(id);
+    if (!existing) {
+      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+    }
+
+    const before = {
+      status: existing.status,
+      transactionId: existing.transactionId,
+      paymentMethod: existing.paymentMethod,
+    };
+
     const order = await Order.findByIdAndUpdate(id, parsed.data, { new: true });
     if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
@@ -36,6 +48,20 @@ export async function PATCH(
     if (parsed.data.status === 'paid') {
       await Campaign.findByIdAndUpdate(order.campaignId, { status: 'processing' });
     }
+
+    await writeAuditLog({
+      actorId: auth.id,
+      action: 'order.update',
+      targetType: 'Order',
+      targetId: id,
+      before,
+      after: {
+        status: order.status,
+        transactionId: order.transactionId,
+        paymentMethod: order.paymentMethod,
+      },
+      ip: request.headers.get('x-forwarded-for'),
+    });
 
     return NextResponse.json(order);
   } catch (error) {

@@ -5,6 +5,7 @@ import { requireAuth, isAuthUser } from '@/lib/apiAuth';
 import { verifyPaystack } from '@/lib/payments/paystack';
 import { verifyFlutterwave } from '@/lib/payments/flutterwave';
 import { markOrderPaid } from '@/lib/payments/markOrderPaid';
+import { amountMismatchError, amountsMatch } from '@/lib/payments/amount';
 
 export async function POST(request: NextRequest) {
   try {
@@ -49,12 +50,22 @@ export async function POST(request: NextRequest) {
       verifyResult = await verifyPaystack({ reference });
     }
 
-    if (verifyResult.success) {
-      await markOrderPaid(orderId, verifyResult.transactionId);
-      return NextResponse.json({ success: true, data: verifyResult.raw });
+    if (!verifyResult.success) {
+      return NextResponse.json({ success: false, data: verifyResult.raw });
     }
 
-    return NextResponse.json({ success: false, data: verifyResult.raw });
+    if (
+      typeof verifyResult.amountPaid !== 'number' ||
+      !amountsMatch(Number(order.amount), verifyResult.amountPaid)
+    ) {
+      return NextResponse.json(
+        amountMismatchError(Number(order.amount), Number(verifyResult.amountPaid ?? NaN)),
+        { status: 400 }
+      );
+    }
+
+    await markOrderPaid(orderId, verifyResult.transactionId);
+    return NextResponse.json({ success: true, data: verifyResult.raw });
   } catch (error) {
     console.error('Payment verify error:', error);
     const message = error instanceof Error ? error.message : 'Internal server error';

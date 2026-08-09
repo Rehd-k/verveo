@@ -3,10 +3,11 @@ import { z } from 'zod';
 import mongoose from 'mongoose';
 import dbConnect from '@/lib/mongodb';
 import { requireAuth, isAuthUser } from '@/lib/apiAuth';
-import { User } from '@/models/User';
 import { Campaign } from '@/models/Campaign';
 import { DesignRequest } from '@/models/DesignRequest';
 import { DESIGN_SERVICE_FEE } from '@/lib/designCredit';
+import { debitWallet, InsufficientBalanceError } from '@/lib/wallet/ledger';
+import { migrateDesignCreditToWallet } from '@/lib/wallet/migrateDesignCredit';
 
 const createSchema = z.object({
   containerDescription: z.string().min(10).max(2000),
@@ -53,6 +54,8 @@ export async function POST(request: NextRequest) {
 
   try {
     await dbConnect();
+    await migrateDesignCreditToWallet(auth.id);
+
     const body = await request.json();
     const parsed = createSchema.safeParse(body);
     if (!parsed.success) {
@@ -84,37 +87,28 @@ export async function POST(request: NextRequest) {
     }
 
     const fee = DESIGN_SERVICE_FEE;
-    const user = await User.findOneAndUpdate(
-      {
-        _id: auth.id,
-        designCredit: { $gte: fee },
-      },
-      { $inc: { designCredit: -fee } },
-      { new: true }
-    );
 
-    if (!user) {
-      const current = await User.findById(auth.id).select('designCredit');
-      return NextResponse.json(
-        {
-          error: 'Insufficient design credit',
-          designCredit: current?.designCredit ?? 0,
-          required: fee,
-        },
-        { status: 400 }
-      );
-    }
+    const designRequest = await DesignRequest.create({
+      userId: auth.id,
+      campaignId: campaignId || undefined,
+      containerDescription,
+      preferredContact,
+      contactValue,
+      scheduledAt: scheduled,
+      status: 'pending',
+      amountCharged: fee,
+    });
 
     try {
-      const designRequest = await DesignRequest.create({
+      const ledger = await debitWallet({
         userId: auth.id,
-        campaignId: campaignId || undefined,
-        containerDescription,
-        preferredContact,
-        contactValue,
-        scheduledAt: scheduled,
-        status: 'pending',
-        amountCharged: fee,
+        amount: fee,
+        type: 'design_fee',
+        reference: `design_request_${designRequest._id}`,
+        account: 'wallet',
+        relatedId: designRequest._id.toString(),
+        relatedModel: 'DesignRequest',
+        metadata: { campaignId },
       });
 
       if (campaignId) {
@@ -131,13 +125,24 @@ export async function POST(request: NextRequest) {
           status: designRequest.status,
           amountCharged: designRequest.amountCharged,
           scheduledAt: designRequest.scheduledAt,
-          designCredit: user.designCredit,
+          walletBalance: ledger.balanceAfter,
         },
         { status: 201 }
       );
-    } catch (createError) {
-      await User.findByIdAndUpdate(auth.id, { $inc: { designCredit: fee } });
-      throw createError;
+    } catch (err) {
+      await DesignRequest.findByIdAndDelete(designRequest._id);
+
+      if (err instanceof InsufficientBalanceError) {
+        return NextResponse.json(
+          {
+            error: 'Insufficient wallet balance',
+            walletBalance: err.balance,
+            required: err.required,
+          },
+          { status: 400 }
+        );
+      }
+      throw err;
     }
   } catch (error) {
     console.error('Design request create error:', error);

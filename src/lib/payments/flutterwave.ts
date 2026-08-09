@@ -9,7 +9,12 @@ function getSecret() {
 
 export async function initializeFlutterwave(params: InitializeParams): Promise<InitializeResult> {
   const secret = getSecret();
-  const txRef = `verveo_${params.orderId}_${Date.now()}`;
+  const idPart = params.depositId || params.orderId || 'pay';
+  const txRef = `verveo_${idPart}_${Date.now()}`;
+
+  const meta: Record<string, string> = {};
+  if (params.orderId) meta.orderId = params.orderId;
+  if (params.depositId) meta.depositId = params.depositId;
 
   const res = await axios.post(
     'https://api.flutterwave.com/v3/payments',
@@ -19,7 +24,7 @@ export async function initializeFlutterwave(params: InitializeParams): Promise<I
       currency: 'NGN',
       redirect_url: params.callbackUrl,
       customer: { email: params.email },
-      meta: { orderId: params.orderId },
+      meta,
     },
     { headers: { Authorization: `Bearer ${secret}` } }
   );
@@ -52,8 +57,14 @@ export async function verifyFlutterwave(params: VerifyParams): Promise<VerifyRes
     data?.status === 'successful' &&
     (!params.txRef || data.tx_ref === params.txRef);
 
+  const amountPaid =
+    data?.amount !== undefined && data?.amount !== null
+      ? Number(data.amount)
+      : undefined;
+
   return {
     success,
+    amountPaid,
     transactionId: String(id),
     raw: res.data,
   };

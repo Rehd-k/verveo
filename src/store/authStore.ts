@@ -1,60 +1,49 @@
 import { create } from 'zustand';
 import { User } from '@/types';
-import { setAuthCookie, clearAuthCookie } from '@/lib/fetchAuth';
 
 interface AuthStore {
   user: User | null;
-  token: string | null;
   loading: boolean;
   initialized: boolean;
   login: (email: string, password: string) => Promise<User>;
   signup: (email: string, password: string, name: string, role?: string) => Promise<User>;
-  logout: () => void;
-  setUser: (user: User | null, token?: string) => void;
+  logout: () => Promise<void>;
+  setUser: (user: User | null) => void;
   initializeAuth: () => Promise<void>;
 }
 
 export const useAuth = create<AuthStore>((set, get) => ({
   user: null,
-  token: null,
   loading: false,
   initialized: false,
 
   initializeAuth: async () => {
     if (get().initialized) return;
 
-    const storedToken = localStorage.getItem('token');
-    if (!storedToken) {
-      set({ initialized: true });
-      return;
-    }
-
     set({ loading: true });
     try {
-      const res = await fetch('/api/auth/me', {
-        headers: { Authorization: `Bearer ${storedToken}` },
-      });
+      // Clear legacy client-stored tokens (pre-HttpOnly migration)
+      try {
+        localStorage.removeItem('token');
+      } catch {
+        // ignore
+      }
+
+      const res = await fetch('/api/auth/me', { credentials: 'same-origin' });
 
       if (!res.ok) {
-        localStorage.removeItem('token');
-        clearAuthCookie();
-        set({ user: null, token: null, loading: false, initialized: true });
+        set({ user: null, loading: false, initialized: true });
         return;
       }
 
       const data = await res.json();
-      const token = data.token ?? storedToken;
-      setAuthCookie(token);
       set({
         user: data.user,
-        token,
         loading: false,
         initialized: true,
       });
     } catch {
-      localStorage.removeItem('token');
-      clearAuthCookie();
-      set({ user: null, token: null, loading: false, initialized: true });
+      set({ user: null, loading: false, initialized: true });
     }
   },
 
@@ -64,6 +53,7 @@ export const useAuth = create<AuthStore>((set, get) => ({
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
         body: JSON.stringify({ email, password }),
       });
 
@@ -72,9 +62,13 @@ export const useAuth = create<AuthStore>((set, get) => ({
         throw new Error(data.error || 'Login failed');
       }
 
-      localStorage.setItem('token', data.token);
-      setAuthCookie(data.token);
-      set({ user: data.user, token: data.token, loading: false });
+      try {
+        localStorage.removeItem('token');
+      } catch {
+        // ignore
+      }
+
+      set({ user: data.user, loading: false });
       return data.user;
     } catch (error) {
       set({ loading: false });
@@ -88,6 +82,7 @@ export const useAuth = create<AuthStore>((set, get) => ({
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
         body: JSON.stringify({ email, password, name, role }),
       });
 
@@ -96,9 +91,13 @@ export const useAuth = create<AuthStore>((set, get) => ({
         throw new Error(data.error || 'Signup failed');
       }
 
-      localStorage.setItem('token', data.token);
-      setAuthCookie(data.token);
-      set({ user: data.user, token: data.token, loading: false });
+      try {
+        localStorage.removeItem('token');
+      } catch {
+        // ignore
+      }
+
+      set({ user: data.user, loading: false });
       return data.user;
     } catch (error) {
       set({ loading: false });
@@ -106,14 +105,21 @@ export const useAuth = create<AuthStore>((set, get) => ({
     }
   },
 
-  logout: () => {
-    localStorage.removeItem('token');
-    clearAuthCookie();
-    set({ user: null, token: null });
+  logout: async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+    } catch {
+      // ignore
+    }
+    try {
+      localStorage.removeItem('token');
+    } catch {
+      // ignore
+    }
+    set({ user: null });
   },
 
-  setUser: (user: User | null, token?: string) => {
-    if (token) setAuthCookie(token);
-    set({ user, token: token || null });
+  setUser: (user: User | null) => {
+    set({ user });
   },
 }));

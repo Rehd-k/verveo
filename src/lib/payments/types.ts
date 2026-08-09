@@ -3,7 +3,10 @@ export type OnlinePaymentMethod = 'paystack' | 'flutterwave';
 export interface InitializeParams {
   amount: number;
   email: string;
-  orderId: string;
+  /** Campaign checkout order id */
+  orderId?: string;
+  /** Wallet deposit id */
+  depositId?: string;
   callbackUrl: string;
 }
 
@@ -20,6 +23,8 @@ export interface VerifyParams {
 
 export interface VerifyResult {
   success: boolean;
+  /** Amount paid in NGN (major units), when available from the gateway */
+  amountPaid?: number;
   transactionId?: string;
   raw?: unknown;
 }

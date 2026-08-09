@@ -15,6 +15,7 @@ import {
   Settings,
   User,
   Shield,
+  Wallet,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -27,6 +28,7 @@ const NAV = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, match: (p: string) => p === '/dashboard' },
   { href: '/campaigns', label: 'Campaigns', icon: Megaphone, match: (p: string) => p.startsWith('/campaigns') || p.startsWith('/campaign') },
   { href: '/analytics', label: 'Analytics', icon: ChartLine, match: (p: string) => p === '/analytics' },
+  { href: '/dashboard/wallet', label: 'Wallet', icon: Wallet, match: (p: string) => p.startsWith('/dashboard/wallet') },
   { href: '/settings', label: 'Billing', icon: CreditCard, match: (p: string) => p === '/settings' },
 ];
 

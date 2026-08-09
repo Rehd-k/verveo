@@ -5,6 +5,8 @@ import { User } from '@/models/User';
 import { Campaign } from '@/models/Campaign';
 import { requireAdmin, isAuthUser } from '@/lib/apiAuth';
 import { hashPassword } from '@/lib/auth';
+import { creditWallet } from '@/lib/wallet/ledger';
+import { writeAuditLog } from '@/lib/audit';
 
 const createUserSchema = z.object({
   email: z.string().email(),
@@ -93,18 +95,53 @@ export async function POST(request: NextRequest) {
       password: await hashPassword(password),
       name,
       role,
-      walletBalance: walletBalance ?? 0,
-      designCredit: designCredit ?? 150000,
+      walletBalance: 0,
+      designCredit: 0,
+    });
+
+    const userId = user._id.toString();
+    // designCredit field is legacy; fold into single wallet
+    const totalCredit = (walletBalance ?? 0) + (designCredit ?? 0);
+
+    if (totalCredit > 0) {
+      await creditWallet({
+        userId,
+        amount: totalCredit,
+        type: 'admin_adjustment',
+        reference: `admin_create_wallet_${userId}`,
+        account: 'wallet',
+        createdBy: auth.id,
+        metadata: {
+          fromWallet: walletBalance ?? 0,
+          fromDesign: designCredit ?? 0,
+        },
+      });
+    }
+
+    const refreshed = await User.findById(userId).select('-password');
+
+    await writeAuditLog({
+      actorId: auth.id,
+      action: 'user.create',
+      targetType: 'User',
+      targetId: userId,
+      after: {
+        email: refreshed!.email,
+        role: refreshed!.role,
+        walletBalance: refreshed!.walletBalance,
+        designCredit: refreshed!.designCredit,
+      },
+      ip: request.headers.get('x-forwarded-for'),
     });
 
     return NextResponse.json(
       {
-        id: user._id.toString(),
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        walletBalance: user.walletBalance,
-        designCredit: user.designCredit,
+        id: refreshed!._id.toString(),
+        email: refreshed!.email,
+        name: refreshed!.name,
+        role: refreshed!.role,
+        walletBalance: refreshed!.walletBalance,
+        designCredit: refreshed!.designCredit,
       },
       { status: 201 }
     );

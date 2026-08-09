@@ -84,12 +84,12 @@ export default function AdminSettingsPage() {
       </div>
 
       <div className="rounded-xl border border-border bg-card p-5 space-y-4">
-        <h3 className="font-semibold text-foreground">Signup Design Credit</h3>
+        <h3 className="font-semibold text-foreground">Signup Wallet Credit</h3>
         <p className="text-xs text-muted-foreground">
-          Granted on signup. Can only pay for Verveo professional container design — not campaign checkout.
+          Granted to the wallet on signup (campaigns + pro design). Formerly called Design Credit.
         </p>
         <div className="flex items-center justify-between gap-4">
-          <label className="text-sm text-muted-foreground">Default Design Credit (₦)</label>
+          <label className="text-sm text-muted-foreground">Default signup credit (₦)</label>
           <input
             type="number"
             value={defaultDesignCredit}
