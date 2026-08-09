@@ -215,12 +215,35 @@ export default function CampaignWizardPage() {
   };
 
   const updateData = useCallback((newData: Partial<CampaignDataShape>) => {
-    setCampaignData((prev) => ({
-      ...prev,
-      ...newData,
-      productType: (newData.productType as typeof prev.productType) ?? prev.productType,
-      design: newData.design ? { ...prev.design, ...newData.design } : prev.design,
-    }));
+    setCampaignData((prev) => {
+      const nextLocations = newData.locations ?? prev.locations;
+      const nextVenueTypes = newData.venueTypes ?? prev.venueTypes;
+      const locationsUnchanged =
+        newData.locations === undefined ||
+        (nextLocations.length === prev.locations.length &&
+          nextLocations.every((v, i) => v === prev.locations[i]));
+      const venueTypesUnchanged =
+        newData.venueTypes === undefined ||
+        (nextVenueTypes.length === prev.venueTypes.length &&
+          nextVenueTypes.every((v, i) => v === prev.venueTypes[i]));
+
+      const next = {
+        ...prev,
+        ...newData,
+        locations: locationsUnchanged ? prev.locations : nextLocations,
+        venueTypes: venueTypesUnchanged ? prev.venueTypes : nextVenueTypes,
+        productType: (newData.productType as typeof prev.productType) ?? prev.productType,
+        design: newData.design ? { ...prev.design, ...newData.design } : prev.design,
+      };
+
+      const onlyLocationFields =
+        Object.keys(newData).every((key) => key === 'locations' || key === 'venueTypes');
+      if (onlyLocationFields && locationsUnchanged && venueTypesUnchanged) {
+        return prev;
+      }
+
+      return next;
+    });
   }, []);
 
   const initialCenter =

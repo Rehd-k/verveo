@@ -82,7 +82,9 @@ export default function LocationPage({
   const [center, setCenter] = useState<[number, number]>(defaultCenter);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [citySearch, setCitySearch] = useState('');
-  const { setSelectedBusinesses, setTargetLocation, setEstimatedReach } = useCampaignStore();
+  const setSelectedBusinesses = useCampaignStore((s) => s.setSelectedBusinesses);
+  const setTargetLocation = useCampaignStore((s) => s.setTargetLocation);
+  const setEstimatedReach = useCampaignStore((s) => s.setEstimatedReach);
   const [categories, setCategories] = useState<string[]>(() =>
     data.venueTypes?.length ? [...data.venueTypes] : [...VENUE_CATEGORIES]
   );
@@ -126,18 +128,32 @@ export default function LocationPage({
     categories.length > 0 && (selectedPlaces.length > 0 || hasSavedLocations);
 
   useEffect(() => {
+    const nextLocations =
+      districtNames.length > 0
+        ? districtNames
+        : data.locations?.length
+          ? data.locations
+          : data.locations ?? [];
+    const nextVenueTypes =
+      categories.length > 0 ? categories : data.venueTypes?.length ? data.venueTypes : data.venueTypes ?? [];
+
+    const sameLocations =
+      nextLocations.length === (data.locations?.length ?? 0) &&
+      nextLocations.every((name, i) => name === data.locations?.[i]);
+    const sameVenueTypes =
+      nextVenueTypes.length === (data.venueTypes?.length ?? 0) &&
+      nextVenueTypes.every((type, i) => type === data.venueTypes?.[i]);
+
     setSelectedBusinesses(selectedPlaces);
     setTargetLocation(districtNames.join(', ') || data.locations?.join(', ') || 'Custom area');
     setEstimatedReach(dailyReach);
-    updateData({
-      locations:
-        districtNames.length > 0
-          ? districtNames
-          : data.locations?.length
-            ? data.locations
-            : [],
-      venueTypes: categories.length > 0 ? categories : data.venueTypes || [],
-    });
+
+    if (!sameLocations || !sameVenueTypes) {
+      updateData({
+        locations: sameLocations ? data.locations : nextLocations,
+        venueTypes: sameVenueTypes ? data.venueTypes : nextVenueTypes,
+      });
+    }
   }, [
     selectedPlaces,
     districtNames,
